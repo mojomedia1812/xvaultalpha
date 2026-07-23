@@ -21,19 +21,30 @@ except Exception:
 from resources.lib import control, log_utils
 
 
-BASE_URLS = ("https://huhu.to", "https://www.huhu.to")
+BASE_URLS = (
+    "https://huhu.to",
+    "https://www.huhu.to",
+    "https://oha.to",
+    "https://www.oha.to",
+    "https://vavoo.to",
+    "https://www.vavoo.to",
+)
 PING_URL = "https://www.vypn.net/api/app/ping"
 CATALOG_PATH = "/mediaurl-catalog.json"
 RESOLVE_PATH = "/mediaurl-resolve.json"
-EPG_URL = "https://epgshare01.online/epgshare01/epg_ripper_DE1.xml.gz"
+EPG_URL = "https://epgshare01.online/epgshare01/epg_ripper_PL1.xml.gz"
 LOGOS_URL = "https://iptv-org.github.io/api/logos.json"
+CHANNELS_URL = "https://iptv-org.github.io/api/channels.json"
 MEDIA_USER_AGENT = "MediaUrl/2"
 CLIENT_VERSION = "3.1.0"
-CATALOG_GROUPS = ("Germany", "GERMANY")
+CATALOG_GROUPS = ("Poland",)
+CATALOG_COUNTRY = "Poland"
+CHANNEL_ID_SUFFIX = ".pl"
 CATALOG_FILE = os.path.join(control.addonProfilePath, "linear-tv-catalog.json")
 FAVORITES_FILE = os.path.join(control.addonProfilePath, "linear-tv-favorites.json")
 EPG_FILE = os.path.join(control.addonProfilePath, "linear-tv-epg.json")
 LOGOS_FILE = os.path.join(control.addonProfilePath, "linear-tv-logos.json")
+POLISH_CHANNELS_FILE = os.path.join(control.addonProfilePath, "linear-tv-polish-channels.json")
 HEALTH_FILE = os.path.join(control.addonProfilePath, "linear-tv-health-session.json")
 SIGNATURE_TTL = 7 * 60
 DEFAULT_CACHE_HOURS = 1
@@ -82,42 +93,47 @@ CATEGORY_ORDER = (
 
 CATEGORY_RULES = (
     ("Oeffentlich-rechtlich", (
-        "ARD", "DAS ERSTE", "ZDF", "3SAT", "ARTE", "PHOENIX", "TAGESSCHAU",
-        "ONE", "KIKA", "ALPHA", "DW ", "DEUTSCHE WELLE",
+        "TVP", "TELEWIZJA POLSKA", "POLSAT NEWS POLITYKA", "POLSAT NEWS 2",
+        "POLSAT NEWS", "POLSAT 2", "TV TRWAM",
     )),
     ("Regional", (
-        "WDR", "NDR", "MDR", "SWR", "BR ", "HR ", "RBB", "SR ", "RADIO BREMEN",
-        "HAMBURG", "BERLIN", "BAYERN", "HESSEN", "SACHSEN", "THUERINGEN",
+        "TVP3", "TVP 3", "REGIONALNA", "REGION", "WARSZAWA", "KRAKOW",
+        "KRAKÓW", "GDANSK", "GDAŃSK", "POZNAN", "POZNAŃ", "WROCLAW",
+        "WROCŁAW", "KATOWICE", "LODZ", "ŁÓDŹ", "LUBLIN", "SZCZECIN",
+        "BIALYSTOK", "BIAŁYSTOK", "RZESZOW", "RZESZÓW", "KIELCE",
+        "OPOLE", "OLSZTYN", "BYDGOSZCZ", "GORZOW", "GORZÓW",
     )),
     ("Nachrichten", (
-        "WELT", "NTV", "N-TV", "N24", "EURONEWS", "BILD", "CNN", "BBC NEWS",
-        "SKY NEWS", "TAGESSCHAU", "PHOENIX",
+        "NEWS", "INFO", "INFORMACJE", "BIZNES", "REPUBLIKA", "WYDARZENIA",
+        "POLSAT NEWS", "TVP INFO", "TVN24", "TVN 24",
     )),
     ("Sport", (
-        "SPORT", "DAZN", "SKY BUNDESLIGA", "SKY SPORT", "EUROSPORT", "DYN",
-        "MAGENTA", "TELEKOM SPORT", "FIGHT", "MOTORSPORT", "MOTOGP", "FORMEL",
-        "FUSSBALL", "FOOTBALL", "TENNIS", "GOLF",
+        "SPORT", "ELEVEN", "CANAL SPORT", "CANAL+ SPORT", "EUROSPORT",
+        "FIGHT", "MOTORSPORT", "MOTOGP", "FORMULA", "FORMEL", "FOOTBALL",
+        "PILKA", "PIŁKA", "TENNIS", "GOLF",
     )),
     ("Kinder", (
-        "KIKA", "KINDER", "NICK", "NICKELODEON", "DISNEY", "CARTOON", "BOOMERANG",
-        "BABY TV", "TOGGO", "SUPER RTL", "BOSS BABY",
+        "DZIECI", "KIDS", "JUNIOR", "MINI MINI", "MINIMINI", "NICK",
+        "NICKELODEON", "DISNEY", "CARTOON", "BOOMERANG", "BABY TV",
+        "CBEEBIES", "TELETOON",
     )),
     ("Doku und Wissen", (
-        "DOKU", "DOKUMENTATION", "DISCOVERY", "NATIONAL", "NAT GEO", "PLANET",
-        "HISTORY", "ANIMAL", "WISSEN", "SPIEGEL GESCHICHTE", "GEO",
+        "DOKU", "DOKUMENT", "DISCOVERY", "NATIONAL", "NAT GEO", "PLANETE",
+        "PLANET", "HISTORY", "HISTORIA", "ANIMAL", "NAUKA", "WIEDZA",
     )),
     ("Musik", (
-        "MTV", "DELUXE", "MUSIC", "MUSIK", "VH1", "SCHLAGER", "CLUB", "HITS",
-        "RADIO", "JUKEBOX",
+        "4FUN", "ESKA", "MTV", "MUSIC", "MUZYKA", "VH1", "CLUB", "HITS",
+        "RADIO", "JUKEBOX", "DANCE", "GOLD",
     )),
     ("Filme und Serien", (
-        "SKY CINEMA", "CINEMA", "FILM", "MOVIE", "SERIE", "SERIES", "WARNER",
-        "UNIVERSAL", "13TH STREET", "SYFY", "AXN", "TNT", "RTL CRIME",
-        "RTL LIVING", "FOX", "KINOWELT", "NETFLIX", "AMAZON", "CINEDOME",
+        "KINO", "KINO+", "ALE KINO", "CANAL FILM", "CANAL+ FILM", "FILM",
+        "MOVIE", "SERIALE", "SERIE", "SERIES", "WARNER", "UNIVERSAL",
+        "13 ULICA", "13TH STREET", "SYFY", "AXN", "TNT", "FOX", "CINEMAX",
+        "HBO", "AMC", "CBS EUROPA", "EPIC DRAMA",
     )),
     ("Private", (
-        "RTL", "SAT.1", "SAT1", "PRO7", "PRO 7", "KABEL", "VOX", "NITRO",
-        "SIXX", "DMAX", "TELE 5", "RTLZWEI", "RTL 2",
+        "POLSAT", "TVN", "TV4", "TV 4", "TV6", "TV 6", "TTV", "PULS",
+        "TV PULS", "ANTENA", "STOPKLATKA", "METRO", "ZOOM TV", "WP",
     )),
     ("Events und Backup", (
         "BACKUP", "EVENT", "RAW", "LIVE DURING EVENTS", "SELECT", "OPTION",
@@ -125,13 +141,22 @@ CATEGORY_RULES = (
 )
 
 SPORT_CATEGORY_OVERRIDES = (
-    "FC BAYERN",
-    "BAYERN MUENCHEN",
-    "BAYERN MÜNCHEN",
-    "BAYERN MUNICH",
+    "LEGIA WARSZAWA",
+    "LECH POZNAN",
+    "LECH POZNAŃ",
+    "WISLA KRAKOW",
+    "WISŁA KRAKÓW",
+    "RAKOW CZESTOCHOWA",
+    "RAKÓW CZĘSTOCHOWA",
 )
 
 _HIDDEN_TOKENS = ("BACKUP", "EVENT", "RAW", "LIVE DURING EVENTS", "TEST")
+_FOREIGN_LANGUAGE_RE = re.compile(
+    r"\b(?:AL\s+MADINA|AL\s+NAJAH|AL\s+JAZEERA|BBC\s+WORLD\s+NEWS|CNN|"
+    r"EURONEWS|FRANCE\s*24|DW|DEUTSCHE\s+WELLE|SKY\s+NEWS|TRT\s+WORLD|"
+    r"NHK\s+WORLD|CGTN|CCTV|RAI\s+|TV5MONDE|RUSSIA\s+TODAY|RT\s+NEWS)\b",
+    re.IGNORECASE,
+)
 
 _XMLTV_TIME_RE = re.compile(r"^(\d{14})(?:\s*([+-])(\d{2})(\d{2}))?")
 _EPG_DROP_RE = re.compile(
@@ -424,16 +449,17 @@ def _catalog(force=False):
     if not force:
         cached = _read_json(CATALOG_FILE, {})
         if _cache_valid(cached):
-            return _visible_channels(_apply_current_categories(cached.get("channels", [])))
+            channels = _polish_channels(_apply_current_categories(cached.get("channels", [])))
+            return _visible_channels(channels)
 
     channels = _download_catalog()
     if channels:
-        channels = _apply_current_categories(channels)
+        channels = _polish_channels(_apply_current_categories(channels))
         _write_json(CATALOG_FILE, {"updated_at": int(time.time()), "channels": channels})
         return _visible_channels(channels)
 
     cached = _read_json(CATALOG_FILE, {})
-    fallback = _apply_current_categories(cached.get("channels", []))
+    fallback = _polish_channels(_apply_current_categories(cached.get("channels", [])))
     if fallback:
         control.infoDialog("LiveTV nutzt die gespeicherte Senderliste.", icon="WARNING", time=4000)
         return _visible_channels(fallback)
@@ -481,25 +507,32 @@ def _download_catalog():
 
 
 def _catalog_page(group, cursor, attempts=0):
-    response = requests.post(
-        _base_url() + CATALOG_PATH,
-        json={
-            "language": "en",
-            "region": "US",
-            "catalogId": "iptv",
-            "id": "iptv",
-            "adult": False,
-            "search": "",
-            "sort": "",
-            "filter": {"group": group},
-            "cursor": cursor,
-            "clientVersion": CLIENT_VERSION,
-        },
-        headers=_media_headers(),
-        timeout=30,
-    )
-    if response.status_code == 451:
-        if attempts >= len(BASE_URLS):
+    try:
+        response = requests.post(
+            _base_url() + CATALOG_PATH,
+            json={
+                "language": "pl",
+                "region": "PL",
+                "catalogId": "iptv",
+                "id": "iptv",
+                "adult": False,
+                "search": "",
+                "sort": "",
+                "filter": {"group": group},
+                "cursor": cursor,
+                "clientVersion": CLIENT_VERSION,
+            },
+            headers=_media_headers(),
+            timeout=30,
+        )
+    except Exception:
+        if attempts >= len(BASE_URLS) - 1:
+            raise
+        _switch_base()
+        return _catalog_page(group, cursor, attempts + 1)
+
+    if response.status_code == 451 or response.status_code >= 400:
+        if attempts >= len(BASE_URLS) - 1:
             response.raise_for_status()
         _switch_base()
         return _catalog_page(group, cursor, attempts + 1)
@@ -523,7 +556,7 @@ def _parse_catalog_items(items):
             "name": name,
             "url": stream_page,
             "logo": logo,
-            "group": item.get("group") or "Germany",
+            "group": item.get("group") or CATALOG_COUNTRY,
             "category": _category_for(name),
         })
     return channels
@@ -537,20 +570,20 @@ def _resolve(channel_url, force_signature=False):
     if not signature:
         return ""
 
-    for attempt in range(3):
+    for attempt in range(len(BASE_URLS) * 2):
         try:
             response = requests.post(
                 _base_url() + RESOLVE_PATH,
                 json={
-                    "language": "en",
-                    "region": "US",
+                    "language": "pl",
+                    "region": "PL",
                     "url": channel_url,
                     "clientVersion": CLIENT_VERSION,
                 },
                 headers=_media_headers(signature),
                 timeout=30,
             )
-            if response.status_code == 451:
+            if response.status_code == 451 or response.status_code >= 400:
                 _switch_base()
                 continue
             response.raise_for_status()
@@ -563,6 +596,7 @@ def _resolve(channel_url, force_signature=False):
             log_utils.log("LiveTV resolve attempt %d failed: %s" % (attempt + 1, str(exc)), log_utils.LOGWARNING)
             if attempt == 0:
                 signature = _signature(force=True)
+            _switch_base()
     return ""
 
 
@@ -621,7 +655,7 @@ def _signature(force=False):
             PING_URL,
             json={
                 "reason": "app-focus",
-                "locale": "en",
+                "locale": "pl",
                 "theme": "dark",
                 "metadata": {
                     "device": {"type": "desktop", "uniqueId": str(uuid.uuid4())},
@@ -670,7 +704,7 @@ def _media_headers(signature=""):
         "content-type": "application/json; charset=utf-8",
         "user-agent": MEDIA_USER_AGENT,
         "accept": "*/*",
-        "Accept-Language": "en",
+        "Accept-Language": "pl",
         "Connection": "close",
     }
     if signature:
@@ -1084,6 +1118,104 @@ def _apply_current_categories(channels):
     return result
 
 
+def _polish_channels(channels):
+    aliases = _polish_channel_aliases()
+    result = []
+    for channel in channels or []:
+        if not isinstance(channel, dict):
+            continue
+        current = dict(channel)
+        if not _is_polish_group(current):
+            continue
+        if _is_foreign_language_channel(current):
+            continue
+        if aliases and not _matches_polish_channel(current, aliases):
+            continue
+        result.append(current)
+    return result
+
+
+def _is_polish_group(channel):
+    return (channel.get("group") or "").strip().lower() == CATALOG_COUNTRY.lower()
+
+
+def _is_foreign_language_channel(channel):
+    return bool(_FOREIGN_LANGUAGE_RE.search(channel.get("name") or ""))
+
+
+def _matches_polish_channel(channel, aliases):
+    live_aliases = _live_channel_aliases(channel)
+    for alias in live_aliases:
+        if alias in aliases:
+            return True
+    for alias in live_aliases:
+        if len(alias) < 6:
+            continue
+        for known_alias in aliases:
+            if len(known_alias) >= 6 and (alias in known_alias or known_alias in alias):
+                return True
+    return False
+
+
+def _polish_channel_aliases():
+    cached = _read_json(POLISH_CHANNELS_FILE, {})
+    if _polish_channel_cache_valid(cached):
+        return set(cached.get("aliases") or [])
+
+    aliases = _download_polish_channel_aliases()
+    if aliases:
+        _ensure_profile()
+        _write_json(POLISH_CHANNELS_FILE, {
+            "updated_at": int(time.time()),
+            "source": CHANNELS_URL,
+            "aliases": sorted(aliases),
+        })
+        return aliases
+
+    if isinstance(cached, dict) and cached.get("aliases"):
+        return set(cached.get("aliases") or [])
+    return set()
+
+
+def _polish_channel_cache_valid(data):
+    if not isinstance(data, dict) or not data.get("aliases"):
+        return False
+    return time.time() - int(data.get("updated_at") or 0) < LOGOS_TTL
+
+
+def _download_polish_channel_aliases():
+    if requests is None:
+        return set()
+    try:
+        response = requests.get(CHANNELS_URL, headers=_epg_headers(), timeout=45)
+        response.raise_for_status()
+        return _parse_polish_channel_aliases(response.json())
+    except Exception as exc:
+        log_utils.log("LiveTV Polish channel catalog failed: %s" % str(exc), log_utils.LOGWARNING)
+        return set()
+
+
+def _parse_polish_channel_aliases(items):
+    aliases = set()
+    if not isinstance(items, list):
+        return aliases
+    for item in items:
+        if str(item.get("country") or "").upper() != "PL":
+            continue
+        values = [
+            item.get("id") or "",
+            item.get("name") or "",
+            item.get("network") or "",
+        ]
+        values.extend(item.get("alt_names") or [])
+        for value in values:
+            value = str(value or "")
+            if value.lower().endswith(CHANNEL_ID_SUFFIX):
+                value = value.rsplit(".", 1)[0]
+            aliases.update(_alias_variants(_normalise_channel_name(value)))
+    return set([alias for alias in aliases if alias])
+
+
 def _visible_channels(channels):
     show_special = control.getSetting("livetv.show.special", "true") != "false"
     blocked = _health_blocked_ids()
@@ -1165,7 +1297,7 @@ def _plot(channel, programmes=None, include_empty_epg=False):
     elif include_empty_epg:
         lines.append("Gleich: Keine EPG-Daten")
     lines.append(channel.get("category") or "LiveTV")
-    lines.append(channel.get("group") or "Germany")
+    lines.append(channel.get("group") or CATALOG_COUNTRY)
     return "[CR]".join([line for line in lines if line])
 
 
@@ -1631,7 +1763,7 @@ def _parse_logo_data(items):
     logos = {}
     for item in items:
         channel_id = item.get("channel") or ""
-        if not channel_id.lower().endswith(".de"):
+        if not channel_id.lower().endswith(CHANNEL_ID_SUFFIX):
             continue
         logo = _logo_value(item.get("url"))
         if not logo:
@@ -1666,7 +1798,7 @@ def _logo_value(value):
 
 def _epg_aliases(channel_id, names):
     aliases = set()
-    parts = [channel_id.rsplit(".", 1)[0] if channel_id.lower().endswith(".de") else channel_id]
+    parts = [channel_id.rsplit(".", 1)[0] if channel_id.lower().endswith(CHANNEL_ID_SUFFIX) else channel_id]
     parts.extend(names or [])
     for value in parts:
         aliases.update(_alias_variants(_normalise_channel_name(value)))
@@ -1698,6 +1830,16 @@ def _normalise_channel_name(value):
 
 def _alias_variants(alias):
     aliases = set([alias])
+    if "plus" in alias:
+        aliases.add(alias.replace("plus", ""))
+    if alias.startswith("canal") and not alias.startswith("canalplus"):
+        aliases.add("canalplus" + alias[5:])
+    if "nationalgeographic" in alias:
+        aliases.add(alias.replace("nationalgeographic", "natgeo"))
+    if "nationalgeo" in alias:
+        aliases.add(alias.replace("nationalgeo", "natgeo"))
+    if "natgeo" in alias:
+        aliases.add(alias.replace("natgeo", "nationalgeo"))
     if alias.endswith("plus"):
         aliases.add(alias[:-4] + "up")
     if alias.endswith("up"):
@@ -1734,14 +1876,14 @@ def _favorite_record(channel):
         "name": channel.get("name"),
         "url": channel.get("url"),
         "logo": channel.get("logo") or "",
-        "group": channel.get("group") or "Germany",
+        "group": channel.get("group") or CATALOG_COUNTRY,
         "category": channel.get("category") or "Sonstige",
     }
 
 
 def _load_favorites():
     data = _read_json(FAVORITES_FILE, [])
-    return data if isinstance(data, list) else []
+    return _polish_channels(data if isinstance(data, list) else [])
 
 
 def _save_favorites(favorites):

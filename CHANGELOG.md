@@ -5,6 +5,13 @@
 - Handbuch als GitHub-Pages-Wissensdatenbank erweitert: Menüs, Suche, Quellen, Wiedergabe, Sync, Trakt, LiveTV, Downloads, Werkzeuge, Einstellungen und Fehlerhilfe ausführlicher beschrieben.
 - Sichtbare GitHub-Pages-Texte und deutsch benannte Link-Events mit korrekten Umlauten vereinheitlicht.
 
+## [2026.07.23.4] - 2026-07-23
+
+- LiveTV in xVAULTalpha auf polnische Sender umgestellt: Katalog, Cache, Favoriten, EPG und Logo-Abgleich nutzen Polen/`.pl`.
+- LiveTV lite nutzt nun dieselbe polnische xVAULTalpha-Senderliste statt der bisherigen 2ix2-/Nydus-Quellen fuer DE/AT/CH.
+- Klar fremdsprachige Sender aus der Poland-Gruppe werden herausgefiltert, damit keine deutschen oder anderssprachigen Sender in der Liste erscheinen.
+- Wenn `huhu.to` nicht erreichbar ist, versucht LiveTV nun `oha.to` und danach `vavoo.to` als Fallback-Hosts.
+
 ## [2026.07.23.3] - 2026-07-23
 
 - Quelltextoptimierung.
