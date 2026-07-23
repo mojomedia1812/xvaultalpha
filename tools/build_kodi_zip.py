@@ -10,8 +10,13 @@ from zipfile import ZIP_DEFLATED, ZipFile
 
 PROJECT_DIR = Path(__file__).resolve().parents[1]
 REPO_DIR = PROJECT_DIR.parent
-SITE_URL = "http://xvault.ddnss.de/"
-LEGACY_SITE_URL = "https://mojomedia1812.github.io/xVAULT/"
+SITE_URL = "https://mojomedia1812.github.io/xvaultalpha/"
+SITE_INDEX_TITLE = "/xvaultalpha/"
+LEGACY_SITE_URLS = (
+    "https://mojomedia1812.github.io/xVAULT/",
+    "http://xvault.ddnss.de/",
+    "https://xvault.ddnss.de/",
+)
 ADDON = ET.parse(PROJECT_DIR / "addon.xml").getroot()
 ADDON_ID = ADDON.attrib["id"]
 VERSION = ADDON.attrib["version"]
@@ -39,7 +44,7 @@ UMAMI_TRACKING = """  <script
     defer
     src="https://cloud.umami.is/script.js"
     data-website-id="9a7c0b38-aea1-468a-bccc-e258aeeb365d"
-    data-domains="xvault.ddnss.de"
+    data-domains="mojomedia1812.github.io"
     data-do-not-track="true"
     data-exclude-search="true">
   </script>"""
@@ -230,26 +235,26 @@ def sync_browsable_repository_layout():
     (REPOSITORY_INDEX_DIR / "addon.xml").write_text(_repository_addon_xml() + "\n", encoding="utf-8", newline="\n")
     copy2_retry(PROJECT_DIR / "resources" / "icon.png", REPOSITORY_INDEX_DIR / "icon.png")
 
-    _write_index(ADDON_INDEX_DIR, f"/xVAULT/{ADDON_ID}/", addon_index_entries)
-    _write_index(ADDON_INDEX_DIR / "resources", f"/xVAULT/{ADDON_ID}/resources/", [
+    _write_index(ADDON_INDEX_DIR, f"{SITE_INDEX_TITLE}{ADDON_ID}/", addon_index_entries)
+    _write_index(ADDON_INDEX_DIR / "resources", f"{SITE_INDEX_TITLE}{ADDON_ID}/resources/", [
         _entry("fanart.png", ADDON_INDEX_DIR / "resources" / "fanart.png"),
         _entry("icon.png", ADDON_INDEX_DIR / "resources" / "icon.png"),
         _entry("media/", ADDON_INDEX_DIR / "resources" / "media"),
     ])
-    _write_index(ADDON_INDEX_DIR / "resources" / "media", f"/xVAULT/{ADDON_ID}/resources/media/", [
+    _write_index(ADDON_INDEX_DIR / "resources" / "media", f"{SITE_INDEX_TITLE}{ADDON_ID}/resources/media/", [
         _entry("banner.png", ADDON_INDEX_DIR / "resources" / "media" / "banner.png"),
     ])
-    _write_index(REPOSITORY_INDEX_DIR, "/xVAULT/repository.xvault/", [
+    _write_index(REPOSITORY_INDEX_DIR, f"{SITE_INDEX_TITLE}repository.xvault/", [
         _entry("addon.xml", REPOSITORY_INDEX_DIR / "addon.xml"),
         _entry("icon.png", REPOSITORY_INDEX_DIR / "icon.png"),
         _entry(REPOSITORY_ZIP_NAME, REPOSITORY_INDEX_OUTPUT),
     ])
-    _write_index(PROJECT_DIR / "docs" / "zips", "/xVAULT/zips/", [
+    _write_index(PROJECT_DIR / "docs" / "zips", f"{SITE_INDEX_TITLE}zips/", [
         _entry(f"{ADDON_ID}/", PROJECT_DIR / "docs" / "zips" / ADDON_ID),
         _entry("repository.xvault/", PROJECT_DIR / "docs" / "zips" / REPOSITORY_ID),
     ])
-    _write_index(PROJECT_DIR / "docs" / "zips" / ADDON_ID, f"/xVAULT/zips/{ADDON_ID}/", zip_index_entries)
-    _write_index(PROJECT_DIR / "docs" / "zips" / REPOSITORY_ID, "/xVAULT/zips/repository.xvault/", [
+    _write_index(PROJECT_DIR / "docs" / "zips" / ADDON_ID, f"{SITE_INDEX_TITLE}zips/{ADDON_ID}/", zip_index_entries)
+    _write_index(PROJECT_DIR / "docs" / "zips" / REPOSITORY_ID, f"{SITE_INDEX_TITLE}zips/repository.xvault/", [
         _entry(REPOSITORY_ZIP_NAME, REPOSITORY_OUTPUT),
     ])
 
@@ -340,7 +345,8 @@ def update_download_page(output):
     html_content = re.sub(r"<code>[A-F0-9]{64}</code>", f"<code>{digest}</code>", html_content)
     html_content = _update_archive_links(html_content)
     html_content = _update_release_notes(html_content)
-    html_content = html_content.replace(LEGACY_SITE_URL, SITE_URL)
+    for legacy_site_url in LEGACY_SITE_URLS:
+        html_content = html_content.replace(legacy_site_url, SITE_URL)
     html_content = re.sub(r"(<span>Version ).*?(</span>)", rf"\g<1>{VERSION}\2", html_content)
     html_content = _inject_kodi_listing(html_content)
     html_content = _ensure_umami_tracking(html_content)
@@ -368,6 +374,9 @@ def _update_manual_download_links():
         "Handbuch zu xVAULT %s" % VERSION,
         html_content,
     )
+    for legacy_site_url in LEGACY_SITE_URLS:
+        html_content = html_content.replace(legacy_site_url, SITE_URL)
+    html_content = _ensure_umami_tracking(html_content)
     manual.write_text(html_content, encoding="utf-8", newline="\n")
 
 
@@ -590,7 +599,7 @@ def _kodi_listing_fragment():
     ]
     return """<!-- kodi-listing:start -->
   <section id="kodi-index" class="kodi-index">
-    <h2>Index of /xVAULT/</h2>
+    <h2>Index of {title}</h2>
     <table>
       <tbody>
         <tr><th></th><th><a href="?C=N;O=D">Name</a></th><th><a href="?C=M;O=A">Last modified</a></th><th><a href="?C=S;O=A">Size</a></th></tr>
@@ -600,7 +609,7 @@ def _kodi_listing_fragment():
       </tbody>
     </table>
   </section>
-  <!-- kodi-listing:end -->""".format(rows=_indent(_index_rows(entries, parent="../"), 8))
+  <!-- kodi-listing:end -->""".format(title=html.escape(SITE_INDEX_TITLE), rows=_indent(_index_rows(entries, parent="../"), 8))
 
 
 def _index_rows(entries, parent):

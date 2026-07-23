@@ -1,3 +1,9 @@
+xVAULT 2026.07.23.5
+Entwickler: mojomedia1812
+
+- xVAULTalpha-Veröffentlichung auf die Alpha-GitHub-Pages-Adresse umgestellt, damit Alpha nicht mehr über die Standard-xVAULT-Domain verteilt wird.
+- Repository-Metadaten und Repository-ZIP verweisen nun auf https://mojomedia1812.github.io/xvaultalpha/.
+
 xVAULT 2026.07.23.4
 Entwickler: mojomedia1812
 

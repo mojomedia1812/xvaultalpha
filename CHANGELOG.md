@@ -5,6 +5,11 @@
 - Handbuch als GitHub-Pages-Wissensdatenbank erweitert: Menüs, Suche, Quellen, Wiedergabe, Sync, Trakt, LiveTV, Downloads, Werkzeuge, Einstellungen und Fehlerhilfe ausführlicher beschrieben.
 - Sichtbare GitHub-Pages-Texte und deutsch benannte Link-Events mit korrekten Umlauten vereinheitlicht.
 
+## [2026.07.23.5] - 2026-07-23
+
+- xVAULTalpha-Veröffentlichung auf die Alpha-GitHub-Pages-Adresse umgestellt, damit Alpha nicht mehr über die Standard-xVAULT-Domain verteilt wird.
+- Repository-Metadaten und Repository-ZIP verweisen nun auf `https://mojomedia1812.github.io/xvaultalpha/`.
+
 ## [2026.07.23.4] - 2026-07-23
 
 - LiveTV in xVAULTalpha auf polnische Sender umgestellt: Katalog, Cache, Favoriten, EPG und Logo-Abgleich nutzen Polen/`.pl`.

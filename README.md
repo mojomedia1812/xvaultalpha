@@ -4,18 +4,18 @@ xVAULT ist ein Kodi-Video-Add-on zum Durchsuchen und Wiedergeben von Filmen, TV-
 
 ## Aktuelle Version
 
-Aktueller Stand: `2026.07.23.4`
+Aktueller Stand: `2026.07.23.5`
 
 Die führende Versionsquelle ist [`addon.xml`](addon.xml). Wenn die Version in `addon.xml` geändert wird, muss diese README geprüft und bei Bedarf aktualisiert werden.
 
 ## Installation
 
-1. Die aktuelle Add-on-ZIP von [xvault.ddnss.de](http://xvault.ddnss.de/) herunterladen.
+1. Die aktuelle Add-on-ZIP von [mojomedia1812.github.io/xvaultalpha](https://mojomedia1812.github.io/xvaultalpha/) herunterladen.
 2. In Kodi **Add-ons > Aus ZIP-Datei installieren** öffnen.
-3. Die Datei `plugin.video.xvaultalpha-2026.07.23.4.zip` auswählen.
+3. Die Datei `plugin.video.xvaultalpha-2026.07.23.5.zip` auswählen.
 4. xVAULT starten.
 
-Alternativ kann das Repository-ZIP von [http://xvault.ddnss.de/repository.xvault.zip](http://xvault.ddnss.de/repository.xvault.zip) installiert werden. Danach findet Kodi neue xVAULT-Versionen über das Repository.
+Alternativ kann das Repository-ZIP von [https://mojomedia1812.github.io/xvaultalpha/repository.xvault.zip](https://mojomedia1812.github.io/xvaultalpha/repository.xvault.zip) installiert werden. Danach findet Kodi neue xVAULTalpha-Versionen über das Repository.
 
 Kodi installiert die offiziellen Abhängigkeiten aus den konfigurierten Repositorys. Nicht im offiziellen Kodi-Repo verfügbare Module wie ResolveURL werden beim ersten Start von xVAULT automatisch aus ihren offiziellen Quellen nachinstalliert.
 
@@ -23,7 +23,7 @@ Weitere Hinweise zu Abhängigkeiten stehen in [`DEPENDENCIES.md`](DEPENDENCIES.m
 
 ## Nutzung
 
-- Das ausführliche Handbuch steht als GitHub-Pages-Unterseite unter [xvault.ddnss.de/handbuch/](http://xvault.ddnss.de/handbuch/) bereit.
+- Das ausführliche Handbuch steht als GitHub-Pages-Unterseite unter [mojomedia1812.github.io/xvaultalpha/handbuch/](https://mojomedia1812.github.io/xvaultalpha/handbuch/) bereit.
 - Filme und Serien über die xVAULT-Menüs suchen.
 - LiveTV über polnische Senderkategorien, Suche oder Favoriten starten.
 - Eine Quelle auswählen oder Autoplay verwenden.
