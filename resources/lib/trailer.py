@@ -7,10 +7,10 @@
 # Search waterfall (v7 — API key split + user guidance popups):
 #   1.  KinoCheck API         — exact TMDB ID lookup, free, no YT quota
 #   1b. KinoCheck YT channel  — fallback when API is down (needs own YT API key)
-#   2.  TMDB videos (German)  — Trailer/Teaser, newest first
+#   2.  TMDB videos (Polish)  — Trailer/Teaser, newest first
 #   3.  TMDB videos (English) — Trailer/Teaser, newest first
 #   3b. IMDB                  — direct MP4 from IMDB title page, no player needed
-#   4.  YouTube search (DE)   — needs own YT API key (100 units/search)
+#   4.  YouTube search (PL)   — needs own YT API key (100 units/search)
 #   5.  YouTube search (EN)   — needs own YT API key (0 units if same title)
 #   5b. TMDB videos (any)     — fallback for 3rd languages (ES, KO, ZH, JA, ...)
 #   6.  Give up
@@ -531,7 +531,7 @@ def _searchKinoCheckAPI(tmdb_id, mediatype='movie'):
     """
     try:
         endpoint = 'movies' if mediatype == 'movie' else 'shows'
-        url = 'https://api.kinocheck.de/%s?tmdb_id=%s&language=de' % (endpoint, tmdb_id)
+        url = 'https://api.kinocheck.de/%s?tmdb_id=%s&language=pl' % (endpoint, tmdb_id)
         _log('KinoCheck-API: %s' % url)
         data = _fetchJSON(url)
         if not data:
@@ -563,7 +563,7 @@ def _searchKinoCheckAPI(tmdb_id, mediatype='movie'):
 
 
 def _searchKinoCheck(title, year):
-    """Search KinoCheck YouTube channel for a German trailer.
+    """Search KinoCheck YouTube channel for a Polish trailer.
     Requires working YouTube API key. Gated by _yt_api_dead flag.
     Year-matched results bubble to the top. Returns list of {name, key}."""
     try:
@@ -582,7 +582,7 @@ def _searchKinoCheck(title, year):
         query = ' '.join(parts)
         url   = ('https://www.googleapis.com/youtube/v3/search?part=snippet'
                  '&channelId=%s&q=%s&type=video&maxResults=10'
-                 '&relevanceLanguage=de&key=%s'
+                 '&relevanceLanguage=pl&key=%s'
                  % (KINOCHECK_CHANNEL, quote_plus(query), apikey))
         _log('KinoCheck query: %r' % query)
         data  = _fetchJSON(url)
@@ -786,8 +786,8 @@ def _searchIMDB(imdb_id):
 
 def _notify(search_title, step, source, vtype, lang, poster):
     """3-second notification popup (upper-right).
-    Heading: search title used (DE or EN).
-    Message: source - type [lang]  e.g. 'TMDB - Trailer [DE]'
+    Heading: search title used (PL or EN).
+    Message: source - type [lang]  e.g. 'TMDB - Trailer [PL]'
     If lang is empty (e.g. IMDB): 'IMDB - Trailer'
     """
     try:
@@ -878,10 +878,10 @@ def _playDirect(url, step, source, vtype, lang, poster, search_title):
 
 # ── One-time guidance popups (v7) ─────────────────────────────────────────────
 
-def _showHintIfNeeded(has_yt_player, has_own_key, found_german, played_imdb):
+def _showHintIfNeeded(has_yt_player, has_own_key, found_polish, played_imdb):
     """Show guidance popup after trailer plays (or at give-up). Once per Kodi session.
     Popup 1: no player installed, IMDB played → suggest SmartTube / YT addon.
-    Popup 2: has player but no own key, no German found → suggest own API key.
+    Popup 2: has player but no own key, no Polish trailer found -> suggest own API key.
     Returns True if a popup was shown."""
     try:
         import xbmc, xbmcgui
@@ -893,22 +893,22 @@ def _showHintIfNeeded(has_yt_player, has_own_key, found_german, played_imdb):
                 xbmc.sleep(2000)
                 is_android = xbmc.getCondVisibility('System.Platform.Android')
                 if is_android:
-                    msg = ('Tipp: Für deutsche Trailer (KinoCheck/TMDB) SmartTube installieren.\n'
-                           'Für YouTube-Suche zusätzlich: YouTube Add-on mit eigenem API-Key einrichten.')
+                    msg = ('Wskazówka: dla polskich trailerów (KinoCheck/TMDB) zainstaluj SmartTube.\n'
+                           'Dla wyszukiwania w YouTube skonfiguruj dodatkowo dodatek YouTube z własnym kluczem API.')
                 else:
-                    msg = ('Tipp: YouTube Add-on mit eigenem API-Key installieren für '
-                           'deutsche Trailer (KinoCheck/TMDB) und YouTube-Suche.')
+                    msg = ('Wskazówka: zainstaluj dodatek YouTube z własnym kluczem API dla '
+                           'polskich trailerów (KinoCheck/TMDB) i wyszukiwania w YouTube.')
                 xbmcgui.Dialog().ok('Trailer', msg)
                 win.setProperty('xvault.trailer.hint.player', '1')
                 _log('hint: showed player popup')
                 return True
 
-        elif has_yt_player and not has_own_key and not found_german:
-            # Popup 2: has player but no own key, no German trailer found
+        elif has_yt_player and not has_own_key and not found_polish:
+            # Popup 2: has player but no own key, no Polish trailer found
             if not win.getProperty('xvault.trailer.hint.apikey'):
                 xbmc.sleep(2000)
-                msg = ('Kein deutscher Trailer bei KinoCheck/TMDB/IMDB gefunden.\n'
-                       'YouTube Add-on mit eigenem API-Key einrichten für zusätzliche YouTube-Trailersuche.')
+                msg = ('Nie znaleziono polskiego trailera w KinoCheck/TMDB/IMDB.\n'
+                       'Skonfiguruj dodatek YouTube z własnym kluczem API, aby użyć dodatkowego wyszukiwania trailerów.')
                 xbmcgui.Dialog().ok('Trailer', msg)
                 win.setProperty('xvault.trailer.hint.apikey', '1')
                 _log('hint: showed apikey popup')
@@ -927,7 +927,7 @@ def playTrailer(tmdb_id, mediatype='movie', title='', year='', poster=''):
     Args:
         tmdb_id:   TMDB numeric ID (string)
         mediatype: 'movie' or 'tv'
-        title:     display title in German (for YouTube fallback searches)
+        title:     display title in Polish (for YouTube fallback searches)
         year:      release year string  (for YouTube fallback searches)
         poster:    poster image URL     (shown as notification icon)
     """
@@ -936,7 +936,7 @@ def playTrailer(tmdb_id, mediatype='movie', title='', year='', poster=''):
 
     url_type  = 'movie' if mediatype == 'movie' else 'tv'
     title_key = 'title' if mediatype == 'movie' else 'name'
-    tmdb_de   = cTMDB()
+    tmdb_pl   = cTMDB()
     tmdb_en   = cTMDB(lang='en')
 
     _log('START tmdb_id=%s title=%r year=%s mediatype=%s' % (tmdb_id, title, year, mediatype))
@@ -964,8 +964,8 @@ def playTrailer(tmdb_id, mediatype='movie', title='', year='', poster=''):
                     window.setProperty(_ISA_WARNED, '1')
                     if xbmcgui.Dialog().yesno(
                             'Trailer',
-                            '"InputStream Adaptive" im YouTube Add-on ist aus.\n'
-                            'Trailer-Wiedergabe kann fehlschlagen. Aktivieren?'):
+                            '"InputStream Adaptive" w dodatku YouTube jest wyłączony.\n'
+                            'Odtwarzanie trailera może się nie udać. Włączyć?'):
                         yt.setSetting('kodion.video.quality.isa', 'true')
                         _log('ISA enabled via pre-flight check')
         except Exception:
@@ -985,7 +985,7 @@ def playTrailer(tmdb_id, mediatype='movie', title='', year='', poster=''):
     imdb_id = (en_data or {}).get('imdb_id', '')
     if not imdb_id and url_type == 'tv':
         imdb_id = (en_data or {}).get('external_ids', {}).get('imdb_id', '') or ''
-    _log('EN title: %r (DE title: %r) imdb_id: %s' % (en_title, title, imdb_id))
+    _log('EN title: %r (PL title: %r) imdb_id: %s' % (en_title, title, imdb_id))
 
     # ── Steps 1-3: YouTube-based sources (skip if no YT player) ──────
     if has_yt_player:
@@ -1007,7 +1007,7 @@ def playTrailer(tmdb_id, mediatype='movie', title='', year='', poster=''):
                 # SmartTube — still verify video exists (free oEmbed check)
                 kc_api_hits = _filterExistence(kc_api_hits)
             if kc_api_hits:
-                _play(kc_api_hits[0]['key'], 1, 'KinoCheck', 'Trailer', 'DE', poster, title)
+                _play(kc_api_hits[0]['key'], 1, 'KinoCheck', 'Trailer', 'PL', poster, title)
                 _showHintIfNeeded(has_yt_player, has_own_key, True, False)
                 return
             _log('Step1 KinoCheck-API: all results unavailable, continuing waterfall')
@@ -1019,27 +1019,27 @@ def playTrailer(tmdb_id, mediatype='movie', title='', year='', poster=''):
             kc_hit = _filterByDuration(kc_raw, skip_api=skip_api, api_key=_vf)
             _log('Step1b KinoCheck-YT: raw=%d filtered=%d' % (len(kc_raw), len(kc_hit)))
             if kc_hit:
-                _play(kc_hit[0]['key'], 1, 'KinoCheck', 'Trailer', 'DE', poster, title)
+                _play(kc_hit[0]['key'], 1, 'KinoCheck', 'Trailer', 'PL', poster, title)
                 _showHintIfNeeded(has_yt_player, has_own_key, True, False)
                 return
 
-        # ── Step 2: TMDB videos (German) ──────────────────────────────────
-        _log('--- Step 2: TMDB-DE videos ---')
-        tmdb_de_raw = tmdb_de.getUrl('%s/%s/videos' % (url_type, tmdb_id))
-        videos = _filterAgeRestricted(_tmdbVideos(tmdb_de_raw, lang='de'), skip_api=skip_api, api_key=_vf)
-        _log('Step2 TMDB-DE: raw=%d filtered=%d' % (len((tmdb_de_raw or {}).get('results', [])), len(videos)))
+        # ── Step 2: TMDB videos (Polish) ──────────────────────────────────
+        _log('--- Step 2: TMDB-PL videos ---')
+        tmdb_pl_raw = tmdb_pl.getUrl('%s/%s/videos' % (url_type, tmdb_id))
+        videos = _filterAgeRestricted(_tmdbVideos(tmdb_pl_raw, lang='pl'), skip_api=skip_api, api_key=_vf)
+        _log('Step2 TMDB-PL: raw=%d filtered=%d' % (len((tmdb_pl_raw or {}).get('results', [])), len(videos)))
         if videos:
-            # TMDB iso_639_1='de' only means German metadata tag — video may be English.
-            # If DE title doesn't appear in the video name, treat it as English.
+            # TMDB iso_639_1='pl' only means Polish metadata tag; video may still be English.
+            # If the Polish title does not appear in the video name, treat it as English.
             vname = (videos[0].get('name') or '').lower()
             _norm = lambda s: re.sub(r"['\u2019\-]", '', s.lower())
             if _norm(title) in _norm(vname):
-                step2_title, step2_lang = title, 'DE'
+                step2_title, step2_lang = title, 'PL'
             else:
                 step2_title, step2_lang = en_title, 'EN'
             _log('Step2 lang-detect: vname=%r -> %s title=%r' % (vname[:60], step2_lang, step2_title))
             _play(videos[0]['key'], 2, 'TMDB', videos[0].get('type', 'Trailer'), step2_lang, poster, step2_title)
-            _showHintIfNeeded(has_yt_player, has_own_key, step2_lang == 'DE', False)
+            _showHintIfNeeded(has_yt_player, has_own_key, step2_lang == 'PL', False)
             return
 
         # ── Step 3: TMDB videos (English) ─────────────────────────────────
@@ -1070,13 +1070,13 @@ def playTrailer(tmdb_id, mediatype='movie', title='', year='', poster=''):
         if has_own_key:
             user_key = _getUserKey()
 
-            # ── Step 4: YouTube search (German) ───────────────────────────
-            _log('--- Step 4: YouTube-DE ---')
-            yt_de_raw = _searchYouTube(title, year, lang='de')
-            yt_de_hit = _filterByDuration(yt_de_raw, skip_api=skip_api, api_key=user_key)
-            _log('Step4 YouTube-DE: raw=%d filtered=%d' % (len(yt_de_raw), len(yt_de_hit)))
-            if yt_de_hit and _oembedSanityCheck(yt_de_hit[0]['key'], title, year):
-                _play(yt_de_hit[0]['key'], 4, 'YouTube', 'Trailer', 'DE', poster, title)
+            # ── Step 4: YouTube search (Polish) ───────────────────────────
+            _log('--- Step 4: YouTube-PL ---')
+            yt_pl_raw = _searchYouTube(title, year, lang='pl')
+            yt_pl_hit = _filterByDuration(yt_pl_raw, skip_api=skip_api, api_key=user_key)
+            _log('Step4 YouTube-PL: raw=%d filtered=%d' % (len(yt_pl_raw), len(yt_pl_hit)))
+            if yt_pl_hit and _oembedSanityCheck(yt_pl_hit[0]['key'], title, year):
+                _play(yt_pl_hit[0]['key'], 4, 'YouTube', 'Trailer', 'PL', poster, title)
                 _showHintIfNeeded(has_yt_player, has_own_key, True, False)
                 return
 
@@ -1095,8 +1095,8 @@ def playTrailer(tmdb_id, mediatype='movie', title='', year='', poster=''):
         # Reuse tmdb_en_raw (EN endpoint returns all videos, we just filtered for EN before)
         if tmdb_en_raw:
             videos = _filterAgeRestricted(_tmdbVideos(tmdb_en_raw), skip_api=skip_api, api_key=_vf)
-            # Exclude DE/EN videos we already tried
-            videos = [v for v in videos if v.get('iso_639_1') not in ('de', 'en')]
+            # Exclude PL/EN videos we already tried
+            videos = [v for v in videos if v.get('iso_639_1') not in ('pl', 'en')]
         else:
             videos = []
         _log('Step5b TMDB-ANY: filtered=%d' % len(videos))
@@ -1113,12 +1113,12 @@ def playTrailer(tmdb_id, mediatype='movie', title='', year='', poster=''):
         if not has_yt_player:
             is_android = xbmc.getCondVisibility('System.Platform.Android')
             if is_android:
-                msg = 'Kein Trailer gefunden.\nSmartTube oder YouTube Add-on installieren fuer mehr Quellen.'
+                msg = 'Nie znaleziono trailera.\nZainstaluj SmartTube albo dodatek YouTube, aby użyć większej liczby źródeł.'
             else:
-                msg = 'Kein Trailer gefunden.\nYouTube Add-on installieren fuer mehr Quellen.'
+                msg = 'Nie znaleziono trailera.\nZainstaluj dodatek YouTube, aby użyć większej liczby źródeł.'
             xbmcgui.Dialog().ok('Trailer', msg)
         else:
             xbmcgui.Dialog().notification(
-                'Trailer', 'Kein Trailer gefunden',
+                'Trailer', 'Nie znaleziono trailera',
                 xbmcgui.NOTIFICATION_WARNING, 3000,
             )

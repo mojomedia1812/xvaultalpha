@@ -338,11 +338,11 @@ class source:
     def _language_from_code(code):
         code = (code or '').lower()
         if code == 'de':
-            return 'de', 'Deutsch'
+            return 'de', 'Niemiecki'
         if code == 'des':
-            return 'en', 'Deutsch Sub'
+            return 'en', 'Niemieckie napisy'
         if code == 'en':
-            return 'en', 'Englisch'
+            return 'en', 'Angielski'
         return '', ''
 
     def _login_if_configured(self):

@@ -10,9 +10,9 @@ SITE_IDENTIFIER = 'kinox'
 SITE_DOMAIN = 'www12.kinoz.to'
 SITE_NAME = SITE_IDENTIFIER.upper()
 LANGUAGE_MAP = {
-    '1': ('de', 'Deutsch'),
-    '2': ('en', 'Englisch'),
-    '15': ('multi', 'Deutsch/Englisch')
+    '1': ('de', 'Niemiecki'),
+    '2': ('en', 'Angielski'),
+    '15': ('multi', 'Niemiecki/angielski')
 }
 
 class source:

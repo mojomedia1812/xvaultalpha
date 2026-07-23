@@ -55,7 +55,7 @@ class source:
                     sUrl = self.base_link + '/api' + link + '/watch'
                     sHtmlContent = cRequestHandler(sUrl).request()
                     if 'streamUrl' not in sHtmlContent:
-                        log_utils.log(f'[EINSCHALTEN DEBUG] API-Antwort enthält kein "streamUrl": {sHtmlContent[:100]}...', xbmc.LOGWARNING)
+                        log_utils.log(f'[EINSCHALTEN DEBUG] Odpowiedź API nie zawiera "streamUrl": {sHtmlContent[:100]}...', xbmc.LOGWARNING)
                         continue
                     jResult = json.loads(sHtmlContent)
                     releaseName = jResult.get('releaseName', '')

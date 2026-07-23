@@ -118,11 +118,11 @@ class source:
                     'debridonly': False
                 })
 
-            logger.info('[Filmpalast] %d Quellen gefunden' % len(sources))
+            logger.info('[Filmpalast] znaleziono %d źródeł' % len(sources))
             return sources
 
         except Exception as e:
-            logger.error('[Filmpalast] Fehler: %s' % e)
+            logger.error('[Filmpalast] Błąd: %s' % e)
             return sources
 
     def resolve(self, url):

@@ -215,7 +215,7 @@ def getSearchTerms(filename=None): # 'movies','tvshows', 'person'
         return storage['queries']
 
 def search_new(filename=None): # 'movies','tvshows', 'person'
-    k = xbmc.Keyboard('', "Suche")
+    k = xbmc.Keyboard('', "Szukaj")
     k.doModal()
     term = k.getText() if k.isConfirmed() else None
     if term is None or term == '': return

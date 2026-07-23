@@ -121,7 +121,7 @@ class RedirectFilter(HTTPRedirectHandler):
     def redirect_request(self, req, fp, code, msg, hdrs, newurl):
         if not _doh_enabled():
             if 'notice.cuii' in newurl:
-                xbmcgui.Dialog().ok("xVAULT Support Information", "Ihr Internetanbieter zensiert ihren Internetzugang!" + '\n' + "Um sich vor der Zensur zu schÃ¼tzen, empfehlen wir euren DNS Server im Router bzw. auf Euren GerÃ¤ten auf Google oder Cloudflare umzustellen - fÃ¼r die Protokolle IPv4 UND IPv6! Anleitungen findet Ihr per Googlesuche z.B. 'Fritzbox DNS Server Ã¤ndern'")  # die neue Funktion 'DNS Sperre umgehen' in xVAULT zu aktivieren oder
+                xbmcgui.Dialog().ok("Informacje wsparcia xVAULT", "Twój dostawca internetu blokuje ten dostęp!" + '\n' + "Aby chronić się przed blokadą DNS, zalecamy ustawienie serwerów DNS w routerze lub na urządzeniach na Google albo Cloudflare, dla protokołów IPv4 i IPv6.")
                 return None
         return HTTPRedirectHandler.redirect_request(self, req, fp, code, msg, hdrs, newurl)
 
@@ -314,28 +314,28 @@ class cRequestHandler:
                     if not oResponse:
                         if not self.ignoreErrors:
                             logger.error(' -> [requestHandler]: Failed DDOS-GUARD active: ' + self._sUrl)
-                        return 'DDOS GUARD SCHUTZ'
+                        return 'OCHRONA DDOS GUARD'
                 elif 'cloudflare' in str(e.headers):
                     if not self.ignoreErrors:
-                        value = ('!!! CLOUDFLARE-SCHUTZ AKTIV !!! Weitere Informationen: ' + str(e.__class__.__name__) + ' : ' + str(e), str(traceback.format_exc().splitlines()[-3].split('addons')[-1]))
+                        value = ('!!! OCHRONA CLOUDFLARE AKTYWNA !!! Więcej informacji: ' + str(e.__class__.__name__) + ' : ' + str(e), str(traceback.format_exc().splitlines()[-3].split('addons')[-1]))
                         xbmcgui.Dialog().ok('xVAULT', str(value))  # Error
                         logger.error(' -> [requestHandler]: Failed Cloudflare active: ' + self._sUrl)
-                    return 'CLOUDFLARE-SCHUTZ AKTIV' # Meldung geht als "e.doc" in die exception nach default.py
+                    return 'OCHRONA CLOUDFLARE AKTYWNA'
                 else:
                     if not self.ignoreErrors:
-                        xbmcgui.Dialog().ok('xVAULT', "Fehler beim Abrufen der Url:" + ' {0} {1}'.format(self._sUrl, str(e)))
+                        xbmcgui.Dialog().ok('xVAULT', "Błąd podczas pobierania URL:" + ' {0} {1}'.format(self._sUrl, str(e)))
                         logger.error(' -> [requestHandler]: HTTPError ' + str(e) + ' Url: ' + self._sUrl)
-                    return 'SEITE NICHT ERREICHBAR'
+                    return 'STRONA NIEDOSTĘPNA'
             else:
                 if not self.ignoreErrors:
-                    xbmcgui.Dialog().ok('xVAULT', "Fehler beim Abrufen der Url:" + ' {0} {1}'.format(self._sUrl, str(e)))
+                    xbmcgui.Dialog().ok('xVAULT', "Błąd podczas pobierania URL:" + ' {0} {1}'.format(self._sUrl, str(e)))
                     logger.error(' -> [requestHandler]: HTTPError ' + str(e) + ' Url: ' + self._sUrl)
-                return 'SEITE NICHT ERREICHBAR'
+                return 'STRONA NIEDOSTĘPNA'
         except URLError as e:
             if not self.ignoreErrors:
                 xbmcgui.Dialog().ok('xVAULT', str(e.reason))
                 logger.error(' -> [requestHandler]: URLError ' + str(e.reason) + ' Url: ' + self._sUrl)
-            return 'URL FEHLER'
+            return 'BŁĄD URL'
         except HTTPException as e:
             if not self.ignoreErrors:
                 xbmcgui.Dialog().ok('xVAULT', str(e))
@@ -440,7 +440,7 @@ class cRequestHandler:
 
         fallback_ip = self.SERIENSTREAM_FALLBACK_IPS.get(hostname)
         if fallback_ip:
-            logger.info(' -> [requestHandler]: Cloudflare DoH ohne verwertbare Antwort fuer %s, nutze SerienStream-Fallback-IP %s' % (hostname, fallback_ip))
+            logger.info(' -> [requestHandler]: Cloudflare DoH bez użytecznej odpowiedzi dla %s, używam fallback-IP SerienStream %s' % (hostname, fallback_ip))
             return fallback_ip
 
         return None

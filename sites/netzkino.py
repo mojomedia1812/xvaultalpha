@@ -159,11 +159,11 @@ class source:
                         })
 
         except json.JSONDecodeError:
-            logger.error("[NETZKINO] FEHLER: Konnte API-Antwort nicht als JSON parsen. (Antwort war nicht gültiges JSON)")
+            logger.error("[NETZKINO] BŁĄD: Nie udało się sparsować odpowiedzi API jako JSON. (Odpowiedź nie była prawidłowym JSON-em)")
         except KeyError as e:
-            logger.error(f"[NETZKINO] FEHLER bei JSON-Navigation: Schlüssel '{e}' fehlt oder Struktur unerwartet.")
+            logger.error(f"[NETZKINO] BŁĄD nawigacji JSON: brakuje klucza '{e}' albo struktura jest nieoczekiwana.")
         except Exception as e:
-            logger.error(f"[NETZKINO] Kritischer Fehler im RUN-Ablauf: {e}")
+            logger.error(f"[NETZKINO] Błąd krytyczny w przebiegu RUN: {e}")
         return self.sources
 
 

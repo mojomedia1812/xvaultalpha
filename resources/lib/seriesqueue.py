@@ -27,7 +27,7 @@ def start(params):
         episodes = []
 
     if not episodes or start_index < 0 or start_index >= len(episodes):
-        control.infoDialog('Die Episodenliste ist nicht mehr verfuegbar.', sound=True, icon='WARNING')
+        control.infoDialog('Lista odcinków nie jest już dostępna.', sound=True, icon='WARNING')
         return
 
     selected = episodes[start_index:]
@@ -41,7 +41,7 @@ def start(params):
         meta['_xvault_list_position'] = start_index + 1
         meta['_xvault_list_content'] = 'movies'
 
-        label = meta.get('sysname') or meta.get('title') or 'Episode'
+        label = meta.get('sysname') or meta.get('title') or 'Odcinek'
         item = control.item(label=label, offscreen=True)
         item.setProperty('IsPlayable', 'true')
         try:

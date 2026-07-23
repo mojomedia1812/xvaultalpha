@@ -92,8 +92,8 @@ class episodes:
 		addonPoster, addonBanner = control.addonPoster(), control.addonBanner()
 		addonFanart, settingFanart = control.addonFanart(), control.getSetting('fanart')
 
-		watchedMenu = "In %s [I]Gesehen[/I]" % control.addonName
-		unwatchedMenu = "In %s [I]Ungesehen[/I]" % control.addonName
+		watchedMenu = "W %s [I]Obejrzane[/I]" % control.addonName
+		unwatchedMenu = "W %s [I]Nieobejrzane[/I]" % control.addonName
 		from resources.lib import seriesqueue
 		queue_meta = json.loads(self.sysmeta)
 		queue_key = seriesqueue.make_key(queue_meta)
@@ -120,10 +120,10 @@ class episodes:
 				_sysmeta = control.quote_plus(json.dumps(sysmeta))
 
 				if int(season) == 0:
-					if 'title' in i and i['title']: label = 'Special %02d  %s' % (episode, i['title'])
-					else: label = 'Special %02d' % episode
+					if 'title' in i and i['title']: label = 'Specjalny %02d  %s' % (episode, i['title'])
+					else: label = 'Specjalny %02d' % episode
 				elif 'title' in i and i['title']: label = '%sx%02d  %s' % (season, episode, i['title'])
-				else: label = '%sx%02d  Episode %s' % (season, episode,  episode)
+				else: label = '%sx%02d  Odcinek %s' % (season, episode,  episode)
 				if i.get('premiered') and datetime.datetime(*(time.strptime(i['premiered'], "%Y-%m-%d")[0:6])) > datetime.datetime.now():
 					label = '[COLOR=red][I]{}[/I][/COLOR]'.format(label)  # ffcc0000
 
@@ -136,9 +136,9 @@ class episodes:
 
 				#plot = i['plot'] if 'plot' in i and len(i['plot']) > 50 else ''  #sysmeta['plot']
 				if int(season) == 0:
-					plot = '[COLOR blue]%s%sSpecial / Pilotfilm: %s[/COLOR]%s%s' % (meta['title'], "\n", i['episode'], "\n\n", plot)
+					plot = '[COLOR blue]%s%sOdcinek specjalny / pilotowy: %s[/COLOR]%s%s' % (meta['title'], "\n", i['episode'], "\n\n", plot)
 				else:
-					plot = '[COLOR blue]%s%sStaffel: %s   Episode: %s[/COLOR]%s%s' % (meta['title'], "\n",i['season'], i['episode'], "\n\n", plot)
+					plot = '[COLOR blue]%s%sSezon: %s   Odcinek: %s[/COLOR]%s%s' % (meta['title'], "\n",i['season'], i['episode'], "\n\n", plot)
 
 				meta.update({'poster': poster})
 				meta.update({'fanart': fanart})
@@ -181,7 +181,7 @@ class episodes:
 						cm.append(rate_item)
 				except:
 					pass
-				cm.append(('Einstellungen', 'RunPlugin(%s?action=addonSettings)' % sysaddon))
+				cm.append(('Ustawienia', 'RunPlugin(%s?action=addonSettings)' % sysaddon))
 				item.addContextMenuItems(cm)
 
 				sysmeta = control.quote_plus(json.dumps(sysmeta))
@@ -240,8 +240,7 @@ class episodes:
 		control.endofdirectory(syshandle, cacheToDisc=False)
 		control.sleep(0.2)
 
-		# setzt Auswahl nach letzte als gesehen markierte Episode
+		# ustawia wybór po ostatnim odcinku oznaczonym jako obejrzany
 		if control.getSetting('status.position')== 'true':
 			from resources.lib.utils import setPosition
 			setPosition(pos, __name__)
-

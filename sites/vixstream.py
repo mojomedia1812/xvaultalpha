@@ -45,7 +45,7 @@ class source:
         try:
             return json.loads(payload)
         except Exception as exc:
-            logger.error('[%s] JSON-Fehler: %s' % (SITE_NAME, str(exc)))
+            logger.error('[%s] Błąd JSON: %s' % (SITE_NAME, str(exc)))
             return None
 
     def _get_tmdb_id(self, imdb_id):
@@ -58,16 +58,16 @@ class source:
             if data.get('tv_results'):
                 return str(data['tv_results'][0]['id'])
         except Exception as exc:
-            logger.error('[%s] TMDB Fehler: %s' % (SITE_NAME, str(exc)))
+            logger.error('[%s] Błąd TMDB: %s' % (SITE_NAME, str(exc)))
         return None
 
     def _stream_languages(self):
         setting = getSetting('hosts.language') or '0'
         if setting == '1':
-            return [('de', 'Deutsch')]
+            return [('de', 'Niemiecki')]
         if setting == '2':
-            return [('en', 'Englisch')]
-        return [('de', 'Deutsch'), ('en', 'Englisch')]
+            return [('en', 'Angielski')]
+        return [('de', 'Niemiecki'), ('en', 'Angielski')]
 
     def _src_with_language(self, src, language):
         if re.search(r'([?&])lang=[a-z]+', src):
@@ -100,10 +100,10 @@ class source:
                 'Upgrade-Insecure-Requests': '1'
             }
             payload, status, real_url = self._request(page_url, headers=headers, caching=False)
-            logger.info('[%s] Seite besucht: %s - Status: %s' % (SITE_NAME, page_url, status))
+            logger.info('[%s] Odwiedzono stronę: %s - Status: %s' % (SITE_NAME, page_url, status))
             return status in ['200', '301']
         except Exception as exc:
-            logger.error('[%s] Fehler beim Seitenbesuch: %s' % (SITE_NAME, str(exc)))
+            logger.error('[%s] Błąd podczas odwiedzania strony: %s' % (SITE_NAME, str(exc)))
             return False
 
     def _fresh_embed_url(self, tmdb_id, season=0, episode=0, language='de'):
@@ -121,18 +121,18 @@ class source:
             return None, None
         src = data.get('src', '')
         if not src:
-            logger.warning('[%s] Kein src in API-Response gefunden' % SITE_NAME)
+            logger.warning('[%s] Nie znaleziono src w odpowiedzi API' % SITE_NAME)
             return None, None
 
         embed_url = 'https://%s%s' % (VIXCLOUD, self._src_with_language(src, language))
-        logger.info('[%s] Frischer Embed: type=%s tmdb=%s lang=%s' % (SITE_NAME, media_type, tmdb_id, language))
+        logger.info('[%s] Świeży embed: type=%s tmdb=%s lang=%s' % (SITE_NAME, media_type, tmdb_id, language))
         return embed_url, page_url
 
     def run(self, titles, year, season=0, episode=0, imdb='', hostDict=None):
         try:
             tmdb_id = self._get_tmdb_id(imdb)
             if not tmdb_id:
-                logger.warning('[%s] Keine TMDB-ID gefunden fuer IMDB: %s' % (SITE_NAME, imdb))
+                logger.warning('[%s] Nie znaleziono TMDB-ID dla IMDB: %s' % (SITE_NAME, imdb))
                 return self.sources
 
             embed_url, page_url = self._fresh_embed_url(tmdb_id, season, episode, 'de')
@@ -154,10 +154,10 @@ class source:
                     'direct': False,
                     'info': language_label
                 })
-                logger.info('[%s] Quelle gefunden: tmdb=%s, lang=%s' % (SITE_NAME, tmdb_id, language))
+                logger.info('[%s] Znaleziono źródło: tmdb=%s, lang=%s' % (SITE_NAME, tmdb_id, language))
 
         except Exception as exc:
-            logger.error('[%s] run() Fehler: %s' % (SITE_NAME, str(exc)))
+            logger.error('[%s] Błąd run(): %s' % (SITE_NAME, str(exc)))
             import traceback
             logger.debug('[%s] Traceback: %s' % (SITE_NAME, traceback.format_exc()))
 
@@ -222,13 +222,13 @@ class source:
             url_match = re.search(r"url\s*:\s*['\"]([^'\"]+/playlist/\d+)['\"]", html)
 
             if not token_match:
-                logger.error('[%s] Token nicht gefunden' % SITE_NAME)
+                logger.error('[%s] Nie znaleziono tokenu' % SITE_NAME)
                 snippet = html[:2000] if len(html) > 2000 else html
                 logger.info('[%s] HTML snippet: %s...' % (SITE_NAME, snippet))
             if not expires_match:
-                logger.error('[%s] Expires nicht gefunden' % SITE_NAME)
+                logger.error('[%s] Nie znaleziono pola expires' % SITE_NAME)
             if not url_match:
-                logger.error('[%s] URL nicht gefunden' % SITE_NAME)
+                logger.error('[%s] Nie znaleziono URL' % SITE_NAME)
 
             if token_match and expires_match and url_match:
                 token = token_match.group(1)
@@ -250,11 +250,11 @@ class source:
                 logger.info('[%s] Finale URL: %s' % (SITE_NAME, final_url[:150]))
                 return final_url
 
-            logger.error('[%s] Nicht alle Parameter gefunden' % SITE_NAME)
+            logger.error('[%s] Nie znaleziono wszystkich parametrów' % SITE_NAME)
             return None
 
         except Exception as exc:
-            logger.error('[%s] resolve() Fehler: %s' % (SITE_NAME, str(exc)))
+            logger.error('[%s] Błąd resolve(): %s' % (SITE_NAME, str(exc)))
             import traceback
             logger.debug('[%s] Traceback: %s' % (SITE_NAME, traceback.format_exc()))
             return None

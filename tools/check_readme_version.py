@@ -10,31 +10,31 @@ README = ROOT / "README.md"
 
 def main():
     if not ADDON_XML.is_file():
-        fail("addon.xml wurde nicht gefunden.")
+        fail("Nie znaleziono addon.xml.")
     if not README.is_file():
-        fail("README.md wurde nicht gefunden.")
+        fail("Nie znaleziono README.md.")
 
     root = ET.parse(str(ADDON_XML)).getroot()
     addon_id = root.attrib.get("id", "").strip()
     version = root.attrib.get("version", "").strip()
     if not addon_id:
-        fail("In addon.xml wurde keine Add-on-ID gefunden.")
+        fail("Nie znaleziono Add-on-ID w addon.xml.")
     if not version:
-        fail("In addon.xml wurde keine Version gefunden.")
+        fail("Nie znaleziono wersji w addon.xml.")
 
     readme = README.read_text(encoding="utf-8")
     if version not in readme:
-        fail("README.md enthaelt nicht die aktuelle Add-on-Version %s aus addon.xml." % version)
+        fail("README.md nie zawiera aktualnej wersji dodatku %s z addon.xml." % version)
 
     install_zip = "%s-%s.zip" % (addon_id, version)
     if install_zip not in readme:
-        fail("README.md enthaelt nicht den aktuellen Installations-ZIP-Namen %s." % install_zip)
+        fail("README.md nie zawiera aktualnej nazwy instalacyjnego ZIP-a %s." % install_zip)
 
-    print("README.md passt zur Add-on-Version %s." % version)
+    print("README.md pasuje do wersji dodatku %s." % version)
 
 
 def fail(message):
-    print("README-Versioncheck fehlgeschlagen: %s" % message, file=sys.stderr)
+    print("Kontrola wersji README nie powiodła się: %s" % message, file=sys.stderr)
     sys.exit(1)
 
 

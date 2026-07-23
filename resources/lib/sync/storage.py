@@ -84,8 +84,8 @@ def reconcile_auth_settings():
         if get_setting(SYNC_ENABLED) != 'true':
             set_setting(SYNC_ENABLED, 'true')
         set_status('Angemeldet als %s' % (user_email or get_setting(ACCOUNT_EMAIL)))
-    elif get_setting(STATUS_TEXT) != 'Nicht angemeldet':
-        set_status('Nicht angemeldet')
+    elif get_setting(STATUS_TEXT) != 'Niezalogowany':
+        set_status('Niezalogowany')
 
 
 def profile_path(*parts):
@@ -182,7 +182,7 @@ def clear_login():
         'updated_at': time.strftime('%Y-%m-%dT%H:%M:%S%z'),
     })
     reconcile_auth_settings()
-    set_status('Nicht angemeldet')
+    set_status('Niezalogowany')
 
 
 def set_status(text):

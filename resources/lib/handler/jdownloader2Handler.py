@@ -11,15 +11,15 @@ from urllib.parse import urlencode
 class cJDownloader2Handler:
     def sendToJDownloader2(self, sUrl):
         if self.__checkConfig() is False:
-            control.infoDialog('Einstellungen nicht konfiguriert', heading='JDownloader 2', icon='ERROR')
+            control.infoDialog('Ustawienia nie są skonfigurowane', heading='JDownloader 2', icon='ERROR')
             return False
 
         if self.__checkConnection() is False:
-            control.infoDialog('Verbindung fehlgeschlagen', heading='JDownloader 2', icon='ERROR')
+            control.infoDialog('Połączenie nie powiodło się', heading='JDownloader 2', icon='ERROR')
             return False
 
         if self.__download(sUrl) is True:
-            control.infoDialog('Link gesendet', heading='JDownloader 2', icon='INFO')
+            control.infoDialog('Link wysłany', heading='JDownloader 2', icon='INFO')
             return True
         return False
 

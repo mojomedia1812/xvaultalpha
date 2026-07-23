@@ -22,7 +22,7 @@ SETTING_SESSION_ID = 'telemetry.session_id'
 SETTING_LAST_HEARTBEAT = 'telemetry.last_heartbeat'
 SETTING_CONSENT_VERSION = 'telemetry.consent_version'
 SETTING_ADDON_VERSION = 'telemetry.addon_version'
-ADDON_VARIANT = 'alpha'
+ADDON_VARIANT = 'alpa'
 
 ALLOWED_EVENTS = set([
     'installation_created',
@@ -46,26 +46,26 @@ def status_lines():
     session_id = control.getSetting(SETTING_SESSION_ID, '')
     context = device_context()
     return [
-        'Nutzungsstatistik: %s' % ('aktiv' if enabled() else 'inaktiv'),
+        'Statystyki użycia: %s' % ('aktywna' if enabled() else 'nieaktywna'),
         'Backend: Supabase',
-        'Installations-ID: %s' % (_mask(install_id) if install_id else 'nicht erstellt'),
-        'Sitzung: %s' % (_mask(session_id) if session_id else 'nicht gestartet'),
-        'xVAULT-Version: %s' % context.get('addon_version', ''),
-        'xVAULT-Kanal: %s' % context.get('addon_variant', 'stable'),
-        'Kodi-Version: %s' % (context.get('kodi_version', '') or 'unbekannt'),
-        'OS-Klasse: %s' % context.get('os_class', 'unknown'),
-        'Geräteklasse: %s' % context.get('device_class', 'unknown'),
-        'Heartbeat: alle 10 Minuten',
-        'Letzter Heartbeat: %s' % (control.getSetting(SETTING_LAST_HEARTBEAT, '') or 'nie'),
+        'ID instalacji: %s' % (_mask(install_id) if install_id else 'nie utworzono'),
+        'Sesja: %s' % (_mask(session_id) if session_id else 'nie uruchomiono'),
+        'Wersja xVAULT: %s' % context.get('addon_version', ''),
+        'Kanał xVAULT: %s' % context.get('addon_variant', 'stable'),
+        'Wersja Kodi: %s' % (context.get('kodi_version', '') or 'unbekannt'),
+        'Klasa OS: %s' % context.get('os_class', 'unknown'),
+        'Klasa urządzenia: %s' % context.get('device_class', 'unknown'),
+        'Heartbeat: co 10 minut',
+        'Ostatni heartbeat: %s' % (control.getSetting(SETTING_LAST_HEARTBEAT, '') or 'nie'),
     ]
 
 
 def show_status():
     try:
         import xbmcgui
-        xbmcgui.Dialog().textviewer('xVAULT Nutzungsstatistik', '\n'.join(status_lines()))
+        xbmcgui.Dialog().textviewer('Statystyki użycia xVAULT', '\n'.join(status_lines()))
     except Exception:
-        control.infoDialog('Nutzungsstatistik: %s' % ('aktiv' if enabled() else 'inaktiv'), icon='INFO')
+        control.infoDialog('Statystyki użycia: %s' % ('aktywna' if enabled() else 'nieaktywna'), icon='INFO')
 
 
 def app_start():

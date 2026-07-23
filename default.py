@@ -207,7 +207,7 @@ elif action in ('sendToJD', 'sendToJD2', 'sendToMyJD', 'sendToPyLoad'):
 elif action == 'mediaInfo':
     import xbmcgui
     dialog = xbmcgui.DialogProgress()
-    dialog.create('Medien-Info', 'Löse Stream-URL auf...')
+    dialog.create('Informacje o mediach', 'Rozwiązywanie adresu streamu...')
     dialog.update(0)
     from resources.lib import sources
     sources.sources().mediaInfo(source, dialog)
@@ -242,13 +242,13 @@ elif action == 'playURL':
     try:
         import resolveurl
         import xbmcgui, xbmc
-        url = xbmcgui.Dialog().input("URL Input")
+        url = xbmcgui.Dialog().input("Wpisz URL")
         hmf = resolveurl.HostedMediaFile(url=url, include_disabled=True, include_universal=False)
         try:
             if hmf.valid_url(): url = hmf.resolve()
         except:
             pass
-        item = xbmcgui.ListItem('URL-direkt')
+        item = xbmcgui.ListItem('URL bezpośredni')
         kodiver = int(xbmc.getInfoLabel("System.BuildVersion").split(".")[0])
         if ".m3u8" in url or '.mpd' in url:
             item.setProperty("inputstream", "inputstream.adaptive")
@@ -267,7 +267,7 @@ elif action == 'playURL':
         item.setPath(url)
         xbmc.Player().play(url, item)
     except:
-        control.infoDialog("Keinen Video Link gefunden", sound=True, icon='WARNING', time=1000)
+        control.infoDialog("Nie znaleziono linku wideo", sound=True, icon='WARNING', time=1000)
 
 elif action == 'telemetryStatus':
     from resources.lib import telemetry
@@ -315,7 +315,7 @@ elif action == 'playTrailer':
             poster    = params.get('poster', ''),
         )
     except Exception:
-        control.infoDialog('Trailer-Suche fehlgeschlagen', sound=True, icon='WARNING')
+        control.infoDialog('Wyszukiwanie trailera nie powiodło się', sound=True, icon='WARNING')
 
 elif action == 'UpdatePlayCount':
     from resources.lib import playcountDB
@@ -437,7 +437,7 @@ elif action == 'playItem':
     from resources.lib import sources
     sources.sources().playItem(title, source)
 
-elif action == "settings":  # alle Quellen aktivieren / deaktivieren
+elif action == "settings":  # włącz / wyłącz wszystkie źródła
     from resources import settings
     settings.run(params)
 

@@ -81,18 +81,18 @@ class source:
     def _language_from_watch(self, data, title=''):
         value = str(data.get('lang', '')).strip()
         if value == '2':
-            return 'de', 'Deutsch'
+            return 'de', 'Niemiecki'
         if value == '3':
-            return 'en', 'Englisch'
+            return 'en', 'Angielski'
         if value == '4':
             return 'multi', 'Mehrsprachig'
 
         title = str(title)
         if re.search(r'\bStaffel\b', title, re.IGNORECASE):
-            return 'de', 'Deutsch'
+            return 'de', 'Niemiecki'
         if re.search(r'\bSeason\b', title, re.IGNORECASE):
-            return 'en', 'Englisch'
-        return 'de', 'Deutsch'
+            return 'en', 'Angielski'
+        return 'de', 'Niemiecki'
 
     def _match_search_result(self, movie, clean_titles, year, season):
         sTitle = str(movie.get('title', ''))

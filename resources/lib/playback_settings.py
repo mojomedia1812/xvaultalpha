@@ -17,8 +17,8 @@ MODE_ORDER = (MODE_DIALOG, MODE_DIRECTORY, MODE_AUTOPLAY)
 
 _MODE_LABELS = {
     MODE_DIALOG: 'Dialog',
-    MODE_DIRECTORY: 'Verzeichnis',
-    MODE_AUTOPLAY: 'Autoplay',
+    MODE_DIRECTORY: 'Katalog',
+    MODE_AUTOPLAY: 'Autoodtwarzanie',
 }
 
 _MODE_ALIASES = {
@@ -65,18 +65,18 @@ def set_mode(value):
 def select_mode(value=None):
     if value is None:
         labels = [_MODE_LABELS[mode] for mode in MODE_ORDER]
-        choice = control.selectDialog(labels, 'Standard-Aktion')
+        choice = control.selectDialog(labels, 'Akcja domyślna')
         if choice < 0:
             return None
         mode = MODE_ORDER[choice]
     else:
         mode = normalize_mode(value, None)
         if mode is None:
-            control.infoDialog('Ungueltige Standard-Aktion.', icon='WARNING')
+            control.infoDialog('Nieprawidłowa akcja domyślna.', icon='WARNING')
             return None
 
     set_mode(mode)
-    control.infoDialog('Standard-Aktion: %s' % _MODE_LABELS[mode], icon='INFO')
+    control.infoDialog('Akcja domyślna: %s' % _MODE_LABELS[mode], icon='INFO')
     return mode
 
 

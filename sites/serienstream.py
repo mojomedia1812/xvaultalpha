@@ -159,7 +159,7 @@ class source:
                         import xbmcgui
                         xbmcgui.Dialog().ok(
                             'SerienStream',
-                            'Keine Login-Daten in den Einstellungen eingetragen.\n\nBitte Email und Passwort fuer SerienStream eintragen.\nBis dahin wird SerienStream uebersprungen.'
+                            'Nie wpisano danych logowania w ustawieniach.\n\nPodaj e-mail i hasło dla SerienStream.\nDo tego czasu SerienStream będzie pomijany.'
                         )
                     except Exception as e:
                         if log_utils:
@@ -815,12 +815,12 @@ class source:
     def _language_from_id(language_id, label=''):
         language_label = (label or '').strip()
         normalized_label = language_label.lower()
-        if language_id == '1' or 'deutsch' in normalized_label:
-            return 'de', language_label or 'Deutsch'
-        if language_id == '2' or 'englisch' in normalized_label or 'english' in normalized_label:
-            return 'en', language_label or 'Englisch'
+        if language_id == '1' or 'deutsch' in normalized_label or 'niemiecki' in normalized_label:
+            return 'de', language_label or 'Niemiecki'
+        if language_id == '2' or 'englisch' in normalized_label or 'english' in normalized_label or 'angielski' in normalized_label:
+            return 'en', language_label or 'Angielski'
         if language_id == '3' or 'ger-sub' in normalized_label or 'sub' in normalized_label:
-            return 'en', language_label or 'Ger-Sub'
+            return 'en', language_label or 'Niemieckie napisy'
         return '', language_label
 
     def resolve(self, url):

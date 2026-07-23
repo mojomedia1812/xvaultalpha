@@ -19,7 +19,7 @@ SOURCE_CACHE_TTL = 15 * 60
 SOURCE_CACHE_LIMIT = 5
 SOURCE_RESOLVE_TIMEOUT = 30
 
-# für self.sysmeta - zur späteren verwendung als meta
+# dla self.sysmeta - do późniejszego użycia jako meta
 _params = dict(parse_qsl(sys.argv[2].replace('?',''))) if len(sys.argv) > 1 else dict()
 
 class sources:
@@ -28,7 +28,7 @@ class sources:
         self.sources = []
         self.hostDict = []
         self.current = int(time.time())
-        if 'sysmeta' in _params: self.sysmeta = _params['sysmeta'] # string zur späteren verwendung als meta
+        if 'sysmeta' in _params: self.sysmeta = _params['sysmeta'] # string do późniejszego użycia jako meta
         self.watcher = False
         self.executor = ThreadPoolExecutor(max_workers=20)
         self.executor_shutdown = False
@@ -101,10 +101,10 @@ class sources:
             self._telemetryEvent('source_collection_started', 'sources', self._sourceTelemetryPayload())
             items = self.getSources(title, year, imdb, season, episode, originaltitle, premiered, episode_title=episode_title, episode_premiered=episode_premiered)
             self._telemetryEvent('source_collection_finished', 'sources', self._sourceTelemetryPayload(len(items)))
-            ## unnötig
+            ## niepotrzebne
             #select = '1' if control.getSetting('downloads') == 'true' and not (control.getSetting('download.movie.path') == '' or control.getSetting('download.tv.path') == '') else select
 
-            # # TODO überprüfen wofür mal gedacht
+            # # TODO sprawdzić pierwotne przeznaczenie
             # if control.window.getProperty('PseudoTVRunning') == 'True':
             #     return control.resolveUrl(int(sys.argv[1]), True, control.item(path=str(self.sourcesDirect(items))))
 
@@ -162,16 +162,16 @@ class sources:
             return current_mode
 
         choice = control.selectDialog(
-            ['Dialog', 'Verzeichnis'],
-            'Stream-Sprache: Alle'
+            ['Dialog', 'Katalog'],
+            'Język streamu: wszystkie'
         )
         if choice < 0:
-            control.infoDialog('Autoplay ist bei Sprache Alle nicht moeglich.', icon='WARNING')
+            control.infoDialog('Autoodtwarzanie nie jest możliwe przy języku Wszystkie.', icon='WARNING')
             return None
 
         select = str(choice)
         playback_settings.set_mode(select)
-        control.infoDialog('Standard-Aktion wurde auf %s gesetzt.' % (['Dialog', 'Verzeichnis'][choice]), icon='INFO')
+        control.infoDialog('Akcja domyślna została ustawiona na %s.' % (['Dialog', 'Katalog'][choice]), icon='INFO')
         return select
 
 
@@ -246,22 +246,22 @@ class sources:
 
                 cm = []
                 if downloads:
-                    cm.append(("Download", 'RunPlugin(%s?action=download&name=%s&image=%s&source=%s)' % (sysaddon, sysname, sysimage, syssource)))
+                    cm.append(("Pobierz", 'RunPlugin(%s?action=download&name=%s&image=%s&source=%s)' % (sysaddon, sysname, sysimage, syssource)))
                 if control.getSetting('jd_enabled') == 'true':
-                    cm.append(("Sende zum JDownloader", 'RunPlugin(%s?action=sendToJD&name=%s&source=%s)' % (sysaddon, sysname, syssource)))
+                    cm.append(("Wyślij do JDownloader", 'RunPlugin(%s?action=sendToJD&name=%s&source=%s)' % (sysaddon, sysname, syssource)))
                 if control.getSetting('jd2_enabled') == 'true':
-                    cm.append(("Sende zum JDownloader2", 'RunPlugin(%s?action=sendToJD2&name=%s&source=%s)' % (sysaddon, sysname, syssource)))
+                    cm.append(("Wyślij do JDownloader2", 'RunPlugin(%s?action=sendToJD2&name=%s&source=%s)' % (sysaddon, sysname, syssource)))
                 if control.getSetting('myjd_enabled') == 'true':
-                    cm.append(("Sende zu My.JDownloader", 'RunPlugin(%s?action=sendToMyJD&name=%s&source=%s)' % (sysaddon, sysname, syssource)))
+                    cm.append(("Wyślij do My.JDownloader", 'RunPlugin(%s?action=sendToMyJD&name=%s&source=%s)' % (sysaddon, sysname, syssource)))
                 if control.getSetting('pyload_enabled') == 'true':
-                    cm.append(("Sende zu PyLoad", 'RunPlugin(%s?action=sendToPyLoad&name=%s&source=%s)' % (sysaddon, sysname, syssource)))
-                cm.append(("Medien-Info", 'RunPlugin(%s?action=mediaInfo&source=%s)' % (sysaddon, syssource)))
-                cm.append(('Einstellungen', 'RunPlugin(%s?action=addonSettings)' % sysaddon))
+                    cm.append(("Wyślij do PyLoad", 'RunPlugin(%s?action=sendToPyLoad&name=%s&source=%s)' % (sysaddon, sysname, syssource)))
+                cm.append(("Informacje o mediach", 'RunPlugin(%s?action=mediaInfo&source=%s)' % (sysaddon, syssource)))
+                cm.append(('Ustawienia', 'RunPlugin(%s?action=addonSettings)' % sysaddon))
                 item.addContextMenuItems(cm)
 
                 url = "%s?action=playItem&title=%s&source=%s" % (sysaddon, systitle, syssource)
 
-                # ## Notwendig für Library Exporte ##
+                # ## Wymagane dla eksportów biblioteki ##
                 # ## Amazon Scraper Details ##
                 # if "amazon" in label.lower():
                 #     aid = re.search(r'asin%3D(.*?)%22%2C', url)
@@ -269,7 +269,7 @@ class sources:
 
                 ##https: // codedocs.xyz / AlwinEsch / kodi / group__python__xbmcgui__listitem.html  # ga0b71166869bda87ad744942888fb5f14
 
-                name = '%s%sStaffel: %s   Episode: %s' % (title, "\n", meta['season'], meta['episode']) if 'season' in meta else title
+                name = '%s%sSezon: %s   Odcinek: %s' % (title, "\n", meta['season'], meta['episode']) if 'season' in meta else title
                 plot = meta['plot'] if 'plot' in meta and len(meta['plot'].strip()) >= 1 else ''
                 plot = '[COLOR blue]%s[/COLOR]%s%s' % (name, "\n\n", py2_encode(plot))
 
@@ -427,14 +427,14 @@ class sources:
         cached = self._readSourceCache(cache_key)
         if cached:
             self.sources = cached
-            log_utils.log('Quellen-Cache verwendet: %s Treffer' % len(self.sources), log_utils.LOGINFO)
+            log_utils.log('Użyto cache źródeł: %s wyników' % len(self.sources), log_utils.LOGINFO)
             return self.sources
 
         control.idle() #ok
         progressDialog = control.progressDialog if control.getSetting('progress.dialog') == '0' else control.progressDialogBG
         progressDialog.create(control.addonInfo('name'), '')
         progressDialog.update(0)
-        progressDialog.update(0, "Quellen werden vorbereitet")
+        progressDialog.update(0, "Przygotowywanie źródeł")
 
         content = 'shows' if getattr(self, 'mediatype', None) == 'tvshow' else 'movies' if season == 0 or season == '' or season == None else 'shows'
         aliases, localtitle = utils.getAliases(imdb, content)
@@ -526,7 +526,7 @@ class sources:
                     if len(info) > 6: line = line1 + string % (str(len(info)))
                     elif len(info) > 1: line = line1 + string % (', '.join(info))
                     elif len(info) == 1: line = line1 + string % (''.join(info))
-                    else: line = line1 + 'Suche beendet!'
+                    else: line = line1 + 'Wyszukiwanie zakończone!'
 
                     progressDialog.update(max(1, percent), line)
                     if len(info) == 0: break
@@ -608,7 +608,7 @@ class sources:
                 return None
             return items
         except Exception as e:
-            log_utils.log('Quellen-Cache konnte nicht gelesen werden: %s' % str(e), log_utils.LOGWARNING)
+            log_utils.log('Nie udało się odczytać cache źródeł: %s' % str(e), log_utils.LOGWARNING)
             return None
 
     def _writeSourceCache(self, cache_key, items):
@@ -635,9 +635,9 @@ class sources:
                 'entries': entries
             }
             control.window.setProperty(self.sourceCacheProperty, json.dumps(payload))
-            log_utils.log('Quellen-Cache gespeichert: %s Treffer' % len(items), log_utils.LOGINFO)
+            log_utils.log('Zapisano cache źródeł: %s wyników' % len(items), log_utils.LOGINFO)
         except Exception as e:
-            log_utils.log('Quellen-Cache konnte nicht gespeichert werden: %s' % str(e), log_utils.LOGWARNING)
+            log_utils.log('Nie udało się zapisać cache źródeł: %s' % str(e), log_utils.LOGWARNING)
 
     def _readSourceCachePayload(self):
         try:
@@ -708,7 +708,7 @@ class sources:
             log_utils.log('ResolveURL-Hosterliste geladen: %s Domains' % len(domains), log_utils.LOGINFO)
             return domains
         except Exception as e:
-            log_utils.log('ResolveURL-Hosterliste konnte nicht geladen werden: %s' % str(e), log_utils.LOGWARNING)
+            log_utils.log('Nie udało się wczytać listy hosterów ResolveURL: %s' % str(e), log_utils.LOGWARNING)
             return []
 
     def _providerDisplayName(self, provider, call=None):
@@ -795,14 +795,14 @@ class sources:
             codes.add('multi')
         if re.search(r'\bdual\s+audio\b', text):
             codes.add('multi')
-        if re.search(r'\b(?:ger|deu|german|deutsch|de)\s+(?:eng|english|englisch|en)\b', text):
+        if re.search(r'\b(?:ger|deu|german|deutsch|niemiecki|de)\s+(?:eng|english|englisch|angielski|en)\b', text):
             codes.add('multi')
-        if re.search(r'\b(?:eng|english|englisch|en)\s+(?:ger|deu|german|deutsch|de)\b', text):
+        if re.search(r'\b(?:eng|english|englisch|angielski|en)\s+(?:ger|deu|german|deutsch|niemiecki|de)\b', text):
             codes.add('multi')
 
-        if tokens.intersection(set(['de', 'deu', 'ger', 'german', 'deutsch'])):
+        if tokens.intersection(set(['de', 'deu', 'ger', 'german', 'deutsch', 'niemiecki'])):
             codes.add('de')
-        if tokens.intersection(set(['en', 'eng', 'english', 'englisch'])):
+        if tokens.intersection(set(['en', 'eng', 'english', 'englisch', 'angielski'])):
             codes.add('en')
         return codes
 
@@ -871,7 +871,7 @@ class sources:
 
     def sourcesFilter(self):
         # hostblockDict = utils.getHostDict()
-        # self.sources = [i for i in self.sources if i['source'].split('.')[0] not in str(hostblockDict)] # Hoster ausschließen (Liste)
+        # self.sources = [i for i in self.sources if i['source'].split('.')[0] not in str(hostblockDict)] # wyklucz hostery (lista)
 
         quality = control.getSetting('hosts.quality')
         if quality == '': quality = '0'
@@ -967,7 +967,7 @@ class sources:
                     except:
                         url = None
                 if url and not resolved and not self._looksLikeDirectMediaUrl(url):
-                    log_utils.log('Resolver lieferte keinen Direktstream: Provider %s / %s' % (item['provider'], item['source']), log_utils.LOGWARNING)
+                    log_utils.log('Resolver nie zwrócił bezpośredniego streamu: dostawca %s / %s' % (item['provider'], item['source']), log_utils.LOGWARNING)
                     url = None
             elif item.get('prioHoster', 0) >= 999:
                 try:
@@ -979,7 +979,7 @@ class sources:
                     url = None
 
             if url == None or (not '://' in str(url) and not local):
-                log_utils.log('Kein Video Link gefunden: Provider %s / %s / %s ' % (item['provider'], item['source'] , str(item['source'])), log_utils.LOGERROR)
+                log_utils.log('Nie znaleziono linku wideo: dostawca %s / %s / %s ' % (item['provider'], item['source'] , str(item['source'])), log_utils.LOGERROR)
                 raise Exception()
 
             if check_stream and not local and not utils.test_stream(url):
@@ -1050,7 +1050,7 @@ class sources:
             log_utils.log('VOE direkt aufgeloest: Provider %s / %s' % (item.get('provider'), item.get('source')), log_utils.LOGINFO)
             return '%s|%s' % (media_url, stream_headers)
         except Exception as e:
-            log_utils.log('VOE Direktaufloesung fehlgeschlagen: %s' % str(e), log_utils.LOGWARNING)
+            log_utils.log('Bezpośrednie rozwiązanie VOE nie powiodło się: %s' % str(e), log_utils.LOGWARNING)
             return None
 
     def _decodeVoePayload(self, encoded, replacements):
@@ -1180,7 +1180,7 @@ class sources:
             return future.result()
         except Exception as e:
             log_utils.log(
-                'Resolve Fehler: Provider %s / Hoster %s / %s' %
+                'Błąd rozwiązywania: dostawca %s / hoster %s / %s' %
                 (item.get('provider'), item.get('source'), str(e)),
                 log_utils.LOGWARNING
             )
@@ -1234,7 +1234,7 @@ class sources:
                     progressDialog = None
 
                     log_utils.log(
-                        'Autoplay versucht Quelle: Provider %s / Hoster %s' %
+                        'Autoodtwarzanie próbuje źródła: dostawca %s / hoster %s' %
                         (item.get('provider'), item.get('source')),
                         log_utils.LOGINFO
                     )
@@ -1242,7 +1242,7 @@ class sources:
                         return True
 
                     log_utils.log(
-                        'Autoplay Quelle startete nicht: Provider %s / Hoster %s' %
+                        'Źródło autoodtwarzania nie wystartowało: dostawca %s / hoster %s' %
                         (item.get('provider'), item.get('source')),
                         log_utils.LOGWARNING
                     )
@@ -1327,7 +1327,7 @@ class sources:
 
             if dialog is None:
                 dialog = xbmcgui.DialogProgress()
-                dialog.create('Medien-Info', 'Löse Stream-URL auf...')
+                dialog.create('Informacje o mediach', 'Rozwiązywanie adresu streamu...')
                 dialog.update(0)
 
             future = self.executor.submit(self.sourcesResolve, item)
@@ -1338,7 +1338,7 @@ class sources:
                 remaining = int(deadline - _time.time())
                 if remaining <= 0:
                     break
-                dialog.update(int(50.0 * i / 120), 'Löse Stream-URL auf...')
+                dialog.update(int(50.0 * i / 120), 'Rozwiązywanie adresu streamu...')
                 try:
                     if dialog.iscanceled():
                         try: dialog.close()
@@ -1367,11 +1367,11 @@ class sources:
             if url is None:
                 try: dialog.close()
                 except: pass
-                control.infoDialog("Stream-URL konnte nicht aufgelöst werden", sound=False, icon='INFO')
+                control.infoDialog("Nie udało się rozwiązać adresu streamu", sound=False, icon='INFO')
                 return
 
             log_utils.log('mediaInfo: resolve done, url=%s deadline_remaining=%.1f' % (url[:80], deadline - _time.time()), log_utils.LOGWARNING)
-            dialog.update(50, 'Analysiere Stream...')
+            dialog.update(50, 'Analizowanie streamu...')
 
             from resources.lib import mediainfo
             t_probe = _time.time()
@@ -1382,21 +1382,21 @@ class sources:
             except: pass
 
             if info:
-                xbmcgui.Dialog().textviewer('Medien-Info', info)
+                xbmcgui.Dialog().textviewer('Informacje o mediach', info)
             else:
-                control.infoDialog("Auflösung konnte nicht ermittelt werden", sound=False, icon='INFO')
+                control.infoDialog("Nie udało się ustalić rozdzielczości", sound=False, icon='INFO')
 
         except Exception as e:
             try:
                 if dialog: dialog.close()
             except: pass
             log_utils.log('mediaInfo Error: %s' % str(e), log_utils.LOGERROR)
-            control.infoDialog("Auflösung konnte nicht ermittelt werden", sound=False, icon='INFO')
+            control.infoDialog("Nie udało się ustalić rozdzielczości", sound=False, icon='INFO')
 
 
     def errorForSources(self, error_group='no_sources'):
         self._telemetryEvent('source_collection_failed', 'sources', self._sourceTelemetryPayload(0, error_group))
-        control.infoDialog("Keine Streams verfügbar oder ausgewählt", sound=False, icon='INFO')
+        control.infoDialog("Brak dostępnych lub wybranych streamów", sound=False, icon='INFO')
 
     def getTitle(self, title):
         title = utils.normalize(title)

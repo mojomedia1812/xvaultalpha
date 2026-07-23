@@ -112,7 +112,7 @@ def ensure_all_dependencies():
 
         if still_missing:
             _log('Missing dependencies after install: %s' % ', '.join(still_missing), xbmc.LOGWARNING)
-            _notify('Abhaengigkeiten fehlen: %s' % ', '.join(still_missing[:3]), 'WARNING', 7000)
+            _notify('Brakuje zależności: %s' % ', '.join(still_missing[:3]), 'WARNING', 7000)
 
         success = len(missing_required) == 0
         if success:

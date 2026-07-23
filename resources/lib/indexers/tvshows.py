@@ -30,8 +30,8 @@ class tvshows:
 			self.next_pages = int(params.get('page')) + 1
 			self.query = params.get('query')
 			self.list, self.total_pages = cTMDB().search_term('tvshow', params.get('query'), params.get('page'))
-			if self.list == None or len(self.list) == 0:  # nichts gefunden
-				return control.infoDialog("Nichts gefunden1", time=2000)
+			if self.list == None or len(self.list) == 0:  # nic nie znaleziono
+				return control.infoDialog("Nic nie znaleziono", time=2000)
 			self.getDirectory(params)
 			searchDB.save_query(params.get('query'), params.get('action'))
 		except:
@@ -43,8 +43,8 @@ class tvshows:
 			if params.get('total_pages'): self.total_pages = params.get('total_pages')
 			if params.get('list'): self.list = params.get('list')
 			self.worker()
-			if self.list == None or len(self.list) == 0:	#nichts gefunden
-				return control.infoDialog("Nichts gefunden", time=2000)
+			if self.list == None or len(self.list) == 0:	# nic nie znaleziono
+				return control.infoDialog("Nic nie znaleziono", time=2000)
 			self.Directory(self.list)
 			return self.list
 		except:
@@ -52,9 +52,9 @@ class tvshows:
 
 	def search(self):
 		# TODO different search providers
-		#navigator.navigator().addDirectoryItem("DB für Suche auswählen", 'tvChangeSearchDB', self.activeSearchDB + '.png', 'DefaultTVShows.png', isFolder=False)
-		navigator.navigator().addDirectoryItem("[B]Serien - neue Suche %s[/B]" % self.activeSearchDB, 'searchNew&table=tvshows', '02_01_serien_neue_suche_tmdb.png', 'DefaultAddonsSearch.png',
-											   isFolder=False, context=('Einstellungen', 'addonSettings'))
+		#navigator.navigator().addDirectoryItem("Wybierz bazę do wyszukiwania", 'tvChangeSearchDB', self.activeSearchDB + '.png', 'DefaultTVShows.png', isFolder=False)
+		navigator.navigator().addDirectoryItem("[B]Seriale - nowe wyszukiwanie %s[/B]" % self.activeSearchDB, 'searchNew&table=tvshows', '02_01_serien_neue_suche_tmdb.png', 'DefaultAddonsSearch.png',
+											   isFolder=False, context=('Ustawienia', 'addonSettings'))
 		match = searchDB.getSearchTerms('tvshows')
 		lst = []
 		delete_option = False
@@ -64,11 +64,11 @@ class tvshows:
 				delete_option = True
 				navigator.navigator().addDirectoryItem(term, 'tvshows&page=1&query=%s' % control.quote_plus(term), '_search.png',
 													   'DefaultAddonsSearch.png', isFolder=True,
-													   context=("Suchanfrage löschen", 'searchDelTerm&table=tvshows&name=%s' % index))
+													   context=("Usuń zapytanie", 'searchDelTerm&table=tvshows&name=%s' % index))
 				lst += [(term)]
 
 		if delete_option:
-			navigator.navigator().addDirectoryItem("[B]Suchverlauf löschen[/B]", 'searchClear&table=tvshows', '02_02_suchverlauf_loeschen.png', 'DefaultAddonProgram.png', isFolder=False)
+			navigator.navigator().addDirectoryItem("[B]Wyczyść historię wyszukiwania[/B]", 'searchClear&table=tvshows', '02_02_suchverlauf_loeschen.png', 'DefaultAddonProgram.png', isFolder=False)
 		navigator.navigator()._endDirectory('', False) # addons  videos  files
 
 # TODO different search providers
@@ -108,8 +108,8 @@ class tvshows:
 		addonPoster, addonBanner = control.addonPoster(), control.addonBanner()
 		addonFanart, settingFanart = control.addonFanart(), control.getSetting('fanart')
 
-		watchedMenu = "In %s [I]Gesehen[/I]" % control.addonName
-		unwatchedMenu = "In %s [I]Ungesehen[/I]" % control.addonName
+		watchedMenu = "W %s [I]Obejrzane[/I]" % control.addonName
+		unwatchedMenu = "W %s [I]Nieobejrzane[/I]" % control.addonName
 		hasTrailerPlayer = control.hasTrailerPlayer()
 		trailerLabel = control.trailerLabel()
 		for i in items:
@@ -171,7 +171,7 @@ class tvshows:
 						cm.append(rate_item)
 				except:
 					pass
-				cm.append(('Einstellungen', 'RunPlugin(%s?action=addonSettings)' % sysaddon))
+				cm.append(('Ustawienia', 'RunPlugin(%s?action=addonSettings)' % sysaddon))
 				item.addContextMenuItems(cm)
 
 				sysmeta = control.quote_plus(json.dumps(sysmeta))
@@ -183,7 +183,7 @@ class tvshows:
 				votes = ''
 				if 'rating' in i and i['rating'] != '':
 					if 'votes' in i: votes = '(%s)' % str(i['votes']).replace(',', '')
-					plot = '[COLOR blue]Bewertung :  %.1f  %s[/COLOR]%s%s' % (float(i['rating']), votes, "\n\n", plot)
+					plot = '[COLOR blue]Ocena: %.1f  %s[/COLOR]%s%s' % (float(i['rating']), votes, "\n\n", plot)
 				meta.update({'plot': plot})
 
 				aActors = []
@@ -230,7 +230,7 @@ class tvshows:
 				print(e)
 				pass
 
-		# nächste Seite
+		# następna strona
 		try:
 			self.next_pages = self.next_pages + 1
 			if self.next_pages <= self.total_pages:
@@ -241,12 +241,12 @@ class tvshows:
 					url += '&media_type=%s' % _params.get('media_type')
 					url += '&next_pages=%s' % self.next_pages
 					url += '&url=%s' % control.quote_plus(_params.get('url'))
-				item = control.item(label="Nächste Seite")
+				item = control.item(label="Następna strona")
 				icon = control.addonNext()
 				item.setArt({'icon': icon, 'thumb': icon, 'poster': icon, 'banner': icon})
 				if not addonFanart is None: item.setProperty('Fanart_Image', addonFanart)
 
-				#  -> gesehen/ungesehen im cm und "Keine Informationen verfügbar" ausblenden (abhängig von control.content() )
+				#  -> ukryj obejrzane/nieobejrzane w menu kontekstowym oraz "Brak dostępnych informacji" (zależnie od control.content())
 				video_streaminfo = {'overlay': 4, 'plot': ' '}  # alt255
 				if int(getKodiVersion()) <= 19:
 					item.setInfo('video', video_streaminfo)

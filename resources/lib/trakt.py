@@ -111,7 +111,7 @@ def authorize():
     if not client_id or not client_secret:
         control.dialog.ok(
             control.addonName,
-            'Die interne Trakt OAuth-Konfiguration ist unvollstaendig.'
+            'Wewnętrzna konfiguracja OAuth Trakt jest niekompletna.'
         )
         return False
 
@@ -133,16 +133,16 @@ def authorize():
     interval = int(data.get('interval') or 5)
     expires_in = int(data.get('expires_in') or 600)
     if not user_code or not device_code:
-        control.infoDialog('Trakt hat keinen Aktivierungscode geliefert.', icon='WARNING', time=6000)
+        control.infoDialog('Trakt nie zwrócił kodu aktywacyjnego.', icon='WARNING', time=6000)
         return False
 
     control.dialog.ok(
         control.addonName,
-        'Trakt verbinden:\n\n1. Oeffne %s\n2. Gib den Code ein: [B]%s[/B]\n\nDanach mit OK fortfahren.' % (verification_url, user_code)
+        'Połącz Trakt:\n\n1. Otwórz %s\n2. Wpisz kod: [B]%s[/B]\n\nNastępnie kontynuuj przyciskiem OK.' % (verification_url, user_code)
     )
 
     progress = control.progressDialog
-    progress.create(control.addonName, 'Warte auf Trakt-Freigabe...')
+    progress.create(control.addonName, 'Oczekiwanie na autoryzację Trakt...')
     started = time.time()
     try:
         while time.time() - started < expires_in:
@@ -155,23 +155,23 @@ def authorize():
             if status == 200:
                 _save_auth(token_data)
                 _refresh_user_status()
-                control.infoDialog('Trakt verbunden.', icon='INFO', time=5000)
+                control.infoDialog('Trakt połączony.', icon='INFO', time=5000)
                 return True
             error_code = (token_data or {}).get('error') or ''
             if status == 400 and error_code in ('', 'authorization_pending', 'pending'):
                 control.sleep(interval)
                 continue
             if status == 418 or error_code in ('access_denied', 'denied'):
-                control.infoDialog('Trakt-Freigabe wurde abgelehnt.', icon='WARNING', time=6000)
+                control.infoDialog('Autoryzacja Trakt została odrzucona.', icon='WARNING', time=6000)
                 return False
             if status in (404, 409, 410) or error_code in ('expired_token', 'invalid_grant', 'invalid_device_code'):
-                control.infoDialog('Trakt-Aktivierung ist abgelaufen oder ungueltig.', icon='WARNING', time=6000)
+                control.infoDialog('Aktywacja Trakt wygasła albo jest nieprawidłowa.', icon='WARNING', time=6000)
                 return False
             if status in (401, 403):
-                control.infoDialog('Trakt-OAuth-Konfiguration wurde von Trakt abgelehnt.', icon='WARNING', time=6000)
+                control.infoDialog('Konfiguracja OAuth Trakt została odrzucona przez Trakt.', icon='WARNING', time=6000)
                 return False
             if status == 400 and error_code in ('invalid_client', 'invalid_request'):
-                control.infoDialog('Trakt-OAuth-Konfiguration wurde von Trakt abgelehnt.', icon='WARNING', time=6000)
+                control.infoDialog('Konfiguracja OAuth Trakt została odrzucona przez Trakt.', icon='WARNING', time=6000)
                 return False
             if status == 429 or error_code == 'slow_down':
                 interval += 5
@@ -182,7 +182,7 @@ def authorize():
         except Exception:
             pass
 
-    control.infoDialog('Trakt-Aktivierung abgelaufen.', icon='WARNING', time=6000)
+    control.infoDialog('Aktywacja Trakt wygasła.', icon='WARNING', time=6000)
     return False
 
 
@@ -200,7 +200,7 @@ def logout():
         except Exception:
             pass
     _clear_auth()
-    control.infoDialog('Trakt abgemeldet.', icon='INFO')
+    control.infoDialog('Trakt wylogowany.', icon='INFO')
 
 
 def show_status():
@@ -208,24 +208,24 @@ def show_status():
     if connected:
         _refresh_user_status()
     status_text = _auth_value('status') or _setting('trakt.status')
-    status = status_text or ('verbunden' if connected else 'nicht verbunden')
+    status = _display_status(status_text) or ('połączony' if connected else 'niepołączony')
     username = _auth_value('username') or _setting('trakt.username') or '-'
     lines = [
         'Status: %s' % status,
         'OAuth-App: xVAULT Device-Code',
-        'Alias-Suche: %s' % ('aktiv' if _bool('trakt.aliases.enabled', 'true') else 'inaktiv'),
-        'Gesehen-Sync: %s' % ('aktiv' if _bool('trakt.sync.watched', 'false') else 'inaktiv'),
-        'Scrobbling: %s' % ('aktiv' if _bool('trakt.scrobble.enabled', 'false') else 'inaktiv'),
-        'Benutzer: %s' % username,
-        'Letzter Sync: %s' % (_setting('trakt.last_sync_at') or '-'),
+        'Wyszukiwanie aliasów: %s' % ('aktywna' if _bool('trakt.aliases.enabled', 'true') else 'nieaktywna'),
+        'Sync obejrzanych: %s' % ('aktywna' if _bool('trakt.sync.watched', 'false') else 'nieaktywna'),
+        'Scrobbling: %s' % ('aktywna' if _bool('trakt.scrobble.enabled', 'false') else 'nieaktywna'),
+        'Użytkownik: %s' % username,
+        'Ostatnia synchronizacja: %s' % (_setting('trakt.last_sync_at') or '-'),
     ]
     _log('Trakt Status: %s' % ' | '.join(lines))
     control.infoDialog(
         'Trakt: %s | Alias %s | Sync %s | Scrobble %s' % (
             status,
-            'an' if _bool('trakt.aliases.enabled', 'true') else 'aus',
-            'an' if _bool('trakt.sync.watched', 'false') else 'aus',
-            'an' if _bool('trakt.scrobble.enabled', 'false') else 'aus',
+            'wł.' if _bool('trakt.aliases.enabled', 'true') else 'wył.',
+            'wł.' if _bool('trakt.sync.watched', 'false') else 'wył.',
+            'wł.' if _bool('trakt.scrobble.enabled', 'false') else 'wył.',
         ),
         icon='INFO',
         time=8000
@@ -236,17 +236,32 @@ def is_authorized():
     return bool(_access_token() or _refresh_token())
 
 
+def _display_status(value):
+    text = str(value or '').strip()
+    if not text:
+        return ''
+    legacy = {
+        'Verbunden': 'Połączony',
+        'Nicht verbunden': 'Niepołączony',
+    }
+    if text in legacy:
+        return legacy[text]
+    if text.startswith('Verbunden als '):
+        return 'Połączony jako %s' % text.split('Verbunden als ', 1)[1]
+    return text
+
+
 def sync_watched(silent=True):
     changed = False
     if not _bool('trakt.sync.watched', 'false'):
         if not silent:
-            control.infoDialog('Trakt Gesehen-Sync ist deaktiviert.', icon='WARNING')
+            control.infoDialog('Synchronizacja obejrzanych Trakt jest wyłączona.', icon='WARNING')
         return False
     changed = export_watched(silent=True) or changed
     changed = import_watched(silent=True) or changed
     _set_setting('trakt.last_sync_at', _display_time())
     if not silent:
-        control.infoDialog('Trakt-Synchronisation abgeschlossen.', icon='INFO')
+        control.infoDialog('Synchronizacja Trakt zakończona.', icon='INFO')
     return changed
 
 
@@ -272,7 +287,7 @@ def import_watched(silent=True):
         _set_setting('trakt.last_sync_at', _display_time())
         return True
     except Exception as exc:
-        _notify_or_log('Trakt-Import fehlgeschlagen: %s' % exc, silent)
+        _notify_or_log('Import Trakt nie powiódł się: %s' % exc, silent)
         return False
 
 
@@ -309,7 +324,7 @@ def export_watched(silent=True):
         _set_setting('trakt.last_sync_at', _display_time())
         return True
     except Exception as exc:
-        _notify_or_log('Trakt-Export fehlgeschlagen: %s' % exc, silent)
+        _notify_or_log('Eksport Trakt nie powiódł się: %s' % exc, silent)
         return False
 
 
@@ -324,7 +339,7 @@ def update_watch_status(meta, watched=True, silent=True):
         _request('POST', endpoint, payload=payload, oauth=True, timeout=15)
         return True
     except Exception as exc:
-        _notify_or_log('Trakt-Status konnte nicht geschrieben werden: %s' % exc, silent)
+        _notify_or_log('Nie udało się zapisać statusu Trakt: %s' % exc, silent)
         return False
 
 
@@ -366,13 +381,13 @@ def show_media_list(params):
     try:
         ids = _list_tmdb_ids(list_type, media_type)
         if not ids:
-            control.infoDialog('Keine Trakt-Eintraege gefunden.', icon='INFO')
+            control.infoDialog('Nie znaleziono wpisów Trakt.', icon='INFO')
             _empty_directory()
             return True
         _render_tmdb_ids(ids, media_type)
         return True
     except Exception as exc:
-        control.infoDialog('Trakt-Liste konnte nicht geladen werden.', icon='WARNING', time=6000)
+        control.infoDialog('Nie udało się wczytać listy Trakt.', icon='WARNING', time=6000)
         _log('list load failed: %s' % exc, log_utils.LOGWARNING)
         _empty_directory()
         return True
@@ -380,30 +395,30 @@ def show_media_list(params):
 
 def rate_from_params(params):
     if not _bool('trakt.ratings.enabled', 'false'):
-        control.infoDialog('Trakt-Bewertungen sind deaktiviert.', icon='WARNING')
+        control.infoDialog('Oceny Trakt są wyłączone.', icon='WARNING')
         return False
     if not _can_use_oauth(False):
         return False
     try:
         meta = json.loads(params.get('meta') or '{}')
     except Exception:
-        control.infoDialog('Bewertung nicht moeglich: Metadaten fehlen.', icon='WARNING')
+        control.infoDialog('Ocena niemożliwa: brakuje metadanych.', icon='WARNING')
         return False
     options = ['%s/10' % i for i in range(1, 11)]
-    index = control.selectDialog(options, 'Trakt-Bewertung')
+    index = control.selectDialog(options, 'Ocena Trakt')
     if index < 0:
         return False
     rating = index + 1
     payload = _rating_payload(meta, rating)
     if not payload:
-        control.infoDialog('Bewertung nicht moeglich: IDs fehlen.', icon='WARNING')
+        control.infoDialog('Ocena niemożliwa: brakuje ID.', icon='WARNING')
         return False
     try:
         _request('POST', '/sync/ratings', payload=payload, oauth=True, timeout=15)
-        control.infoDialog('Trakt-Bewertung gespeichert.', icon='INFO')
+        control.infoDialog('Ocena Trakt zapisana.', icon='INFO')
         return True
     except Exception as exc:
-        control.infoDialog('Trakt-Bewertung fehlgeschlagen.', icon='WARNING', time=6000)
+        control.infoDialog('Ocena Trakt nie powiodła się.', icon='WARNING', time=6000)
         _log('rating failed: %s' % exc, log_utils.LOGWARNING)
         return False
 
@@ -411,7 +426,7 @@ def rate_from_params(params):
 def context_rate_item(sysaddon, meta):
     if not _bool('trakt.ratings.enabled', 'false'):
         return None
-    return ('Trakt: Bewerten', 'RunPlugin(%s?action=traktRate&meta=%s)' % (sysaddon, control.quote_plus(json.dumps(meta))))
+    return ('Trakt: oceń', 'RunPlugin(%s?action=traktRate&meta=%s)' % (sysaddon, control.quote_plus(json.dumps(meta))))
 
 
 def _scrobble(action, meta, current_time, total_time):
@@ -431,10 +446,10 @@ def _scrobble(action, meta, current_time, total_time):
 
 def _request(method, path, params=None, payload=None, oauth=False, timeout=10, retry=True):
     if requests is None:
-        raise TraktError('Python requests ist nicht verfuegbar.')
+        raise TraktError('Python requests jest niedostępny.')
     client_id = _client_id()
     if not client_id:
-        raise TraktError('Trakt OAuth-Konfiguration fehlt.')
+        raise TraktError('Brakuje konfiguracji OAuth Trakt.')
     headers = {
         'Content-Type': 'application/json',
         'User-Agent': _user_agent(),
@@ -444,7 +459,7 @@ def _request(method, path, params=None, payload=None, oauth=False, timeout=10, r
     if oauth:
         token = _valid_access_token()
         if not token:
-            raise TraktError('Bitte Trakt zuerst verbinden.')
+            raise TraktError('Najpierw połącz Trakt.')
         headers['Authorization'] = 'Bearer %s' % token
     url = path if str(path).startswith('http') else BASE_URL + path
     response = requests.request(method, url, headers=headers, params=params, json=payload, timeout=timeout)
@@ -524,7 +539,7 @@ def _save_auth(data):
         'refresh_token': data.get('refresh_token') or auth.get('refresh_token') or '',
         'token_expires_at': token_expires_at,
         'enabled': True,
-        'status': auth.get('status') or 'Verbunden',
+        'status': auth.get('status') or 'Połączony',
         'updated_at': _display_time(),
     })
     _write_auth(auth)
@@ -532,7 +547,7 @@ def _save_auth(data):
     _set_setting('trakt.refresh_token', auth.get('refresh_token') or '')
     _set_setting('trakt.token_expires_at', str(token_expires_at))
     _set_setting('trakt.enabled', 'true')
-    _set_setting('trakt.status', 'Verbunden')
+    _set_setting('trakt.status', 'Połączony')
 
 
 def _clear_auth():
@@ -542,13 +557,13 @@ def _clear_auth():
         'refresh_token': '',
         'token_expires_at': 0,
         'enabled': False,
-        'status': 'Nicht verbunden',
+        'status': 'Niepołączony',
         'updated_at': _display_time(),
     })
     _write_auth(auth)
     for key in ('trakt.access_token', 'trakt.refresh_token', 'trakt.token_expires_at', 'trakt.username'):
         _set_setting(key, '')
-    _set_setting('trakt.status', 'Nicht verbunden')
+    _set_setting('trakt.status', 'Niepołączony')
 
 
 def _refresh_user_status():
@@ -557,10 +572,10 @@ def _refresh_user_status():
         user = (data.get('user') or {}).get('username') or ''
         if user:
             auth = _auth_data()
-            auth.update({'username': user, 'status': 'Verbunden als %s' % user, 'updated_at': _display_time()})
+            auth.update({'username': user, 'status': 'Połączony jako %s' % user, 'updated_at': _display_time()})
             _write_auth(auth)
             _set_setting('trakt.username', user)
-            _set_setting('trakt.status', 'Verbunden als %s' % user)
+            _set_setting('trakt.status', 'Połączony jako %s' % user)
     except Exception:
         pass
 
@@ -568,15 +583,15 @@ def _refresh_user_status():
 def _can_use_oauth(silent):
     if not _trakt_enabled():
         if not silent:
-            control.infoDialog('Trakt-Konto ist deaktiviert.', icon='WARNING', time=6000)
+            control.infoDialog('Konto Trakt jest wyłączone.', icon='WARNING', time=6000)
         return False
     if not _client_id() or not _client_secret():
         if not silent:
-            control.infoDialog('Trakt OAuth-Konfiguration fehlt.', icon='WARNING', time=6000)
+            control.infoDialog('Brakuje konfiguracji OAuth Trakt.', icon='WARNING', time=6000)
         return False
     if not _valid_access_token():
         if not silent:
-            control.infoDialog('Bitte Trakt zuerst verbinden.', icon='WARNING', time=6000)
+            control.infoDialog('Najpierw połącz Trakt.', icon='WARNING', time=6000)
         return False
     return True
 
@@ -890,14 +905,14 @@ def _progress(current_time, total_time):
 
 def _status_message(response):
     mapping = {
-        401: 'Trakt OAuth fehlt oder ist abgelaufen.',
-        403: 'Trakt API-Key ist ungueltig oder die App ist nicht freigegeben.',
-        409: 'Trakt meldet einen Konflikt/Duplikat.',
-        420: 'Trakt Account-Limit erreicht.',
-        422: 'Trakt konnte die Daten nicht verarbeiten.',
-        429: 'Trakt Rate-Limit erreicht. Bitte spaeter erneut versuchen.',
+        401: 'Brakuje OAuth Trakt albo wygasł.',
+        403: 'Klucz API Trakt jest nieprawidłowy albo aplikacja nie jest zatwierdzona.',
+        409: 'Trakt zgłasza konflikt/duplikat.',
+        420: 'Osiągnięto limit konta Trakt.',
+        422: 'Trakt nie mógł przetworzyć danych.',
+        429: 'Osiągnięto limit zapytań Trakt. Spróbuj ponownie później.',
     }
-    message = mapping.get(response.status_code, 'Trakt Fehler %s' % response.status_code)
+    message = mapping.get(response.status_code, 'Błąd Trakt %s' % response.status_code)
     retry_after = response.headers.get('Retry-After')
     if retry_after:
         message += ' Retry-After: %ss.' % retry_after
@@ -1016,12 +1031,12 @@ def _set_setting(key, value):
         control.Addon.setSettingString(key, value)
         return
     except Exception as exc:
-        _log('Trakt setSettingString/setSettingBool fehlgeschlagen fuer %s: %s' % (key, exc), log_utils.LOGWARNING)
+        _log('Trakt setSettingString/setSettingBool nie powiodło się dla %s: %s' % (key, exc), log_utils.LOGWARNING)
         pass
     try:
         control.setSetting(key, value)
     except Exception as exc:
-        _log('Trakt setting fallback fehlgeschlagen fuer %s: %s' % (key, exc), log_utils.LOGWARNING)
+        _log('Fallback ustawienia Trakt nie powiódł się dla %s: %s' % (key, exc), log_utils.LOGWARNING)
 
 
 def _bool(key, default='false'):

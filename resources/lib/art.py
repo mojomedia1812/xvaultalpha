@@ -5,7 +5,7 @@
 import requests
 from resources.lib.control import  getSetting, addonPoster, py2_encode
 
-lang = 'de'
+lang = 'pl'
 
 ## TMDB
 tm_api_key = getSetting('api.tmdb').strip()

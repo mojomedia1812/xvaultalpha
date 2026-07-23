@@ -14,9 +14,9 @@ class cPyLoadHandler:
     def sendToPyLoad(self, sPackage, sUrl):
         log('xVAULT -> [pyLoadHandler]: PyLoad package: ' + str(sPackage) + ', ' + str(sUrl), LOGNOTICE)
         if self.__sendLinkToCore(sPackage, sUrl):
-            control.infoDialog('Link gesendet', heading='PyLoad', icon='INFO')
+            control.infoDialog('Link wysłany', heading='PyLoad', icon='INFO')
         else:
-            control.infoDialog('Senden fehlgeschlagen', heading='PyLoad', icon='ERROR')
+            control.infoDialog('Wysyłanie nie powiodło się', heading='PyLoad', icon='ERROR')
 
     def __sendLinkToCore(self, sPackage, sUrl):
         log('xVAULT -> [pyLoadHandler]: Sending link...', LOGNOTICE)

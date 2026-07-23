@@ -30,9 +30,9 @@ class cParser:
 
     @staticmethod
     def replaceSpecialCharacters(s):
-        for t in (('\\/', '/'), ('&amp;', '&'), ('\\u00c4', 'Ä'), ('\\u00e4', 'ä'),
-            ('\\u00d6', 'Ö'), ('\\u00f6', 'ö'), ('\\u00dc', 'Ü'), ('\\u00fc', 'ü'),
-            ('\\u00df', 'ß'), ('\\u2013', '-'), ('\\u00b2', '²'), ('\\u00b3', '³'),
+        for t in (('\\/', '/'), ('&amp;', '&'), ('\\u00c4', chr(0x00C4)), ('\\u00e4', chr(0x00E4)),
+            ('\\u00d6', chr(0x00D6)), ('\\u00f6', chr(0x00F6)), ('\\u00dc', chr(0x00DC)), ('\\u00fc', chr(0x00FC)),
+            ('\\u00df', chr(0x00DF)), ('\\u2013', '-'), ('\\u00b2', '²'), ('\\u00b3', '³'),
             ('\\u00e9', 'é'), ('\\u2018', '‘'), ('\\u201e', '„'), ('\\u201c', '“'),
             ('\\u00c9', 'É'), ('\\u2026', '...'), ('\\u202fh', 'h'), ('\\u2019', '’'),
             ('\\u0308', '̈'), ('\\u00e8', 'è'), ('#038;', ''), ('\\u00f8', 'ø'),
@@ -202,10 +202,10 @@ class logger:
 #             if isinstance(text, unicode):
 #                 text = text.encode('utf-8')
 #
-#         text = text.replace('\\xc3\\x84', 'Ä').replace('\\xc3\\xa4', 'ä')
-#         text = text.replace('\\xc3\\x96', 'Ö').replace('\\xc3\\xb6', 'ö')
-#         text = text.replace('\\xc3\\x9c', 'Ü').replace('\\xc3\\xbc', 'ü')
-#         text = text.replace('\\xc3\\x9f', 'ß').replace("\\'", "'")
+#         text = text.replace('\\xc3\\x84', chr(0x00C4)).replace('\\xc3\\xa4', chr(0x00E4))
+#         text = text.replace('\\xc3\\x96', chr(0x00D6)).replace('\\xc3\\xb6', chr(0x00F6))
+#         text = text.replace('\\xc3\\x9c', chr(0x00DC)).replace('\\xc3\\xbc', chr(0x00FC))
+#         text = text.replace('\\xc3\\x9f', chr(0x00DF)).replace("\\'", "'")
 #
 #         return text
 #

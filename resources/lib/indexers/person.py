@@ -27,11 +27,11 @@ class person:
 		try:
 			self.next_pages = int(params.get('page')) + 1
 			self.query = params.get('query')
-			# Suche nach 'willis'
+			# Wyszukiwanie po 'willis'
 			# https://api.themoviedb.org/3/search/person?language=de&api_key=be7e192d9ff45609c57344a5c561be1d&query=willis&page=1
 			self.list, self.total_pages = cTMDB().search_term('person', params.get('query'), params.get('page'))
-			if self.list == None or len(self.list) == 0:  # nichts gefunden
-				 return control.infoDialog("Nichts gefunden", time=2000)
+			if self.list == None or len(self.list) == 0:  # nic nie znaleziono
+				 return control.infoDialog("Nic nie znaleziono", time=2000)
 			#self.list = sorted(self.list, key=lambda k: k['popularity'])
 			self.personDirectory(self.list)
 			searchDB.save_query(params.get('query'), params.get('action'))
@@ -40,8 +40,8 @@ class person:
 			pass
 
 	def search(self):
-		navigator.navigator().addDirectoryItem("[B]Darsteller - neue Suche[/B]", 'searchNew&table=person', '03_01_darsteller_neue_suche.png', 'DefaultAddonsSearch.png',
-											   isFolder=False, context=('Einstellungen', 'addonSettings'))
+		navigator.navigator().addDirectoryItem("[B]Aktorzy - nowe wyszukiwanie[/B]", 'searchNew&table=person', '03_01_darsteller_neue_suche.png', 'DefaultAddonsSearch.png',
+											   isFolder=False, context=('Ustawienia', 'addonSettings'))
 		match = searchDB.getSearchTerms('person')
 		lst = []
 		delete_option = False
@@ -51,11 +51,11 @@ class person:
 				delete_option = True
 				navigator.navigator().addDirectoryItem(term, 'person&page=1&query=%s' % control.quote_plus(term), self.activeSearchDB + '_people-search.png',
 													   'DefaultAddonsSearch.png', isFolder=True,
-													   context=("Suchanfrage löschen", 'searchDelTerm&table=person&name=%s' % index))
+													   context=("Usuń zapytanie", 'searchDelTerm&table=person&name=%s' % index))
 				lst += [(term)]
 
 		if delete_option:
-			navigator.navigator().addDirectoryItem("[B]Suchverlauf löschen[/B]", 'searchClear&table=person', '03_02_suchverlauf_loeschen.png', 'DefaultAddonProgram.png', isFolder=False)
+			navigator.navigator().addDirectoryItem("[B]Wyczyść historię wyszukiwania[/B]", 'searchClear&table=person', '03_02_suchverlauf_loeschen.png', 'DefaultAddonProgram.png', isFolder=False)
 		navigator.navigator()._endDirectory('', False)  # addons  videos  files
 
 
@@ -110,15 +110,15 @@ class person:
 			except:
 				pass
 
-		# nächste Seite
+		# następna strona
 		try:
 			if self.next_pages <= self.total_pages:
 				url = '%s?action=person&url=&page=%s&query=%s' % (sys.argv[0], self.next_pages, control.quote_plus(self.query))
-				item = control.item(label="Nächste Seite")
+				item = control.item(label="Następna strona")
 				icon = control.addonNext()
 				item.setArt({'icon': icon, 'thumb': icon, 'poster': icon, 'banner': icon})
 				if not addonFanart == None: item.setProperty('Fanart_Image', addonFanart)
-				#  -> gesehen/ungesehen im cm und "Keine Informationen verfügbar" ausblenden (abhängig von control.content() )
+				#  -> ukryj obejrzane/nieobejrzane w menu kontekstowym oraz "Brak dostępnych informacji" (zależnie od control.content())
 				item.setInfo('video', {'overlay': 4, 'plot': ' '})  # alt255
 				control.addItem(handle=syshandle, url=url, listitem=item, isFolder=True)
 		except:
@@ -139,12 +139,12 @@ class person:
 				self.creditsDirectory(self.list, number, person_id)
 			else:
 				meta = json.loads(params.get('sysmeta'))
-				# Suche nach Filme mit "Bruce Willis" -> 62
+				# Wyszukiwanie filmów z "Bruce Willis" -> 62
 				# https://api.themoviedb.org/3/person/62/movie_credits?api_key=86dd18b04874d9c94afadde7993d94e3&language=de
 				self.list = cTMDB().search_credits('movie_credits', meta['id']) # "combined_credits", "tv_credits", "movie_credits"
 
-				if self.list == None or len(self.list) == 0:  # nichts gefunden
-					 control.infoDialog("Nichts gefunden", time=8000)
+				if self.list == None or len(self.list) == 0:  # nic nie znaleziono
+					 control.infoDialog("Nic nie znaleziono", time=8000)
 				#self.list = sorted(self.list, key=lambda k: k['vote_average'], reverse=True)
 				self.list = utils.multikeysort(self.list, ['-vote_average', '-popularity'])
 				self.creditsDirectory(self.list, person_id=meta['id'])
@@ -230,16 +230,16 @@ class person:
 				print(e)
 				pass
 
-		# nächste Seite
+		# następna strona
 		try:
 			next_number = number + 20
 			if person_id is not None and next_number < len(items):
 				url = '%s?action=personCredits&person_id=%s&number=%s' % (sys.argv[0], person_id, next_number)
-				item = control.item(label="Nächste Seite")
+				item = control.item(label="Następna strona")
 				icon = control.addonNext()
 				item.setArt({'icon': icon, 'thumb': icon, 'poster': icon, 'banner': icon})
 				if not addonFanart == None: item.setProperty('Fanart_Image', addonFanart)
-				#  -> gesehen/ungesehen im cm und "Keine Informationen verfügbar" ausblenden (abhängig von control.content() )
+				#  -> ukryj obejrzane/nieobejrzane w menu kontekstowym oraz "Brak dostępnych informacji" (zależnie od control.content())
 				item.setInfo('video', {'overlay': 4, 'plot': ' '})  # alt255
 				control.addItem(handle=syshandle, url=url, listitem=item, isFolder=True)
 		except:
@@ -248,4 +248,3 @@ class person:
 		control.content(syshandle, 'movies')
 		control.plugincategory(syshandle, control.addonVersion)
 		control.endofdirectory(syshandle, cacheToDisc=True)
-

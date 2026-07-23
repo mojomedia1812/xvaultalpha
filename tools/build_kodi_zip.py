@@ -98,6 +98,13 @@ EXCLUDED_SUFFIXES = {
 }
 
 
+def _write_text(path, content):
+    tmp_path = path.with_name(f".{path.name}.tmp")
+    with tmp_path.open("w", encoding="utf-8", newline="\n") as handle:
+        handle.write(content)
+    tmp_path.replace(path)
+
+
 def addon_files():
     for path in PROJECT_DIR.rglob("*"):
         relative = path.relative_to(PROJECT_DIR)
@@ -128,13 +135,13 @@ def validate(output):
 
     expected_addon = f"{ADDON_ID}/addon.xml"
     if expected_addon not in names:
-        raise RuntimeError(f"{expected_addon} fehlt im ZIP")
+        raise RuntimeError(f"{expected_addon} brakuje w ZIP")
     if any(not name.startswith(f"{ADDON_ID}/") for name in names):
-        raise RuntimeError("ZIP enthält Dateien außerhalb des Add-on-Wurzelordners")
+        raise RuntimeError("ZIP zawiera pliki poza folderem głównym dodatku")
     if any("\\" in name for name in names):
-        raise RuntimeError("ZIP enthält nicht Kodi-konforme Backslash-Pfade")
+        raise RuntimeError("ZIP zawiera ścieżki z backslashami niezgodne z Kodi")
     if any(name.startswith(f"{ADDON_ID}/docs/") for name in names):
-        raise RuntimeError("Website-Dateien wurden in das Add-on-Paket aufgenommen")
+        raise RuntimeError("Pliki strony zostały dodane do paczki dodatku")
 
 
 def build_repository_zip(output):
@@ -151,12 +158,12 @@ def validate_repository_zip(output):
         names = archive.namelist()
         expected_addon = f"{REPOSITORY_ID}/addon.xml"
         if expected_addon not in names:
-            raise RuntimeError(f"{expected_addon} fehlt im Repository-ZIP")
+            raise RuntimeError(f"{expected_addon} brakuje w ZIP repozytorium")
         if any(not name.startswith(f"{REPOSITORY_ID}/") for name in names):
-            raise RuntimeError("Repository-ZIP enthält Dateien außerhalb des Add-on-Wurzelordners")
+            raise RuntimeError("ZIP repozytorium zawiera pliki poza folderem głównym dodatku")
         root = ET.fromstring(archive.read(expected_addon))
         if root.attrib.get("id") != REPOSITORY_ID:
-            raise RuntimeError("Repository-ZIP enthält falsche Add-on-ID")
+            raise RuntimeError("ZIP repozytorium zawiera nieprawidłowe ID dodatku")
 
 
 def _file_digest(path):
@@ -232,7 +239,7 @@ def sync_browsable_repository_layout():
 
     copy2_retry(REPOSITORY_OUTPUT, REPOSITORY_INDEX_OUTPUT)
     validate_repository_zip(REPOSITORY_INDEX_OUTPUT)
-    (REPOSITORY_INDEX_DIR / "addon.xml").write_text(_repository_addon_xml() + "\n", encoding="utf-8", newline="\n")
+    _write_text(REPOSITORY_INDEX_DIR / "addon.xml", _repository_addon_xml() + "\n")
     copy2_retry(PROJECT_DIR / "resources" / "icon.png", REPOSITORY_INDEX_DIR / "icon.png")
 
     _write_index(ADDON_INDEX_DIR, f"{SITE_INDEX_TITLE}{ADDON_ID}/", addon_index_entries)
@@ -310,12 +317,8 @@ def update_kodi_repository_metadata():
         f'{_xml_body(_repository_addon_xml())}\n'
         '</addons>\n'
     )
-    ADDONS_XML.write_text(content, encoding="utf-8", newline="\n")
-    (ADDONS_XML.with_suffix(ADDONS_XML.suffix + ".md5")).write_text(
-        hashlib.md5(content.encode("utf-8")).hexdigest(),
-        encoding="utf-8",
-        newline="\n",
-    )
+    _write_text(ADDONS_XML, content)
+    _write_text(ADDONS_XML.with_suffix(ADDONS_XML.suffix + ".md5"), hashlib.md5(content.encode("utf-8")).hexdigest())
 
 
 def update_download_page(output):
@@ -326,7 +329,7 @@ def update_download_page(output):
     size = _format_size(output.stat().st_size)
     html_content = page.read_text(encoding="utf-8")
     html_content = re.sub(
-        r"(<span>Aktuelle Version</span>\s*<strong>).*?(</strong>)",
+        r"(<span>(?:Aktuelle Version|Aktualna wersja)</span>\s*<strong>).*?(</strong>)",
         rf"\g<1>{VERSION}\2",
         html_content,
         flags=re.S,
@@ -341,7 +344,7 @@ def update_download_page(output):
         f'href="{REPOSITORY_DIRECT_ZIP_NAME}"',
         html_content,
     )
-    html_content = re.sub(r"(ZIP-Datei · ).*?(</p>)", rf"\g<1>{size}\2", html_content)
+    html_content = re.sub(r"((?:ZIP-Datei|Plik ZIP) · ).*?(</p>)", rf"\g<1>{size}\2", html_content)
     html_content = re.sub(r"<code>[A-F0-9]{64}</code>", f"<code>{digest}</code>", html_content)
     html_content = _update_archive_links(html_content)
     html_content = _update_release_notes(html_content)
@@ -350,7 +353,7 @@ def update_download_page(output):
     html_content = re.sub(r"(<span>Version ).*?(</span>)", rf"\g<1>{VERSION}\2", html_content)
     html_content = _inject_kodi_listing(html_content)
     html_content = _ensure_umami_tracking(html_content)
-    page.write_text(html_content, encoding="utf-8", newline="\n")
+    _write_text(page, html_content)
     _update_manual_download_links()
 
 
@@ -370,14 +373,14 @@ def _update_manual_download_links():
         html_content,
     )
     html_content = re.sub(
-        r"Handbuch zu xVAULT\s+[0-9]{4}\.[0-9]{2}\.[0-9]{2}\.[0-9]+",
-        "Handbuch zu xVAULT %s" % VERSION,
+        r"(?:Handbuch zu xVAULT|Podręcznik xVAULT)\s+[0-9]{4}\.[0-9]{2}\.[0-9]{2}\.[0-9]+",
+        "Podręcznik xVAULT %s" % VERSION,
         html_content,
     )
     for legacy_site_url in LEGACY_SITE_URLS:
         html_content = html_content.replace(legacy_site_url, SITE_URL)
     html_content = _ensure_umami_tracking(html_content)
-    manual.write_text(html_content, encoding="utf-8", newline="\n")
+    _write_text(manual, html_content)
 
 
 def _ensure_umami_tracking(html_content):
@@ -416,9 +419,9 @@ def _release_notes_html():
     if not releases:
         return (
             '    <section class="panel update-panel">\n'
-            '      <p class="section-kicker">Neu in %s</p>\n'
-            '      <h2>Aktuelle Änderungen</h2>\n'
-            '      <p>Details stehen in CHANGELOG.txt.</p>\n'
+            '      <p class="section-kicker">Nowości w %s</p>\n'
+            '      <h2>Aktualne zmiany</h2>\n'
+            '      <p>Szczegóły znajdują się w CHANGELOG.txt.</p>\n'
             '    </section>'
         ) % html.escape(VERSION)
     blocks = []
@@ -427,7 +430,7 @@ def _release_notes_html():
         items = "\n".join("        <li>%s</li>" % html.escape(bullet) for bullet in visible_bullets)
         blocks.append(
             '    <section class="panel update-panel">\n'
-            '      <p class="section-kicker">Neu in %s</p>\n'
+            '      <p class="section-kicker">Nowości w %s</p>\n'
             '      <h2>%s</h2>\n'
             '      <ul class="update-list">\n'
             '%s\n'
@@ -464,7 +467,7 @@ def _read_changelog_releases():
 
 
 def _release_title(bullets):
-    return "Änderungen im Überblick"
+    return "Przegląd zmian"
 
 
 def _archive_downloads_html():
@@ -481,12 +484,12 @@ def _archive_downloads_html():
 
     versions.sort(key=lambda item: _version_key(item[0]), reverse=True)
     if not versions:
-        return '        <li><span>Keine vorherigen Versionen verfuegbar</span></li>'
+        return '        <li><span>Brak wcześniejszych wersji</span></li>'
 
     lines = []
     for version, path in versions:
         lines.append(
-            '        <li><a href="downloads/%s" download data-umami-event="Vorherige Version heruntergeladen">Version %s herunterladen</a><span>%s</span></li>'
+            '        <li><a href="downloads/%s" download data-umami-event="Pobrano poprzednią wersję">Pobierz wersję %s</a><span>%s</span></li>'
             % (path.name, version, _format_size(path.stat().st_size))
         )
     return "\n".join(lines)
@@ -541,10 +544,10 @@ def _write_index(directory, title, entries):
 {tracking}
 </head>
 <body>
-<h2>Index of {title}</h2>
+<h2>Indeks {title}</h2>
 <table>
 <tbody>
-<tr><th></th><th><a href="?C=N;O=D">Name</a></th><th><a href="?C=M;O=A">Last modified</a></th><th><a href="?C=S;O=A">Size</a></th></tr>
+<tr><th></th><th><a href="?C=N;O=D">Nazwa</a></th><th><a href="?C=M;O=A">Ostatnio zmieniono</a></th><th><a href="?C=S;O=A">Rozmiar</a></th></tr>
 <tr><th colspan="4"><hr></th></tr>
 {rows}
 <tr><th colspan="4"><hr></th></tr>
@@ -553,7 +556,7 @@ def _write_index(directory, title, entries):
 </body>
 </html>
 """.format(title=html.escape(title), tracking=UMAMI_TRACKING, rows=_index_rows(entries, parent="../"))
-    (directory / "index.html").write_text(content, encoding="utf-8", newline="\n")
+    _write_text(directory / "index.html", content)
 
 
 def _inject_kodi_listing(html_content):
@@ -599,10 +602,10 @@ def _kodi_listing_fragment():
     ]
     return """<!-- kodi-listing:start -->
   <section id="kodi-index" class="kodi-index">
-    <h2>Index of {title}</h2>
+    <h2>Indeks {title}</h2>
     <table>
       <tbody>
-        <tr><th></th><th><a href="?C=N;O=D">Name</a></th><th><a href="?C=M;O=A">Last modified</a></th><th><a href="?C=S;O=A">Size</a></th></tr>
+        <tr><th></th><th><a href="?C=N;O=D">Nazwa</a></th><th><a href="?C=M;O=A">Ostatnio zmieniono</a></th><th><a href="?C=S;O=A">Rozmiar</a></th></tr>
         <tr><th colspan="4"><hr></th></tr>
 {rows}
         <tr><th colspan="4"><hr></th></tr>
@@ -614,14 +617,14 @@ def _kodi_listing_fragment():
 
 def _index_rows(entries, parent):
     rows = [
-        '<tr><td>[PARENTDIR]</td><td><a href="%s" data-umami-event="Verzeichnisnavigation geöffnet">Parent Directory</a></td><td align="right">-</td><td align="right">-</td></tr>' % parent
+        '<tr><td>[NADRZĘDNY]</td><td><a href="%s" data-umami-event="Otworzono katalog nadrzędny">Katalog nadrzędny</a></td><td align="right">-</td><td align="right">-</td></tr>' % parent
     ]
     for entry in entries:
         path = entry["path"]
         name = entry["name"]
         href = html.escape(name, quote=True)
         label = html.escape(name)
-        icon = "[DIR]" if name.endswith("/") else "[FILE]"
+        icon = "[KATALOG]" if name.endswith("/") else "[PLIK]"
         rows.append(
             '<tr><td>%s</td><td><a href="%s"%s>%s</a></td><td align="right">%s</td><td align="right">%s</td></tr>'
             % (icon, href, _index_link_attrs(name), label, _format_index_mtime(path), _format_index_size(path))
@@ -631,15 +634,15 @@ def _index_rows(entries, parent):
 
 def _index_link_attrs(name):
     if name.endswith("/"):
-        event = "Verzeichnis geöffnet"
+        event = "Otworzono katalog"
     elif name.endswith(".zip"):
-        event = "Datei heruntergeladen"
+        event = "Pobrano plik"
     elif name.endswith(".md5"):
-        event = "Checksum geöffnet"
+        event = "Otworzono sumę kontrolną"
     elif name.endswith(".xml"):
-        event = "Repository-Metadaten geöffnet"
+        event = "Otworzono metadane repozytorium"
     else:
-        event = "Repository-Datei geöffnet"
+        event = "Otworzono plik repozytorium"
     return ' data-umami-event="%s"' % html.escape(event, quote=True)
 
 
@@ -652,7 +655,7 @@ def _format_index_mtime(path):
     if not path.exists():
         return "-"
     from datetime import datetime
-    return datetime.fromtimestamp(path.stat().st_mtime).strftime("%d.%b.%Y %H:%M:%S")
+    return datetime.fromtimestamp(path.stat().st_mtime).strftime("%Y-%m-%d %H:%M:%S")
 
 
 def _format_index_size(path):

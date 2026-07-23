@@ -27,7 +27,7 @@ from resources.lib import control
 from resources.lib.control import translatePath
 
 
-SUPPORT_TITLE = 'xVAULT Support'
+SUPPORT_TITLE = 'Wsparcie xVAULT'
 SUPPORT_USER_AGENT = '%s/%s support-uploader' % (control.addonId, control.addonVersion)
 MAX_LOG_BYTES = 512 * 1024
 MAX_LOG_LINES = 1200
@@ -125,31 +125,31 @@ def getDNS(dns):
 
 def pluginInfo():
     lines = [
-        'Kodi Version:  %s (Code Version: %s)' % (
+        'Wersja Kodi:  %s (wersja kodu: %s)' % (
             xbmc.getInfoLabel('System.BuildVersion')[:4],
             xbmc.getInfoLabel('System.BuildVersionCode'),
         ),
-        'System Plattform:   %s' % platform(),
-        'FreeMem: %sMB' % str(xbmc.getFreeMem()),
-        'aktiver Skin: %s' % xbmc.getSkinDir(),
+        'Platforma systemu:   %s' % platform(),
+        'Wolna pamięć: %sMB' % str(xbmc.getFreeMem()),
+        'aktywny skin: %s' % xbmc.getSkinDir(),
         '',
-        'Plugin Informationen zu %s:' % xbmcaddon.Addon().getAddonInfo('name'),
+        'Informacje o wtyczce %s:' % xbmcaddon.Addon().getAddonInfo('name'),
         'Version:  %s - %s' % (
             xbmcaddon.Addon().getAddonInfo('id'),
             xbmcaddon.Addon().getAddonInfo('version'),
         ),
-        'installiert aus Repository:  %s' % getRepofromAddonsDB(xbmcaddon.Addon().getAddonInfo('id')),
+        'zainstalowano z repozytorium:  %s' % getRepofromAddonsDB(xbmcaddon.Addon().getAddonInfo('id')),
         '',
     ]
 
     lines.extend(_addon_info_lines('script.module.resolveurl', 'ResolveURL'))
     lines.extend([
         '',
-        'aktiver DNS Nameserver1: %s' % getDNS('Network.DNS1Address'),
-        'aktiver DNS Nameserver2: %s' % getDNS('Network.DNS2Address'),
+        'aktywny serwer DNS 1: %s' % getDNS('Network.DNS1Address'),
+        'aktywny serwer DNS 2: %s' % getDNS('Network.DNS2Address'),
     ])
 
-    xbmcgui.Dialog().textviewer('xVAULT Support Informationen', '\n'.join(lines))
+    xbmcgui.Dialog().textviewer('Informacje wsparcia xVAULT', '\n'.join(lines))
 
 
 def createSupportPackageAndUpload():
@@ -167,9 +167,9 @@ def createSupportPackageAndUpload():
         _remove_tree(workspace)
         _mkdir(workspace)
 
-        progress.create(SUPPORT_TITLE, 'Sammle Diagnosedaten...')
+        progress.create(SUPPORT_TITLE, 'Zbieranie danych diagnostycznych...')
         manifest = _build_support_workspace(workspace, support_uuid, zip_name, created_at)
-        progress.update(65, 'Erstelle ZIP-Datei...')
+        progress.update(65, 'Tworzenie pliku ZIP...')
         _zip_workspace(workspace, zip_path)
         zip_size = os.path.getsize(zip_path)
         progress.close()
@@ -177,13 +177,13 @@ def createSupportPackageAndUpload():
         _show_package_manifest(manifest, zip_size)
         if not _confirm_upload(manifest, zip_size):
             _delete_file(zip_path)
-            control.infoDialog('Supportpaket verworfen. UUID: %s' % support_uuid, icon='INFO', time=6000)
+            control.infoDialog('Pakiet wsparcia odrzucony. UUID: %s' % support_uuid, icon='INFO', time=6000)
             return
 
-        progress.create(SUPPORT_TITLE, 'Lade Supportpaket hoch...')
-        progress.update(20, 'Upload wird gestartet...')
+        progress.create(SUPPORT_TITLE, 'Przesyłanie pakietu wsparcia...')
+        progress.update(20, 'Uruchamianie przesyłania...')
         upload_result = _upload_support_zip(zip_path, zip_name, manifest.get('provider', {}))
-        progress.update(90, 'Loesche lokales ZIP...')
+        progress.update(90, 'Usuwanie lokalnego ZIP...')
         upload_result = _add_short_url(upload_result)
         _store_last_upload(support_uuid, zip_name, zip_size, upload_result)
         _delete_file(zip_path)
@@ -193,8 +193,8 @@ def createSupportPackageAndUpload():
         control.setSetting(id='support.last_link', value=upload_result.get('short_link') or upload_result.get('link', ''))
         xbmcgui.Dialog().ok(
             SUPPORT_TITLE,
-            'Upload erfolgreich.[CR]Service-ID: %s' % (
-                upload_result.get('short_id') or _short_url_service_id(upload_result.get('short_link', '')) or 'nicht verfuegbar'
+            'Przesyłanie zakończone powodzeniem.[CR]ID usługi: %s' % (
+                upload_result.get('short_id') or _short_url_service_id(upload_result.get('short_link', '')) or 'niedostępne'
             ),
         )
     except Exception as exc:
@@ -206,7 +206,7 @@ def createSupportPackageAndUpload():
         _log('Support upload failed for %s: %s' % (support_uuid, str(exc)), xbmc.LOGERROR)
         xbmcgui.Dialog().ok(
             SUPPORT_TITLE,
-            'Supportpaket konnte nicht hochgeladen werden.[CR]UUID: %s[CR]Fehler: %s[CR]Lokales ZIP wurde geloescht.' % (
+            'Nie udało się przesłać pakietu wsparcia.[CR]UUID: %s[CR]Błąd: %s[CR]Lokalny ZIP został usunięty.' % (
                 support_uuid,
                 _short_error(exc),
             ),
@@ -219,12 +219,12 @@ def _addon_info_lines(addon_id, label):
     try:
         addon = xbmcaddon.Addon(addon_id)
         return [
-            'Plugin Informationen zu %s:' % addon.getAddonInfo('name'),
+            'Informacje o wtyczce %s:' % addon.getAddonInfo('name'),
             'Version:  %s - %s' % (addon.getAddonInfo('id'), addon.getAddonInfo('version')),
-            'installiert aus Repository:  %s' % getRepofromAddonsDB(addon_id),
+            'zainstalowano z repozytorium:  %s' % getRepofromAddonsDB(addon_id),
         ]
     except Exception:
-        return ['Plugin Informationen zu %s: nicht installiert' % label]
+        return ['Informacje o wtyczce %s: niezainstalowana' % label]
 
 
 def _build_support_workspace(workspace, support_uuid, zip_name, created_at):
@@ -234,20 +234,20 @@ def _build_support_workspace(workspace, support_uuid, zip_name, created_at):
         'created_at_utc': created_at,
         'provider': _provider_config(),
         'contains': [
-            'Addon-/Kodi-/Python-Versionen',
-            'relevante Abhaengigkeiten',
-            'redigierte Plugin-Einstellungen',
-            'xVAULT-bezogene Kodi-Logzeilen',
-            'Dateiliste mit Groessen und SHA256 fuer Addon-Quelldateien',
-            'Profil-Dateiliste ohne Datenbankinhalte',
+            'wersje dodatku, Kodi i Pythona',
+            'istotne zależności',
+            'zanonimizowane ustawienia wtyczki',
+            'linie logu Kodi związane z xVAULT',
+            'lista plików ze źródeł dodatku z rozmiarami i SHA256',
+            'lista plików profilu bez zawartości baz danych',
         ],
         'excluded': [
-            'Passwoerter, Tokens, API-Keys, Cookies',
-            'Kunden-/Dokumentinhalte',
-            'Suchverlauf und Favoriteninhalte',
-            'lokale Datenbanken selbst',
-            'Screenshots, Caches, Downloads',
-            'vollstaendige Kodi-Systemlogs',
+            'hasła, tokeny, klucze API i cookies',
+            'treści klientów lub dokumentów',
+            'historia wyszukiwania i zawartość ulubionych',
+            'same lokalne bazy danych',
+            'zrzuty ekranu, cache, pobrane pliki',
+            'pełne logi systemowe Kodi',
         ],
     }
 
@@ -410,9 +410,9 @@ def _recent_xvault_log():
             if filtered:
                 sections.append('### %s\n%s' % (_redact_path(log_path), filtered))
         except Exception as exc:
-            sections.append('### %s\nLog konnte nicht gelesen werden: %s' % (_redact_path(log_path), str(exc)))
+            sections.append('### %s\nNie udało się odczytać logu: %s' % (_redact_path(log_path), str(exc)))
     if not sections:
-        return 'Keine xVAULT-bezogenen Logzeilen gefunden.\n'
+        return 'Nie znaleziono linii logu związanych z xVAULT.\n'
     return '\n\n'.join(sections) + '\n'
 
 
@@ -480,40 +480,40 @@ def _show_package_manifest(manifest, zip_size):
     text = [
         'UUID: %s' % manifest.get('support_uuid'),
         'ZIP: %s' % manifest.get('zip_filename'),
-        'Groesse: %s' % _format_bytes(zip_size),
-        'Upload-Dienst: %s' % manifest.get('provider', {}).get('name', ''),
-        'Ablauf: %s' % manifest.get('provider', {}).get('expiry_label', ''),
+        'Rozmiar: %s' % _format_bytes(zip_size),
+        'Usługa uploadu: %s' % manifest.get('provider', {}).get('name', ''),
+        'Wygasa: %s' % manifest.get('provider', {}).get('expiry_label', ''),
         '',
-        'Enthalten:',
+        'Zawiera:',
     ]
     text.extend(['- %s' % item for item in manifest.get('contains', [])])
     text.append('')
-    text.append('Nicht enthalten:')
+    text.append('Nie zawiera:')
     text.extend(['- %s' % item for item in manifest.get('excluded', [])])
-    xbmcgui.Dialog().textviewer('xVAULT Supportpaket', '\n'.join(text))
+    xbmcgui.Dialog().textviewer('Pakiet wsparcia xVAULT', '\n'.join(text))
 
 
 def _confirm_upload(manifest, zip_size):
     provider = manifest.get('provider', {})
     warning = ''
     if zip_size > MAX_UPLOAD_WARNING_BYTES:
-        warning = 'Grosses Paket: %s. ' % _format_bytes(zip_size)
-    message = '%sSupportpaket zu %s hochladen?[CR]Danach wird eine Kurz-URL erstellt.' % (warning, provider.get('name', ''))
+        warning = 'Duży pakiet: %s. ' % _format_bytes(zip_size)
+    message = '%sPrzesłać pakiet wsparcia do %s?[CR]Następnie zostanie utworzony krótki URL.' % (warning, provider.get('name', ''))
     default_no = getattr(xbmcgui, 'DLG_YESNO_NO_BTN', 0)
     try:
         return xbmcgui.Dialog().yesno(
             SUPPORT_TITLE,
             message,
-            nolabel='Abbrechen',
-            yeslabel='Hochladen',
+            nolabel='Anuluj',
+            yeslabel='Prześlij',
             defaultbutton=default_no,
         )
     except TypeError:
         return xbmcgui.Dialog().yesno(
             SUPPORT_TITLE,
             message,
-            nolabel='Abbrechen',
-            yeslabel='Hochladen',
+            nolabel='Anuluj',
+            yeslabel='Prześlij',
         )
 
 
@@ -544,9 +544,9 @@ def _provider_config():
 
 def _expiry_config(index):
     values = {
-        '0': {'label': '1 Tag', 'fileio': '1d', 'hours': '24'},
-        '1': {'label': '7 Tage', 'fileio': '7d', 'hours': '168'},
-        '2': {'label': '14 Tage', 'fileio': '14d', 'hours': '336'},
+        '0': {'label': '1 dzień', 'fileio': '1d', 'hours': '24'},
+        '1': {'label': '7 dni', 'fileio': '7d', 'hours': '168'},
+        '2': {'label': '14 dni', 'fileio': '14d', 'hours': '336'},
     }
     return values.get(str(index), values['1'])
 
@@ -574,10 +574,10 @@ def _upload_fileio(zip_path, zip_name, provider):
         params={'expires': provider.get('expiry_value', '7d')},
     )
     if not response_json.get('success'):
-        raise SupportUploadError(response_json.get('message') or response_json.get('error') or 'Upload abgelehnt')
+        raise SupportUploadError(response_json.get('message') or response_json.get('error') or 'Przesyłanie odrzucone')
     link = response_json.get('link')
     if not link:
-        raise SupportUploadError('Upload-Antwort enthaelt keinen Link')
+        raise SupportUploadError('Odpowiedź uploadu nie zawiera linku')
     return {
         'provider': provider['name'],
         'link': link,
@@ -628,7 +628,7 @@ def _add_short_url(upload_result):
     else:
         upload_result['short_link'] = ''
         upload_result['short_id'] = ''
-        upload_result['shortener_error'] = 'Kurz-URL konnte nicht erstellt werden'
+        upload_result['shortener_error'] = 'Nie udało się utworzyć krótkiego URL'
     return upload_result
 
 
@@ -724,14 +724,14 @@ def _upload_0x0(zip_path, zip_name, provider):
             raise SupportUploadError('HTTP %s: %s' % (response.status_code, response.text[:200]))
         link = response.text.strip()
         if not link.startswith('http'):
-            raise SupportUploadError('Upload-Antwort enthaelt keinen Link')
+            raise SupportUploadError('Odpowiedź uploadu nie zawiera linku')
         return {
             'provider': provider['name'],
             'link': link,
             'management_token': response.headers.get('X-Token', ''),
             'expires': provider.get('expiry_label', ''),
         }
-    raise SupportUploadError('requests-Modul fehlt fuer 0x0.st Upload')
+    raise SupportUploadError('Brakuje modułu requests dla uploadu 0x0.st')
 
 
 def _post_multipart_json(url, fields, file_path, filename, params=None):
@@ -751,7 +751,7 @@ def _post_multipart_json(url, fields, file_path, filename, params=None):
         try:
             return response.json()
         except Exception:
-            raise SupportUploadError('Ungueltige Upload-Antwort: %s' % text[:200])
+            raise SupportUploadError('Nieprawidłowa odpowiedź uploadu: %s' % text[:200])
     return _urllib_post_multipart_json(url, fields, file_path, filename, params=params)
 
 
@@ -794,7 +794,7 @@ def _urllib_get_json(url, params):
     try:
         return json.loads(raw)
     except Exception:
-        raise SupportUploadError('Ungueltige Kurz-URL-Antwort: %s' % raw[:200])
+        raise SupportUploadError('Nieprawidłowa odpowiedź krótkiego URL: %s' % raw[:200])
 
 
 def _urllib_get_text(url, params):
@@ -851,7 +851,7 @@ def _urllib_post_multipart_json(url, fields, file_path, filename, params=None):
     try:
         return json.loads(raw)
     except Exception:
-        raise SupportUploadError('Ungueltige Upload-Antwort: %s' % raw[:200])
+        raise SupportUploadError('Nieprawidłowa odpowiedź uploadu: %s' % raw[:200])
 
 
 def _store_last_upload(support_uuid, zip_name, zip_size, upload_result):

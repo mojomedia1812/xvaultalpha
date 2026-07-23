@@ -41,7 +41,7 @@ def _createSql(table): # IF NOT EXISTS - kÃ¶nnte man auch entfernen
               "playcount INT)" % table
     return sql
 
-# einmalig Tabellen in der DB anlegen wenn die DateigrÃ¶ÃŸe von der Datenbank Datei 0 ist
+# jednorazowo utwórz tabele w DB, jeśli rozmiar pliku bazy danych wynosi 0
 if not exists(playcountDB) or stat(playcountDB).st_size == 0: # size DB
     conn = db.connect(playcountDB)
     try:

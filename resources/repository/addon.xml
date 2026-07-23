@@ -8,9 +8,9 @@
         </dir>
     </extension>
     <extension point="xbmc.addon.metadata">
-        <summary lang="de_DE">Offizielles xVAULT Kodi-Repository</summary>
+        <summary lang="pl_PL">Oficjalne repozytorium Kodi xVAULT</summary>
         <summary lang="en_GB">Official xVAULT Kodi repository</summary>
-        <description lang="de_DE">Stellt xVAULT-Updates ueber Kodi bereit.</description>
+        <description lang="pl_PL">Udostępnia aktualizacje xVAULT przez Kodi.</description>
         <description lang="en_GB">Provides xVAULT updates through Kodi.</description>
         <platform>all</platform>
         <assets>

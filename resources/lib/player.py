@@ -273,7 +273,7 @@ class player(xbmc.Player):
         if self.isdebug: log_utils.log('Ende - onPlayBackEnded', log_utils.LOGINFO)
 
     def onPlayBackError(self):
-        log_utils.log('Playback-Fehler vor oder waehrend der Wiedergabe: %s' % getattr(self, 'playback_name', ''), log_utils.LOGWARNING)
+        log_utils.log('Błąd odtwarzania przed startem lub w trakcie odtwarzania: %s' % getattr(self, 'playback_name', ''), log_utils.LOGWARNING)
         self._telemetryEvent('playback_failed', 'player_error')
         self.streamFinished = True
 
@@ -381,7 +381,7 @@ class player(xbmc.Player):
         ccont = ''
         if playback_settings.get_mode() == '1': # Liste der Streams (Hosterliste) als Verzeichnis
             count = 0
-            # prÃ¼fen ob Hosterliste aktiv ist - content ist da 'videos'
+            # sprawdź, czy lista hosterów jest aktywna - content to wtedy 'videos'
             for count in range(1, 25+1):
                 control.sleep(2)
                 ccont = control.getInfoLabel("Container.Content")
@@ -390,7 +390,7 @@ class player(xbmc.Player):
             if self.isdebug: log_utils.log(__name__ + ' - count: %s - Container.Content (1):  %s' % (count, control.getInfoLabel("Container.Content")), log_utils.LOGINFO)
             if count == 25: return
 
-            # zur Film- bzw. Episodenliste wechseln  - von content 'videos' dann zu content 'videos'
+            # przejście do listy filmów lub odcinków - z content 'videos' do content 'videos'
             if control.getInfoLabel("Container.Content") != 'movies' and ccont == 'videos':
                 control.execute('Action(ParentDir)')
                 for count in range(1, 15 + 1):
@@ -463,7 +463,7 @@ class subtitles:
         season = str(season)
         episode = str(episode)
         try:
-            langDict = {'Afrikaans': 'afr', 'Albanian': 'alb', 'Arabic': 'ara', 'Armenian': 'arm', 'Basque': 'baq', 'Bengali': 'ben', 'Bosnian': 'bos', 'Breton': 'bre', 'Bulgarian': 'bul', 'Burmese': 'bur', 'Catalan': 'cat', 'Chinese': 'chi', 'Croatian': 'hrv', 'Czech': 'cze', 'Danish': 'dan', 'Dutch': 'dut', 'English': 'eng', 'Esperanto': 'epo', 'Estonian': 'est', 'Finnish': 'fin', 'French': 'fre', 'Galician': 'glg', 'Georgian': 'geo', 'German': 'ger', 'Greek': 'ell', 'Hebrew': 'heb', 'Hindi': 'hin', 'Hungarian': 'hun', 'Icelandic': 'ice', 'Indonesian': 'ind', 'Italian': 'ita', 'Japanese': 'jpn', 'Kazakh': 'kaz', 'Khmer': 'khm', 'Korean': 'kor', 'Latvian': 'lav', 'Lithuanian': 'lit', 'Luxembourgish': 'ltz', 'Macedonian': 'mac', 'Malay': 'may', 'Malayalam': 'mal', 'Manipuri': 'mni', 'Mongolian': 'mon', 'Montenegrin': 'mne', 'Norwegian': 'nor', 'Occitan': 'oci', 'Persian': 'per', 'Polish': 'pol', 'Portuguese': 'por,pob', 'Portuguese(Brazil)': 'pob,por', 'Romanian': 'rum', 'Russian': 'rus', 'Serbian': 'scc', 'Sinhalese': 'sin', 'Slovak': 'slo', 'Slovenian': 'slv', 'Spanish': 'spa', 'Swahili': 'swa', 'Swedish': 'swe', 'Syriac': 'syr', 'Tagalog': 'tgl', 'Tamil': 'tam', 'Telugu': 'tel', 'Thai': 'tha', 'Turkish': 'tur', 'Ukrainian': 'ukr', 'Urdu': 'urd'}
+            langDict = {'afrikaans': 'afr', 'albański': 'alb', 'arabski': 'ara', 'ormiański': 'arm', 'baskijski': 'baq', 'bengalski': 'ben', 'bośniacki': 'bos', 'bretoński': 'bre', 'bułgarski': 'bul', 'birmański': 'bur', 'kataloński': 'cat', 'chiński': 'chi', 'chorwacki': 'hrv', 'czeski': 'cze', 'duński': 'dan', 'niderlandzki': 'dut', 'angielski': 'eng', 'esperanto': 'epo', 'estoński': 'est', 'fiński': 'fin', 'francuski': 'fre', 'galicyjski': 'glg', 'gruziński': 'geo', 'niemiecki': 'ger', 'grecki': 'ell', 'hebrajski': 'heb', 'hindi': 'hin', 'węgierski': 'hun', 'islandzki': 'ice', 'indonezyjski': 'ind', 'włoski': 'ita', 'japoński': 'jpn', 'kazachski': 'kaz', 'khmerski': 'khm', 'koreański': 'kor', 'łotewski': 'lav', 'litewski': 'lit', 'luksemburski': 'ltz', 'macedoński': 'mac', 'malajski': 'may', 'malajalam': 'mal', 'manipuri': 'mni', 'mongolski': 'mon', 'czarnogórski': 'mne', 'norweski': 'nor', 'oksytański': 'oci', 'perski': 'per', 'polski': 'pol', 'portugalski': 'por,pob', 'portugalski (Brazylia)': 'pob,por', 'rumuński': 'rum', 'rosyjski': 'rus', 'serbski': 'scc', 'syngaleski': 'sin', 'słowacki': 'slo', 'słoweński': 'slv', 'hiszpański': 'spa', 'suahili': 'swa', 'szwedzki': 'swe', 'syryjski': 'syr', 'tagalski': 'tgl', 'tamilski': 'tam', 'telugu': 'tel', 'tajski': 'tha', 'turecki': 'tur', 'ukraiński': 'ukr', 'urdu': 'urd'}
             codePageDict = {'ara': 'cp1256', 'ar': 'cp1256', 'ell': 'cp1253', 'el': 'cp1253', 'heb': 'cp1255', 'he': 'cp1255', 'tur': 'cp1254', 'tr': 'cp1254', 'rus': 'cp1251', 'ru': 'cp1251'}
 
             # opensubtitles.org
@@ -574,14 +574,14 @@ class bookmarks:
             minutes, seconds = divmod(float(self.offset), 60)
             hours, minutes = divmod(minutes, 60)
             label = '%02d:%02d:%02d' % (hours, minutes, seconds)
-            label = py2_encode("Fortsetzen ab : %s" % label)
+            label = py2_encode("Kontynuuj od: %s" % label)
 
             if control.getSetting('bookmarks.auto') == 'false':
                 try:
-                    yes = control.dialog.contextmenu([label, "Vom Anfang abspielen", ])
+                    yes = control.dialog.contextmenu([label, "Odtwórz od początku", ])
                 except:
-                    yes = control.yesnoDialog(label, '', '', str(name), "Fortsetzen",
-                                              "Vom Anfang abspielen")
+                    yes = control.yesnoDialog(label, '', '', str(name), "Kontynuuj",
+                                              "Odtwórz od początku")
                 if yes:
                     bookmarkDB.remove_query(idFile, 'bookmarks')
                     self.offset = '0'

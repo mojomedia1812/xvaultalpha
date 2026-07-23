@@ -10,11 +10,11 @@ from resources.lib.requestHandler import cRequestHandler
 from resources.lib.control import getSetting
 
 class cTMDB:
-    TMDB_GENRES = {12: 'Abenteuer', 14: 'Fantasy', 16: 'Animation', 18: 'Drama', 27: 'Horror', 28: 'Action', 35: 'KomÃ¶die', 36: 'Historie', 37: 'Western', 53: 'Thriller', 80: 'Krimi', 99: 'Dokumentarfilm', 878: 'Science Fiction', 9648: 'Mystery', 10402: 'Musik', 10749: 'Liebesfilm', 10751: 'Familie', 10752: 'Kriegsfilm', 10759: 'Action & Adventure', 10762: 'Kids', 10763: 'News', 10764: 'Reality', 10765: 'Sci-Fi & Fantasy', 10766: 'Soap', 10767: 'Talk', 10768: 'War & Politics', 10770: 'TV-Film'}
+    TMDB_GENRES = {12: 'Przygodowy', 14: 'Fantasy', 16: 'Animacja', 18: 'Dramat', 27: 'Horror', 28: 'Akcja', 35: 'Komedia', 36: 'Historyczny', 37: 'Western', 53: 'Thriller', 80: 'Kryminał', 99: 'Dokumentalny', 878: 'Science Fiction', 9648: 'Tajemnica', 10402: 'Muzyka', 10749: 'Romans', 10751: 'Familijny', 10752: 'Wojenny', 10759: 'Akcja i przygoda', 10762: 'Dzieci', 10763: 'Informacje', 10764: 'Reality', 10765: 'Sci-Fi i fantasy', 10766: 'Soap opera', 10767: 'Talk-show', 10768: 'Wojna i polityka', 10770: 'Film TV'}
     URL = 'https://api.themoviedb.org/3/'
     URL_TRAILER = 'plugin://plugin.video.youtube/play/?video_id=%s'
 
-    def __init__(self, api_key='', lang='de'):
+    def __init__(self, api_key='', lang='pl-PL'):
         self.api_key = (api_key or getSetting('api.tmdb')).strip()
         self.lang = lang
         self.poster = 'https://image.tmdb.org/t/p/%s' % 'w342' #cConfig().getSetting('poster_tmdb')
@@ -185,7 +185,7 @@ class cTMDB:
         return sGenres
 
     def getLanguage(self, Language):
-        iso_639 = {'en': 'English', 'de': 'German', 'fr': 'French', 'it': 'Italian', 'nl': 'Nederlands', 'sv': 'Swedish', 'cs': 'Czech', 'da': 'Danish', 'fi': 'Finnish', 'pl': 'Polish', 'es': 'Spanish', 'el': 'Greek', 'tr': 'Turkish', 'uk': 'Ukrainian', 'ru': 'Russian', 'kn': 'Kannada', 'ga': 'Irish', 'hr': 'Croatian', 'hu': 'Hungarian', 'ja': 'Japanese', 'no': 'Norwegian', 'id': 'Indonesian', 'ko': 'Korean', 'pt': 'Portuguese', 'lv': 'Latvian', 'lt': 'Lithuanian', 'ro': 'Romanian', 'sk': 'Slovak', 'sl': 'Slovenian', 'sq': 'Albanian', 'sr': 'Serbian', 'th': 'Thai', 'vi': 'Vietnamese', 'bg': 'Bulgarian', 'fa': 'Persian', 'hy': 'Armenian', 'ka': 'Georgian', 'ar': 'Arabic', 'af': 'Afrikaans', 'bs': 'Bosnian', 'zh': 'Chinese', 'cn': 'Chinese', 'hi': 'Hindi'}
+        iso_639 = {'en': 'angielski', 'de': 'niemiecki', 'fr': 'francuski', 'it': 'włoski', 'nl': 'niderlandzki', 'sv': 'szwedzki', 'cs': 'czeski', 'da': 'duński', 'fi': 'fiński', 'pl': 'polski', 'es': 'hiszpański', 'el': 'grecki', 'tr': 'turecki', 'uk': 'ukraiński', 'ru': 'rosyjski', 'kn': 'kannada', 'ga': 'irlandzki', 'hr': 'chorwacki', 'hu': 'węgierski', 'ja': 'japoński', 'no': 'norweski', 'id': 'indonezyjski', 'ko': 'koreański', 'pt': 'portugalski', 'lv': 'łotewski', 'lt': 'litewski', 'ro': 'rumuński', 'sk': 'słowacki', 'sl': 'słoweński', 'sq': 'albański', 'sr': 'serbski', 'th': 'tajski', 'vi': 'wietnamski', 'bg': 'bułgarski', 'fa': 'perski', 'hy': 'ormiański', 'ka': 'gruziński', 'ar': 'arabski', 'af': 'afrikaans', 'bs': 'bośniacki', 'zh': 'chiński', 'cn': 'chiński', 'hi': 'hindi'}
         if Language in iso_639:
             return iso_639[Language]
         else:
@@ -194,7 +194,7 @@ class cTMDB:
     def get_meta_episode(self, media_type, name, tmdb_id='', season='', episode='', advanced='false'):
         meta = {}
         if media_type == 'episode' and tmdb_id and str(season) != '' and str(episode) != '':
-            url = '%stv/%s/season/%s/episode/%s?api_key=%s&language=de&include_adult=false' % (self.URL, tmdb_id, season, episode, self.api_key)
+            url = '%stv/%s/season/%s/episode/%s?api_key=%s&language=pl-PL&include_adult=false' % (self.URL, tmdb_id, season, episode, self.api_key)
             if advanced == 'true': url = url + '&append_to_response=external_ids,videos,credits'
             Data = cRequestHandler(url, ignoreErrors=True).request()
             if Data:
@@ -212,7 +212,7 @@ class cTMDB:
     def get_meta_seasons(self, tmdb_id='', season='', advanced='false'):
         meta = {}
         if tmdb_id and str(season) != '':
-            url = '%stv/%s/season/%s?api_key=%s&language=de&include_adult=false' % (self.URL, tmdb_id, season, self.api_key)
+            url = '%stv/%s/season/%s?api_key=%s&language=pl-PL&include_adult=false' % (self.URL, tmdb_id, season, self.api_key)
             Data = cRequestHandler(url, ignoreErrors=True).request()
             if Data:
                 try:
@@ -490,7 +490,7 @@ class cTMDB:
             if len(overviews['translations']) > 0:
                 overviews = overviews['translations']
                 for overview in overviews:
-                    if overview['name'] == "Deutsch" or  overview['iso_639_1'] == "de": #  or  overview['name'] == "English":
+                    if overview['name'] == "Polski" or  overview['iso_639_1'] == "pl": #  or  overview['name'] == "English":
                         _meta.update({'plot': overview['data']['overview']})
                         break
                     elif not 'plot' in _meta and not 'overview' in _meta and overview['name'] == "English":
@@ -619,7 +619,7 @@ class cTMDB:
                 if len(listAliases[titles]) > 0:
                     lialiases = listAliases[titles]
                     # aliases = [i['title'] for i in lialiases if i['iso_3166_1'] in ['DE', 'US', 'EN', 'AT', 'CN', origin_country]]
-                    aliases = [i['title'] for i in lialiases if i['iso_3166_1'] in ['DE', 'US', 'EN', 'AT', origin_country]]
+                    aliases = [i['title'] for i in lialiases if i['iso_3166_1'] in ['PL', 'US', 'EN', origin_country]]
                     _meta['aliases'] = aliases
 
             return _meta

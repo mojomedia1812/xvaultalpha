@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<addon id="plugin.video.xvaultalpha" version="2026.07.23.5" name="[B]xVAULT Alpha[/B]" provider-name="xVAULT">
+<addon id="plugin.video.xvaultalpha" version="2026.07.23.6" name="[B]xVAULT Alpha[/B]" provider-name="xVAULT">
     <requires>
         <import addon="xbmc.python" version="3.0.0" />
         <import addon="script.module.requests" />
@@ -20,7 +20,7 @@
     </extension>
     <extension point="xbmc.service" library="service.py" start="startup" />
     <extension point="xbmc.addon.metadata">
-        <summary lang="de_DE">Filme, Serien und LiveTV durchsuchen und wiedergeben</summary>
+        <summary lang="pl_PL">Przeglądaj i odtwarzaj filmy, seriale oraz LiveTV</summary>
         <summary lang="en_GB">Browse and play movies, TV shows and live TV</summary>
         <platform>all</platform>
         <assets>

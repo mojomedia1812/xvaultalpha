@@ -7,13 +7,13 @@ from resources.lib import linear_tv
 
 
 CATEGORIES = (
-    {"slug": "pl", "label": "Polnische TV"},
+    {"slug": "pl", "label": "Polska TV"},
 )
 
 
 def show_home():
     handle = _handle()
-    _add_folder(handle, "Senderliste aktualisieren", {"action": "liveTVLiteRefresh"}, False)
+    _add_folder(handle, "Odśwież listę kanałów", {"action": "liveTVLiteRefresh"}, False)
     for category in CATEGORIES:
         _add_folder(
             handle,
@@ -26,14 +26,14 @@ def show_home():
 
 def refresh():
     channels = _catalog(refresh=True)
-    control.infoDialog("LiveTV lite aktualisiert: %d Sender" % len(channels), icon="INFO", time=4000)
+    control.infoDialog("LiveTV lite odświeżone: %d kanałów" % len(channels), icon="INFO", time=4000)
     show_home()
 
 
 def show_category(category_slug):
     category = _category(category_slug)
     if not category:
-        control.infoDialog("Kategorie nicht gefunden", icon="WARNING", time=3500)
+        control.infoDialog("Nie znaleziono kategorii", icon="WARNING", time=3500)
         _end("LiveTV lite", cache=False)
         return
 
@@ -64,7 +64,7 @@ def _catalog(refresh=False):
 
 def _lite_channel(channel):
     current = dict(channel or {})
-    current["category"] = "Polnische TV"
+    current["category"] = "Polska TV"
     current["category_slug"] = "pl"
     current["source"] = "xvaultalpha"
     return current
@@ -83,7 +83,7 @@ def _art(channel):
 
 
 def _plot(channel):
-    return "%s\nQuelle: xVAULTalpha LiveTV\n%s" % (
+    return "%s\nŹródło: xVAULTalpha LiveTV\n%s" % (
         channel.get("category") or "LiveTV lite",
         channel.get("page_url") or channel.get("url") or "",
     )

@@ -38,7 +38,7 @@ def run(params):
     action = params.get('subaction')
 
     if action == "Defaults":
-        dialog.notification(name , 'Einstellungen wurden übernommen', NOTIFICATION_INFO, 500, sound=False)
+        dialog.notification(name , 'Ustawienia zostały zastosowane', NOTIFICATION_INFO, 500, sound=False)
         sourceList = getProviderModuleNames()
         for i in sourceList:
             source_setting = 'provider.' + i
@@ -46,24 +46,24 @@ def run(params):
             control.setSetting(source_setting, value)
 
     elif action == "toggleAll":
-        dialog.notification(name , 'Einstellungen wurden übernommen', NOTIFICATION_INFO, 500, sound=False)
+        dialog.notification(name , 'Ustawienia zostały zastosowane', NOTIFICATION_INFO, 500, sound=False)
         sourceList = getProviderModuleNames()
         for i in sourceList:
             source_setting = 'provider.' + i
             control.setSetting(source_setting, params['setting'])
 
-    elif action == "defaultsGerman":
+    elif action == "defaultsSources":
         sourceList = getProviderModuleNames()
         for i in sourceList:
             source_setting = 'provider.' + i
             value = control.getSettingDefault(source_setting)
             control.setSetting(source_setting, value)
 
-    elif action == "toggleGerman":
+    elif action == "toggleSources":
         sourceList = getProviderModuleNames()
         for i in sourceList:
             source_setting = 'provider.' + i
             control.setSetting(source_setting, params['setting'])
 
     elif action == "downloadInfo":
-        window('Hilfe zum Syntax für den Ordnerpfad', '', 'downloadinfo.txt')
+        window('Pomoc dotycząca składni ścieżki folderu', '', 'downloadinfo.txt')

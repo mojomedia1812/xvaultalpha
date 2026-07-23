@@ -321,7 +321,7 @@ def combined_items():
 def push_local(silent=False, client=None, require_login=True):
     if require_login and not storage.is_logged_in():
         if not silent:
-            control.infoDialog('Bitte zuerst anmelden.', icon='WARNING')
+            control.infoDialog('Najpierw się zaloguj.', icon='WARNING')
         return False
     try:
         client = client or Client()
@@ -340,7 +340,7 @@ def push_local(silent=False, client=None, require_login=True):
 def pull_remote(apply_bookmarks=True, silent=False, client=None, require_login=True):
     if require_login and not storage.is_logged_in():
         if not silent:
-            control.infoDialog('Bitte zuerst anmelden.', icon='WARNING')
+            control.infoDialog('Najpierw się zaloguj.', icon='WARNING')
         return False
     try:
         client = client or Client()

@@ -115,7 +115,7 @@ def check_and_push_if_changed(silent=True, client=None, require_enabled=True, fo
         storage.update_last_sync(iso_now())
         storage.set_status('Angemeldet als %s' % storage.email())
         if not silent:
-            control.infoDialog('Favoriten wurden gesichert.', icon='INFO')
+            control.infoDialog('Ulubione zostały zapisane.', icon='INFO')
         return True
     except ApiError as exc:
         if not silent:
@@ -125,7 +125,7 @@ def check_and_push_if_changed(silent=True, client=None, require_enabled=True, fo
 
 def restore_from_server(mode='ask', client=None, require_login=True):
     if require_login and not storage.is_logged_in():
-        control.infoDialog('Bitte zuerst anmelden.', icon='WARNING')
+        control.infoDialog('Najpierw się zaloguj.', icon='WARNING')
         return False
     try:
         data = (client or Client()).pull_favorites()
@@ -134,16 +134,16 @@ def restore_from_server(mode='ask', client=None, require_login=True):
         return False
     favorites = data.get('favorites') or {}
     if not favorites:
-        control.infoDialog('Keine Serverdaten gefunden.', icon='WARNING')
+        control.infoDialog('Nie znaleziono danych na serwerze.', icon='WARNING')
         return False
 
     if mode == 'ask':
-        choice = control.dialog.contextmenu(['Serverstand überschreibt lokalen Stand', 'Serverstand mit lokalem Stand zusammenführen'])
+        choice = control.dialog.contextmenu(['Stan z serwera nadpisuje stan lokalny', 'Połącz stan z serwera ze stanem lokalnym'])
         if choice < 0:
             return False
         mode = 'overwrite' if choice == 0 else 'merge'
 
-    if not control.yesnoDialog('Lokale Favoriten werden geändert.', 'Vorher wird automatisch eine Sicherung erstellt.', 'Fortfahren?', yeslabel='Ja', nolabel='Nein'):
+    if not control.yesnoDialog('Lokalne ulubione zostaną zmienione.', 'Najpierw zostanie automatycznie utworzona kopia zapasowa.', 'Kontynuować?', yeslabel='Tak', nolabel='Nie'):
         return False
 
     raw_xml = _payload_raw_xml(favorites)
@@ -155,7 +155,7 @@ def restore_from_server(mode='ask', client=None, require_login=True):
     write_favourites(raw_xml, backup=True)
     mark_synced(raw_xml)
     storage.update_last_sync(iso_now())
-    control.infoDialog('Favoriten wurden wiederhergestellt. Bitte Kodi ggf. neu starten.', icon='INFO', time=6000)
+    control.infoDialog('Ulubione zostały przywrócone. W razie potrzeby uruchom Kodi ponownie.', icon='INFO', time=6000)
     return True
 
 

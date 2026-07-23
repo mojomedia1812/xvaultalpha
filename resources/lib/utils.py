@@ -71,7 +71,7 @@ def isBlockedHoster(url, isResolve=True):
                 except: pass
                 return False, sDomain, sUrl, prioHoster
             else:
-                log_utils.log('In resolveUrl keine Domain für Url %s' % url, log_utils.LOGWARNING)
+                log_utils.log('Brak domeny w resolveUrl dla URL %s' % url, log_utils.LOGWARNING)
                 return True, sDomain, url, prioHoster
         except:
             return True, sDomain, url, prioHoster
@@ -82,9 +82,9 @@ def isBlockedHoster(url, isResolve=True):
             prioHoster = status[0].priority
             return False, sDomain, url, prioHoster
 
-    # elif checkResolver:   # Ãœberprüfung in resolveUrl
-    #     if resolver.relevant_resolvers(domain=sDomain) == []: # sDomain nicht in resolveUrl gefunden
-    #         log_utils.log('In resolveUrl keine Domain für Url %s' % url, log_utils.LOGWARNING)
+    # elif checkResolver:   # sprawdzanie w resolveUrl
+    #     if resolver.relevant_resolvers(domain=sDomain) == []: # sDomain nie znaleziono w resolveUrl
+    #         log_utils.log('Brak domeny w resolveUrl dla URL %s' % url, log_utils.LOGWARNING)
     #         return True, sDomain, prioHoster
     # return False, sDomain, prioHoster
 
@@ -275,7 +275,7 @@ def test_stream(stream_url):
 
     import ssl
     try:
-        #- streamurl mit ungültigen Zertifikat abweisen
+        #- odrzuć streamurl z nieprawidłowym certyfikatem
         ssl_context = ssl.create_default_context()
         #ssl_context.check_hostname = False
         #ssl_context.verify_mode = ssl.CERT_NONE
@@ -342,7 +342,7 @@ def normalize(title):
 #         return title
 
 
-## setzt Auswahl nach letzte als gesehen markierte Episode / Staffel
+## ustawia wybór po ostatnim odcinku / sezonie oznaczonym jako obejrzany
 def setPosition(pos, _name, content='movies'): # org.: episodes
     isdebug = True if getSetting('status.debug') == 'true' else False
     win = currentWindowId  # win = xbmcgui.Window(xbmcgui.getCurrentWindowId())
@@ -356,7 +356,7 @@ def setPosition(pos, _name, content='movies'): # org.: episodes
         sleep(0.1)
 
     if isdebug:
-        log_utils.log(_name + ' - Container.Content (1) - soll: %s ist: %s  count: %s' % (content, getInfoLabel("Container.Content"), count), log_utils.LOGINFO)
+        log_utils.log(_name + ' - Container.Content (1) - oczekiwane: %s aktualne: %s  count: %s' % (content, getInfoLabel("Container.Content"), count), log_utils.LOGINFO)
         log_utils.log(_name + ' - System.CurrentControlID - old: %s ' % getInfoLabel("System.CurrentControlID"), log_utils.LOGINFO)
         log_utils.log(_name + ' - pos: %s - check: %s' % (pos, int(getInfoLabel("Container().CurrentItem"))), log_utils.LOGINFO)
 
@@ -443,7 +443,7 @@ def getParams(_params):
             exec ("%s = '%s'" % (key, value))
 
 
-# Funktionen ab hier auch für xstream
+# Funkcje od tego miejsca także dla xstream
 def translatePath(*args):
     from sys import version_info
     if version_info.major == 2:
@@ -457,7 +457,7 @@ def download_url(url, dest, dp=None):
     # download_url(url, src, dp=[None / True / False / Dialog])
     if dp == None or dp == True:
         dp = progressDialog
-        dp.create("URL Downloader", " \n  Downloading  File:  [B]%s[/B]" % url.split('/')[-1])
+        dp.create("Pobieranie URL", " \n  Pobieranie pliku:  [B]%s[/B]" % url.split('/')[-1])
     elif dp == False:
         return urlretrieve(url, dest)
     try:
@@ -522,7 +522,7 @@ def get_zip_directory(path, folder):
         if result:
             return result
 
-## ist Müll !!
+## do usunięcia
 # def remove_dir(path):
 #     from xbmcvfs import rmdir, listdir, delete
 #     dirList, flsList = listdir(path)
@@ -530,7 +530,7 @@ def get_zip_directory(path, folder):
 #         delete(os.path.join(path, fl))
 #     for dr in dirList:
 #         remove_dir(os.path.join(path, dr))
-#     ## rmdir(path)  # gefährlich !!!
+#     ## rmdir(path)  # niebezpieczne !!!
 
 def remove_dir(folder):
     import os, shutil, stat

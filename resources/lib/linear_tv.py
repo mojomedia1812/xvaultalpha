@@ -75,24 +75,24 @@ _base_index = 0
 
 
 CATEGORY_ORDER = (
-    "Favoriten",
-    "Suche",
-    "Alle Sender",
-    "Oeffentlich-rechtlich",
-    "Private",
-    "Nachrichten",
+    "Ulubione",
+    "Szukaj",
+    "Wszystkie kanały",
+    "Publiczne",
+    "Prywatne",
+    "Informacyjne",
     "Sport",
-    "Filme und Serien",
-    "Doku und Wissen",
-    "Kinder",
-    "Musik",
+    "Filmy i seriale",
+    "Dokumentalne i wiedza",
+    "Dzieci",
+    "Muzyka",
     "Regional",
-    "Events und Backup",
-    "Sonstige",
+    "Wydarzenia i backup",
+    "Pozostałe",
 )
 
 CATEGORY_RULES = (
-    ("Oeffentlich-rechtlich", (
+    ("Publiczne", (
         "TVP", "TELEWIZJA POLSKA", "POLSAT NEWS POLITYKA", "POLSAT NEWS 2",
         "POLSAT NEWS", "POLSAT 2", "TV TRWAM",
     )),
@@ -103,7 +103,7 @@ CATEGORY_RULES = (
         "BIALYSTOK", "BIAŁYSTOK", "RZESZOW", "RZESZÓW", "KIELCE",
         "OPOLE", "OLSZTYN", "BYDGOSZCZ", "GORZOW", "GORZÓW",
     )),
-    ("Nachrichten", (
+    ("Informacyjne", (
         "NEWS", "INFO", "INFORMACJE", "BIZNES", "REPUBLIKA", "WYDARZENIA",
         "POLSAT NEWS", "TVP INFO", "TVN24", "TVN 24",
     )),
@@ -112,30 +112,30 @@ CATEGORY_RULES = (
         "FIGHT", "MOTORSPORT", "MOTOGP", "FORMULA", "FORMEL", "FOOTBALL",
         "PILKA", "PIŁKA", "TENNIS", "GOLF",
     )),
-    ("Kinder", (
+    ("Dzieci", (
         "DZIECI", "KIDS", "JUNIOR", "MINI MINI", "MINIMINI", "NICK",
         "NICKELODEON", "DISNEY", "CARTOON", "BOOMERANG", "BABY TV",
         "CBEEBIES", "TELETOON",
     )),
-    ("Doku und Wissen", (
+    ("Dokumentalne i wiedza", (
         "DOKU", "DOKUMENT", "DISCOVERY", "NATIONAL", "NAT GEO", "PLANETE",
         "PLANET", "HISTORY", "HISTORIA", "ANIMAL", "NAUKA", "WIEDZA",
     )),
-    ("Musik", (
+    ("Muzyka", (
         "4FUN", "ESKA", "MTV", "MUSIC", "MUZYKA", "VH1", "CLUB", "HITS",
         "RADIO", "JUKEBOX", "DANCE", "GOLD",
     )),
-    ("Filme und Serien", (
+    ("Filmy i seriale", (
         "KINO", "KINO+", "ALE KINO", "CANAL FILM", "CANAL+ FILM", "FILM",
         "MOVIE", "SERIALE", "SERIE", "SERIES", "WARNER", "UNIVERSAL",
         "13 ULICA", "13TH STREET", "SYFY", "AXN", "TNT", "FOX", "CINEMAX",
         "HBO", "AMC", "CBS EUROPA", "EPIC DRAMA",
     )),
-    ("Private", (
+    ("Prywatne", (
         "POLSAT", "TVN", "TV4", "TV 4", "TV6", "TV 6", "TTV", "PULS",
         "TV PULS", "ANTENA", "STOPKLATKA", "METRO", "ZOOM TV", "WP",
     )),
-    ("Events und Backup", (
+    ("Wydarzenia i backup", (
         "BACKUP", "EVENT", "RAW", "LIVE DURING EVENTS", "SELECT", "OPTION",
     )),
 )
@@ -179,7 +179,7 @@ _EPG_ALIAS_REPLACEMENTS = (
 
 def show_home():
     if not _enabled():
-        control.infoDialog("LiveTV ist in den Einstellungen deaktiviert.", icon="INFO")
+        control.infoDialog("LiveTV jest wyłączone w ustawieniach.", icon="INFO")
         _end("LiveTV", cache=False)
         return
 
@@ -189,11 +189,11 @@ def show_home():
         return
 
     handle = _handle()
-    _add_folder(handle, "Senderliste aktualisieren", {"action": "liveTVRefresh"}, False)
-    _add_folder(handle, "Senderliste auf Funktion pruefen", {"action": "liveTVHealthCheck"}, True, "Prueft alle aktuell sichtbaren Sender und blendet nicht erreichbare Sender bis zum naechsten xVAULT-Hauptstart aus.")
-    _add_folder(handle, "Favoriten", {"action": "liveTVFavorites"}, True, "Favoriten")
-    _add_folder(handle, "Suche", {"action": "liveTVSearch"}, True, "Suche")
-    _add_folder(handle, "Alle Sender", {"action": "liveTVCategory", "category": "Alle Sender"}, True, "Alle Sender")
+    _add_folder(handle, "Odśwież listę kanałów", {"action": "liveTVRefresh"}, False)
+    _add_folder(handle, "Sprawdź działanie listy kanałów", {"action": "liveTVHealthCheck"}, True, "Sprawdza wszystkie aktualnie widoczne kanały i ukrywa niedostępne do następnego głównego startu xVAULT.")
+    _add_folder(handle, "Ulubione", {"action": "liveTVFavorites"}, True, "Ulubione")
+    _add_folder(handle, "Szukaj", {"action": "liveTVSearch"}, True, "Szukaj")
+    _add_folder(handle, "Wszystkie kanały", {"action": "liveTVCategory", "category": "Wszystkie kanały"}, True, "Wszystkie kanały")
 
     grouped = _group_channels(channels)
     for category in _sorted_categories(grouped):
@@ -206,26 +206,26 @@ def show_home():
 def refresh():
     clear_session_health()
     channels = _catalog(force=True)
-    control.infoDialog("LiveTV-Senderliste aktualisiert: %d Sender" % len(channels), icon="INFO", time=4000)
+    control.infoDialog("Lista kanałów LiveTV odświeżona: %d kanałów" % len(channels), icon="INFO", time=4000)
     xbmc.executebuiltin("Container.Refresh")
     _end("LiveTV", cache=False)
 
 
 def check_channel_health():
     if requests is None:
-        control.infoDialog("Streampruefung nicht moeglich: requests fehlt.", icon="ERROR", time=5000)
+        control.infoDialog("Sprawdzenie streamów niemożliwe: brakuje requests.", icon="ERROR", time=5000)
         _end("LiveTV", cache=False)
         return
 
     if not _confirm_health_check():
-        control.infoDialog("LiveTV-Senderpruefung abgebrochen.", icon="INFO", time=3000)
+        control.infoDialog("Sprawdzanie kanałów LiveTV przerwane.", icon="INFO", time=3000)
         _end("LiveTV", cache=False)
         return
 
     clear_session_health()
     channels = _catalog()
     if not channels:
-        control.infoDialog("Keine LiveTV-Sender zum Pruefen gefunden.", icon="WARNING", time=4000)
+        control.infoDialog("Nie znaleziono kanałów LiveTV do sprawdzenia.", icon="WARNING", time=4000)
         _end("LiveTV", cache=False)
         return
 
@@ -235,7 +235,7 @@ def check_channel_health():
     checked = 0
     cancelled = False
     progress = control.progressDialog
-    progress.create(control.addonName, "LiveTV-Sender werden geprueft")
+    progress.create(control.addonName, "Sprawdzanie kanałów LiveTV")
     progress.update(0, "Vorbereitung")
 
     try:
@@ -256,7 +256,7 @@ def check_channel_health():
                 percent = min(99, int(checked * 100 / total))
                 progress.update(
                     percent,
-                    "Geprueft %d/%d: %s" % (checked, total, _truncate(name, 60)),
+                    "Sprawdzono %d/%d: %s" % (checked, total, _truncate(name, 60)),
                 )
                 try:
                     result = future.result()
@@ -267,7 +267,7 @@ def check_channel_health():
                 else:
                     blocked[str(channel.get("id") or channel.get("url") or name)] = {
                         "name": name,
-                        "reason": result.get("reason") or "nicht erreichbar",
+                        "reason": result.get("reason") or "niedostępny",
                         "checked_at": int(time.time()),
                     }
         finally:
@@ -288,21 +288,21 @@ def check_channel_health():
 
     hidden = len(blocked)
     if cancelled:
-        message = "Pruefung abgebrochen: %d geprueft, %d funktionieren, %d temporaer gesperrt." % (
+        message = "Sprawdzanie przerwane: %d sprawdzono, %d działa, %d tymczasowo zablokowano." % (
             checked,
             reachable,
             hidden,
         )
         icon = "WARNING"
     else:
-        message = "Pruefung abgeschlossen: %d geprueft, %d funktionieren, %d temporaer gesperrt." % (
+        message = "Sprawdzanie zakończone: %d sprawdzono, %d działa, %d tymczasowo zablokowano." % (
             checked,
             reachable,
             hidden,
         )
         icon = "INFO"
     try:
-        control.dialog.ok("LiveTV-Senderpruefung", message)
+        control.dialog.ok("Sprawdzanie kanałów LiveTV", message)
     except Exception:
         control.infoDialog(message, icon=icon, time=6000)
     xbmc.executebuiltin("Container.Refresh")
@@ -319,11 +319,11 @@ def clear_session_health():
 
 def _confirm_health_check():
     message = (
-        "Die Pruefung der kompletten LiveTV-Senderliste kann je nach System bis zu 30 Minuten dauern. "
-        "Fuer schwache Systeme wird der Vorgang nicht empfohlen. Jetzt trotzdem starten?"
+        "Sprawdzenie pełnej listy kanałów LiveTV może potrwać do 30 minut, zależnie od systemu. "
+        "Na słabszych urządzeniach ten proces nie jest zalecany. Uruchomić mimo to?"
     )
     try:
-        return bool(control.dialog.yesno("LiveTV-Senderliste pruefen", message))
+        return bool(control.dialog.yesno("Sprawdź listę kanałów LiveTV", message))
     except Exception as exc:
         log_utils.log("LiveTV health confirmation failed: %s" % str(exc), log_utils.LOGWARNING)
         return True
@@ -331,22 +331,22 @@ def _confirm_health_check():
 
 def show_category(category):
     channels = _catalog()
-    if category and category != "Alle Sender":
+    if category and category != "Wszystkie kanały":
         channels = [channel for channel in channels if channel.get("category") == category]
     _show_channels(channels, category or "LiveTV")
 
 
 def show_search(query=None):
     if query is None:
-        keyboard = control.keyboard("", "LiveTV suchen")
+        keyboard = control.keyboard("", "Szukaj LiveTV")
         keyboard.doModal()
         if not keyboard.isConfirmed():
-            _end("Suche", cache=False)
+            _end("Szukaj", cache=False)
             return
         query = keyboard.getText().strip()
 
     if not query:
-        _end("Suche", cache=False)
+        _end("Szukaj", cache=False)
         return
 
     words = [_normalize(part) for part in query.split() if _normalize(part)]
@@ -355,30 +355,30 @@ def show_search(query=None):
         haystack = _normalize("%s %s" % (channel.get("name", ""), channel.get("category", "")))
         if all(word in haystack for word in words):
             channels.append(channel)
-    _show_channels(channels, "Suche: %s" % query)
+    _show_channels(channels, "Szukaj: %s" % query)
 
 
 def show_favorites():
     favorites = _load_favorites()
-    _show_channels(favorites, "Favoriten", favorites=True)
+    _show_channels(favorites, "Ulubione", favorites=True)
 
 
 def add_favorite(channel_id):
     channel = _channel_by_id(_catalog(), channel_id)
     if not channel:
-        control.infoDialog("Sender nicht gefunden", icon="WARNING")
+        control.infoDialog("Nie znaleziono kanału", icon="WARNING")
         return
     favorites = _load_favorites()
     if not _channel_by_id(favorites, channel_id):
         favorites.append(_favorite_record(channel))
         _save_favorites(favorites)
-    control.infoDialog("Favorit gespeichert", icon="INFO")
+    control.infoDialog("Zapisano ulubiony kanał", icon="INFO")
 
 
 def remove_favorite(channel_id):
     favorites = [item for item in _load_favorites() if item.get("id") != channel_id]
     _save_favorites(favorites)
-    control.infoDialog("Favorit entfernt", icon="INFO")
+    control.infoDialog("Usunięto ulubiony kanał", icon="INFO")
     xbmc.executebuiltin("Container.Refresh")
 
 
@@ -386,7 +386,7 @@ def play(channel_id):
     catalog = _catalog()
     channel = _channel_by_id(catalog, channel_id) or _channel_by_id(_load_favorites(), channel_id)
     if not channel:
-        control.infoDialog("Sender nicht gefunden", icon="WARNING", time=4000)
+        control.infoDialog("Nie znaleziono kanału", icon="WARNING", time=4000)
         control.resolveUrl(_handle(), False, control.item("LiveTV", offscreen=True))
         return
 
@@ -395,12 +395,12 @@ def play(channel_id):
 
     stream_url, playback_channel = _select_live_stream(channel, catalog)
     if not stream_url:
-        control.infoDialog("Stream konnte nicht aufgeloest werden", icon="WARNING", time=4000)
+        control.infoDialog("Nie udało się rozwiązać streamu", icon="WARNING", time=4000)
         control.resolveUrl(_handle(), False, control.item(channel.get("name") or "LiveTV", offscreen=True))
         return
 
     if playback_channel.get("id") != channel.get("id"):
-        control.infoDialog("Nutze Ersatzstream: %s" % (playback_channel.get("name") or "LiveTV"), icon="INFO", time=3500)
+        control.infoDialog("Używam strumienia zapasowego: %s" % (playback_channel.get("name") or "LiveTV"), icon="INFO", time=3500)
 
     item = control.item(playback_channel.get("name") or "LiveTV", offscreen=True)
     item.setProperty("IsPlayable", "true")
@@ -420,7 +420,7 @@ def _show_channels(channels, title, favorites=False):
     handle = _handle()
     epg = _epg_data(refresh=True) if _epg_enabled() else {}
     channels = _enrich_channel_logos(channels, epg)
-    _add_folder(handle, "Senderliste auf Funktion pruefen", {"action": "liveTVHealthCheck"}, True, "Prueft alle aktuell sichtbaren Sender und blendet nicht erreichbare Sender bis zum naechsten xVAULT-Hauptstart aus.")
+    _add_folder(handle, "Sprawdź działanie listy kanałów", {"action": "liveTVHealthCheck"}, True, "Sprawdza wszystkie aktualnie widoczne kanały i ukrywa niedostępne do następnego głównego startu xVAULT.")
     for channel in sorted(channels, key=lambda item: _sort_key(item.get("name"))):
         programmes = _programme_pair(channel, epg=epg)
         plot = _plot(channel, programmes, include_empty_epg=_epg_enabled())
@@ -461,10 +461,10 @@ def _catalog(force=False):
     cached = _read_json(CATALOG_FILE, {})
     fallback = _polish_channels(_apply_current_categories(cached.get("channels", [])))
     if fallback:
-        control.infoDialog("LiveTV nutzt die gespeicherte Senderliste.", icon="WARNING", time=4000)
+        control.infoDialog("LiveTV używa zapisanej listy kanałów.", icon="WARNING", time=4000)
         return _visible_channels(fallback)
 
-    control.infoDialog("LiveTV-Senderliste konnte nicht geladen werden.", icon="ERROR", time=5000)
+    control.infoDialog("Nie udało się wczytać listy kanałów LiveTV.", icon="ERROR", time=5000)
     return []
 
 
@@ -474,7 +474,7 @@ def _download_catalog():
         return []
 
     progress = control.progressDialog
-    progress.create(control.addonName, "LiveTV-Senderliste wird geladen")
+    progress.create(control.addonName, "Wczytywanie listy kanałów LiveTV")
     progress.update(0)
     try:
         merged = {}
@@ -491,7 +491,7 @@ def _download_catalog():
                     merged[channel["id"]] = channel
                 done_steps += 1
                 percent = min(99, int(done_steps * 100 / total_steps))
-                progress.update(percent, "%d Sender gefunden" % len(merged))
+                progress.update(percent, "Znaleziono %d kanałów" % len(merged))
                 cursor = data.get("nextCursor")
                 if not cursor:
                     break
@@ -605,7 +605,7 @@ def _check_channel_reachable(channel):
     if not stream_url:
         stream_url = _resolve(channel.get("url"), force_signature=True)
     if not stream_url:
-        return {"ok": False, "reason": "Resolve fehlgeschlagen"}
+        return {"ok": False, "reason": "Rozwiązywanie nie powiodło się"}
     return _health_stream_reachable(stream_url)
 
 
@@ -728,13 +728,13 @@ def _configure_stream(item, stream_url):
     if engine == PLAYBACK_ENGINE_ADAPTIVE:
         if _configure_adaptive_stream(item):
             return
-        control.infoDialog("InputStream Adaptive ist nicht verfuegbar. Kodi intern wird genutzt.", icon="WARNING", time=4000)
+        control.infoDialog("InputStream Adaptive jest niedostępny. Używany jest wewnętrzny odtwarzacz Kodi.", icon="WARNING", time=4000)
         return
 
     if engine == PLAYBACK_ENGINE_FFMPEG_DIRECT:
         if _configure_ffmpeg_direct_stream(item):
             return
-        control.infoDialog("FFmpeg Direct ist nicht verfuegbar. Kodi intern wird genutzt.", icon="WARNING", time=4000)
+        control.infoDialog("FFmpeg Direct jest niedostępny. Używany jest wewnętrzny odtwarzacz Kodi.", icon="WARNING", time=4000)
         return
 
     if engine == PLAYBACK_ENGINE_AUTO and _configure_ffmpeg_direct_stream(item):
@@ -1087,12 +1087,12 @@ def _get_kodi_setting(setting):
 def _group_channels(channels):
     grouped = {}
     for channel in channels:
-        grouped.setdefault(channel.get("category") or "Sonstige", []).append(channel)
+        grouped.setdefault(channel.get("category") or "Pozostałe", []).append(channel)
     return grouped
 
 
 def _sorted_categories(grouped):
-    known = [category for category in CATEGORY_ORDER if category in grouped and category not in ("Favoriten", "Suche", "Alle Sender")]
+    known = [category for category in CATEGORY_ORDER if category in grouped and category not in ("Ulubione", "Szukaj", "Wszystkie kanały")]
     unknown = sorted([category for category in grouped if category not in known], key=_sort_key)
     return known + unknown
 
@@ -1104,7 +1104,7 @@ def _category_for(name):
     for category, patterns in CATEGORY_RULES:
         if any(pattern in upper for pattern in patterns):
             return category
-    return "Sonstige"
+    return "Pozostałe"
 
 
 def _apply_current_categories(channels):
@@ -1230,18 +1230,18 @@ def _visible_channels(channels):
 
 
 def _context_menu(channel, favorite_context=False):
-    check_entry = ("Senderliste auf Funktion pruefen", "RunPlugin(%s)" % _url({"action": "liveTVHealthCheck"}))
+    check_entry = ("Sprawdź działanie listy kanałów", "RunPlugin(%s)" % _url({"action": "liveTVHealthCheck"}))
     if favorite_context:
         return [
-            ("Aus Favoriten entfernen", "RunPlugin(%s)" % _url({"action": "liveTVFavoriteRemove", "id": channel.get("id")})),
+            ("Usuń z ulubionych", "RunPlugin(%s)" % _url({"action": "liveTVFavoriteRemove", "id": channel.get("id")})),
             check_entry,
         ]
     favorites = _load_favorites()
     if _channel_by_id(favorites, channel.get("id")):
-        label = "Aus Favoriten entfernen"
+        label = "Usuń z ulubionych"
         action = "liveTVFavoriteRemove"
     else:
-        label = "Zu Favoriten hinzufuegen"
+        label = "Dodaj do ulubionych"
         action = "liveTVFavoriteAdd"
     return [
         (label, "RunPlugin(%s)" % _url({"action": action, "id": channel.get("id")})),
@@ -1286,16 +1286,16 @@ def _plot(channel, programmes=None, include_empty_epg=False):
     lines = []
     current, next_programme = _normalise_programme_pair(programmes)
     if current:
-        lines.append("Aktuell: %s %s" % (_programme_time_range(current), _programme_title(current)))
+        lines.append("Teraz: %s %s" % (_programme_time_range(current), _programme_title(current)))
         description = current.get("desc") or ""
         if description:
             lines.append(description)
     elif include_empty_epg:
-        lines.append("Aktuell: Keine EPG-Daten")
+        lines.append("Teraz: brak danych EPG")
     if next_programme:
-        lines.append("Gleich: %s %s" % (_programme_time_range(next_programme), _programme_title(next_programme)))
+        lines.append("Następnie: %s %s" % (_programme_time_range(next_programme), _programme_title(next_programme)))
     elif include_empty_epg:
-        lines.append("Gleich: Keine EPG-Daten")
+        lines.append("Następnie: brak danych EPG")
     lines.append(channel.get("category") or "LiveTV")
     lines.append(channel.get("group") or CATALOG_COUNTRY)
     return "[CR]".join([line for line in lines if line])
@@ -1425,7 +1425,7 @@ def _epg_data(refresh=False):
         return epg
 
     if _epg_cache_usable(cached, strict=False):
-        control.infoDialog("LiveTV nutzt gespeicherte EPG-Daten.", icon="WARNING", time=3500)
+        control.infoDialog("LiveTV używa zapisanych danych EPG.", icon="WARNING", time=3500)
         return cached
     return {}
 
@@ -1464,12 +1464,12 @@ def _download_epg():
         return {}
 
     progress = control.progressDialog
-    progress.create(control.addonName, "LiveTV-EPG wird geladen")
+    progress.create(control.addonName, "Wczytywanie EPG LiveTV")
     progress.update(5)
     try:
         response = requests.get(EPG_URL, headers=_epg_headers(), timeout=45)
         response.raise_for_status()
-        progress.update(30, "LiveTV-EPG wird ausgewertet")
+        progress.update(30, "Analizowanie EPG LiveTV")
         return _parse_epg(response.content)
     except Exception as exc:
         log_utils.log("LiveTV EPG failed: %s" % str(exc), log_utils.LOGWARNING)
@@ -1739,12 +1739,12 @@ def _download_logo_data():
         return {}
 
     progress = control.progressDialog
-    progress.create(control.addonName, "LiveTV-Senderlogos werden geladen")
+    progress.create(control.addonName, "Wczytywanie logo kanałów LiveTV")
     progress.update(10)
     try:
         response = requests.get(LOGOS_URL, headers=_epg_headers(), timeout=45)
         response.raise_for_status()
-        progress.update(60, "LiveTV-Senderlogos werden zugeordnet")
+        progress.update(60, "Dopasowywanie logo kanałów LiveTV")
         return _parse_logo_data(response.json())
     except Exception as exc:
         log_utils.log("LiveTV logo catalog failed: %s" % str(exc), log_utils.LOGWARNING)
@@ -1877,7 +1877,7 @@ def _favorite_record(channel):
         "url": channel.get("url"),
         "logo": channel.get("logo") or "",
         "group": channel.get("group") or CATALOG_COUNTRY,
-        "category": channel.get("category") or "Sonstige",
+        "category": channel.get("category") or "Pozostałe",
     }
 
 

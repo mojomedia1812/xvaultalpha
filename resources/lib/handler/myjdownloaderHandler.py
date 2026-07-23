@@ -9,7 +9,7 @@ class cMyJDownloaderHandler:
 
     def sendToMyJDownloader(self, sUrl, sMovieTitle, sSourceUrl=None):
         if self.__checkConfig() == False:
-            control.infoDialog('Einstellungen nicht konfiguriert', heading='My.JDownloader', icon='ERROR')
+            control.infoDialog('Ustawienia nie są skonfigurowane', heading='My.JDownloader', icon='ERROR')
             return False
 
         log('xVAULT -> [myjdownloaderHandler]: connecting to MyJD...', LOGNOTICE)
@@ -18,7 +18,7 @@ class cMyJDownloaderHandler:
             jd.connect(self.__getUser(), self.__getPass())
         except Exception as e:
             log('xVAULT -> [myjdownloaderHandler]: connect failed: %s' % str(e), LOGNOTICE)
-            control.infoDialog('Verbindung fehlgeschlagen', heading='My.JDownloader', icon='ERROR')
+            control.infoDialog('Połączenie nie powiodło się', heading='My.JDownloader', icon='ERROR')
             return False
 
         log('xVAULT -> [myjdownloaderHandler]: connected, getting device "%s"' % self.__getDevice(), LOGNOTICE)
@@ -26,7 +26,7 @@ class cMyJDownloaderHandler:
             device = jd.get_device(self.__getDevice())
         except Exception as e:
             log('xVAULT -> [myjdownloaderHandler]: device not found: %s' % str(e), LOGNOTICE)
-            control.infoDialog('Geraet nicht gefunden: ' + self.__getDevice(), heading='My.JDownloader', icon='ERROR')
+            control.infoDialog('Nie znaleziono urządzenia: ' + self.__getDevice(), heading='My.JDownloader', icon='ERROR')
             return False
 
         log('xVAULT -> [myjdownloaderHandler]: sending link: %s' % sUrl, LOGNOTICE)
@@ -38,11 +38,11 @@ class cMyJDownloaderHandler:
                 params["sourceUrl"] = sSourceUrl
             response = device.linkgrabber.add_links([params])
             log('xVAULT -> [myjdownloaderHandler]: add_links response: %s' % str(response), LOGNOTICE)
-            control.infoDialog('Link gesendet', heading='My.JDownloader', icon='INFO')
+            control.infoDialog('Link wysłany', heading='My.JDownloader', icon='INFO')
             return True
         except Exception as e:
             log('xVAULT -> [myjdownloaderHandler]: send failed: %s' % str(e), LOGNOTICE)
-            control.infoDialog('Fehler beim Senden: ' + str(e), heading='My.JDownloader', icon='ERROR')
+            control.infoDialog('Błąd wysyłania: ' + str(e), heading='My.JDownloader', icon='ERROR')
         return False
 
     def __checkConfig(self):

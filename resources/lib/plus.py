@@ -24,7 +24,7 @@ def activate():
     try:
         data = _unlock(code)
         if not data.get('success'):
-            control.infoDialog('Aktivierung nicht moeglich.', icon='WARNING', time=5000)
+            control.infoDialog('Aktywacja niemożliwa.', icon='WARNING', time=5000)
             return
 
         from resources.lib import updater as updater_module
@@ -41,7 +41,7 @@ def activate():
             log_utils.LOGINFO
         )
         log_utils.log('Update install start: addon=%s target=%s' % (updater_module.ALPHA_ADDON_ID, latest_version), log_utils.LOGINFO)
-        control.infoDialog('Aktivierung erfolgreich. Version %s wird installiert.' % latest_version, icon='INFO', time=5000)
+        control.infoDialog('Aktywacja zakończona powodzeniem. Instalowana jest wersja %s.' % latest_version, icon='INFO', time=5000)
         if not updater_module.install_update(
             latest_version,
             release.get('download_url'),
@@ -52,7 +52,7 @@ def activate():
     except Exception as exc:
         log_utils.log('Plus activation failed: %s' % str(exc), log_utils.LOGWARNING)
         control.setSetting(SETTING_ENABLED, 'false')
-        control.infoDialog('Aktivierung fehlgeschlagen.', icon='ERROR', time=5000)
+        control.infoDialog('Aktywacja nie powiodła się.', icon='ERROR', time=5000)
 
 
 def deactivate():
@@ -77,17 +77,17 @@ def deactivate():
     except Exception as exc:
         log_utils.log('Plus deactivation failed: %s' % str(exc), log_utils.LOGWARNING)
         control.setSetting(SETTING_ENABLED, 'true')
-        control.infoDialog('Plus-Deaktivierung fehlgeschlagen.', icon='ERROR', time=5000)
+        control.infoDialog('Dezaktywacja Plus nie powiodła się.', icon='ERROR', time=5000)
 
 
 def _confirm_deactivation():
     return control.yesnoDialog(
-        'Plus deaktivieren und zu xVAULT wechseln?',
-        'Die aktuelle Standard-Version wird heruntergeladen.',
-        'xVAULT danach bitte erneut oeffnen.',
+        'Dezaktywować Plus i przełączyć na xVAULT?',
+        'Zostanie pobrana aktualna wersja standardowa.',
+        'Następnie otwórz xVAULT ponownie.',
         heading=control.addonName,
-        nolabel='Abbrechen',
-        yeslabel='Deaktivieren'
+        nolabel='Anuluj',
+        yeslabel='Dezaktywuj'
     )
 
 
@@ -109,7 +109,7 @@ def _password_input():
 
 def _unlock(code):
     if requests is None:
-        raise RuntimeError('requests module is not available')
+        raise RuntimeError('Moduł requests jest niedostępny')
     payload = {
         'code': str(code or ''),
         'client_id': _client_id(),

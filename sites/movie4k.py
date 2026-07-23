@@ -79,17 +79,17 @@ class source:
     def _language_queries(self):
         setting = getSetting('hosts.language') or '0'
         if setting == '1':
-            return [('2', 'de', 'Deutsch')]
+            return [('2', 'de', 'Niemiecki')]
         if setting == '2':
-            return [('3', 'en', 'Englisch')]
-        return [('2', 'de', 'Deutsch'), ('3', 'en', 'Englisch')]
+            return [('3', 'en', 'Angielski')]
+        return [('2', 'de', 'Niemiecki'), ('3', 'en', 'Angielski')]
 
     def _language_from_item(self, item, fallback_code, fallback_label):
         value = str(item.get('lang', '')).strip()
         if value == '2':
-            return 'de', 'Deutsch'
+            return 'de', 'Niemiecki'
         if value == '3':
-            return 'en', 'Englisch'
+            return 'en', 'Angielski'
         return fallback_code, fallback_label
 
     def _matches_result(self, item, clean_titles, year, season):

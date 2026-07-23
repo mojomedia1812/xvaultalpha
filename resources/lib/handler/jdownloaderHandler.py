@@ -8,16 +8,16 @@ from urllib.request import Request, urlopen
 class cJDownloaderHandler:
     def sendToJDownloader(self, sUrl):
         if self.__checkConfig() == False:
-            control.infoDialog('Einstellungen nicht konfiguriert', heading='JDownloader', icon='ERROR')
+            control.infoDialog('Ustawienia nie są skonfigurowane', heading='JDownloader', icon='ERROR')
             return False
 
         if self.__checkConnection() == False:
-            control.infoDialog('Verbindung fehlgeschlagen', heading='JDownloader', icon='ERROR')
+            control.infoDialog('Połączenie nie powiodło się', heading='JDownloader', icon='ERROR')
             return False
 
         bDownload = self.__download(sUrl)
         if bDownload == True:
-            control.infoDialog('Link gesendet', heading='JDownloader', icon='INFO')
+            control.infoDialog('Link wysłany', heading='JDownloader', icon='INFO')
 
     def __checkConfig(self):
         log('xVAULT -> [jdownloaderHandler]: check JD Addon settings', LOGNOTICE)

@@ -13,56 +13,56 @@ addonFanart = control.addonFanart()
 
 class navigator:
 	def root(self):
-		self.addDirectoryItem("Suche Filme", 'moviesSearch', '01_suche_filme.png', 'DefaultAddonsSearch.png')
-		self.addDirectoryItem("Suche TV-Serien", 'tvshowsSearch', '02_suche_tv_serien.png', 'DefaultAddonsSearch.png')
-		self.addDirectoryItem("Suche nach Person / Darsteller", 'personSearch', '03_darsteller_suche_nach_person.png', 'DefaultAddonsSearch.png')
-		self.addDirectoryItem("Filme", 'movieNavigator', '04_filme.png', 'DefaultMovies.png')
-		self.addDirectoryItem("TV-Serien", 'tvNavigator', '05_tv_serien.png', 'DefaultTVShows.png')
+		self.addDirectoryItem("Szukaj filmów", 'moviesSearch', '01_suche_filme.png', 'DefaultAddonsSearch.png')
+		self.addDirectoryItem("Szukaj seriali", 'tvshowsSearch', '02_suche_tv_serien.png', 'DefaultAddonsSearch.png')
+		self.addDirectoryItem("Szukaj osoby / aktora", 'personSearch', '03_darsteller_suche_nach_person.png', 'DefaultAddonsSearch.png')
+		self.addDirectoryItem("Filmy", 'movieNavigator', '04_filme.png', 'DefaultMovies.png')
+		self.addDirectoryItem("Seriale", 'tvNavigator', '05_tv_serien.png', 'DefaultTVShows.png')
 		self.addDirectoryItem("LIVE-TV", 'liveTVNavigator', 'DefaultTVShows.png', 'DefaultTVShows.png')
 		self.addDirectoryItem("LiveTV lite", 'liveTVLiteNavigator', 'DefaultTVShows.png', 'DefaultTVShows.png')
-		self.addDirectoryItem("Stream-URL abspielen", 'playURL', '07_stream_url_abspielen.png', 'DefaultAddonWebSkin.png', isFolder=False)
-		self.addDirectoryItem("Werkzeuge", 'toolNavigator', '06_werkzeuge.png', 'DefaultAddonProgram.png')
+		self.addDirectoryItem("Odtwórz adres URL streamu", 'playURL', '07_stream_url_abspielen.png', 'DefaultAddonWebSkin.png', isFolder=False)
+		self.addDirectoryItem("Narzędzia", 'toolNavigator', '06_werkzeuge.png', 'DefaultAddonProgram.png')
 		self._endDirectory(content='', cache=False)
 
 	def movies(self):
-		self.addDirectoryItem("[B]Filme[/B] - Neu", 'listings&media_type=movie&url=kino', '04_01_filme_neu.png', 'DefaultRecentlyAddedMovies.png')
-		self.addDirectoryItem("[B]Filme[/B] - Jahr", 'movieYears', '04_02_filme_jahr.png', 'DefaultMovies.png')
-		self.addDirectoryItem("[B]Filme[/B] - Genres", 'movieGenres', '04_03_filme_genres.png', 'DefaultMovies.png')
-		self.addDirectoryItem("[B]Filme[/B] - Am populärsten", 'listings&media_type=movie&url=production_status=released%26sort_by=popularity.desc', '04_04_filme_am_populaersten.png', 'DefaultMovies.png')
-		self.addDirectoryItem("[B]Filme[/B] - Am besten bewertet", 'listings&media_type=movie&url=production_status=released%26sort_by=vote_average.desc', '04_05_filme_am_besten_bewertet.png', 'DefaultMovies.png')
-		self.addDirectoryItem("[B]Filme[/B] - Meist bewertet", 'listings&media_type=movie&url=production_status=released%26sort_by=vote_count.desc', '04_06_filme_meist_bewertet.png', 'DefaultMovies.png')
-		self.addDirectoryItem("[B]Filme[/B] - Bestes Einspielergebnis", 'listings&media_type=movie&url=production_status=released%26sort_by=revenue.desc', '04_07_filme_bestes_einspielergebnis.png', 'DefaultMovies.png')
+		self.addDirectoryItem("[B]Filmy[/B] - Nowe", 'listings&media_type=movie&url=kino', '04_01_filme_neu.png', 'DefaultRecentlyAddedMovies.png')
+		self.addDirectoryItem("[B]Filmy[/B] - Rok", 'movieYears', '04_02_filme_jahr.png', 'DefaultMovies.png')
+		self.addDirectoryItem("[B]Filmy[/B] - Gatunki", 'movieGenres', '04_03_filme_genres.png', 'DefaultMovies.png')
+		self.addDirectoryItem("[B]Filmy[/B] - Najpopularniejsze", 'listings&media_type=movie&url=production_status=released%26sort_by=popularity.desc', '04_04_filme_am_populaersten.png', 'DefaultMovies.png')
+		self.addDirectoryItem("[B]Filmy[/B] - Najwyżej oceniane", 'listings&media_type=movie&url=production_status=released%26sort_by=vote_average.desc', '04_05_filme_am_besten_bewertet.png', 'DefaultMovies.png')
+		self.addDirectoryItem("[B]Filmy[/B] - Najczęściej oceniane", 'listings&media_type=movie&url=production_status=released%26sort_by=vote_count.desc', '04_06_filme_meist_bewertet.png', 'DefaultMovies.png')
+		self.addDirectoryItem("[B]Filmy[/B] - Największe przychody", 'listings&media_type=movie&url=production_status=released%26sort_by=revenue.desc', '04_07_filme_bestes_einspielergebnis.png', 'DefaultMovies.png')
 		if control.getSetting('trakt.watchlist.menu', 'true') == 'true':
-			self.addDirectoryItem("[B]Trakt[/B] - Watchlist Filme", 'traktList&type=watchlist&media_type=movie', '04_filme.png', 'DefaultMovies.png')
+			self.addDirectoryItem("[B]Trakt[/B] - Lista obserwowanych filmów", 'traktList&type=watchlist&media_type=movie', '04_filme.png', 'DefaultMovies.png')
 		if control.getSetting('trakt.collection.menu', 'true') == 'true':
-			self.addDirectoryItem("[B]Trakt[/B] - Collection Filme", 'traktList&type=collection&media_type=movie', '04_filme.png', 'DefaultMovies.png')
+			self.addDirectoryItem("[B]Trakt[/B] - Kolekcja filmów", 'traktList&type=collection&media_type=movie', '04_filme.png', 'DefaultMovies.png')
 		self._endDirectory()
 
 	def tvshows(self):
-		self.addDirectoryItem("[B]Serien[/B] - Genres", 'tvGenres', '05_01_serien_genres.png', 'DefaultTVShows.png')
-		self.addDirectoryItem("[B]Serien[/B] - Am populärsten", 'listings&media_type=tv&url=sort_by=popularity.desc', '05_02_serien_am_populaersten.png', 'DefaultTVShows.png')
-		self.addDirectoryItem("[B]Serien[/B] - Am besten bewertet", 'listings&media_type=tv&url=sort_by=vote_average.desc', '05_03_serien_am_besten_bewertet.png', 'DefaultTVShows.png')
-		self.addDirectoryItem("[B]Serien[/B] - Meist bewertet", 'listings&media_type=tv&url=sort_by=vote_count.desc', '05_04_serien_meist_bewertet.png', 'DefaultTVShows.png')
+		self.addDirectoryItem("[B]Seriale[/B] - Gatunki", 'tvGenres', '05_01_serien_genres.png', 'DefaultTVShows.png')
+		self.addDirectoryItem("[B]Seriale[/B] - Najpopularniejsze", 'listings&media_type=tv&url=sort_by=popularity.desc', '05_02_serien_am_populaersten.png', 'DefaultTVShows.png')
+		self.addDirectoryItem("[B]Seriale[/B] - Najwyżej oceniane", 'listings&media_type=tv&url=sort_by=vote_average.desc', '05_03_serien_am_besten_bewertet.png', 'DefaultTVShows.png')
+		self.addDirectoryItem("[B]Seriale[/B] - Najczęściej oceniane", 'listings&media_type=tv&url=sort_by=vote_count.desc', '05_04_serien_meist_bewertet.png', 'DefaultTVShows.png')
 		if control.getSetting('trakt.watchlist.menu', 'true') == 'true':
-			self.addDirectoryItem("[B]Trakt[/B] - Watchlist Serien", 'traktList&type=watchlist&media_type=tv', '05_tv_serien.png', 'DefaultTVShows.png')
+			self.addDirectoryItem("[B]Trakt[/B] - Lista obserwowanych seriali", 'traktList&type=watchlist&media_type=tv', '05_tv_serien.png', 'DefaultTVShows.png')
 		if control.getSetting('trakt.collection.menu', 'true') == 'true':
-			self.addDirectoryItem("[B]Trakt[/B] - Collection Serien", 'traktList&type=collection&media_type=tv', '05_tv_serien.png', 'DefaultTVShows.png')
+			self.addDirectoryItem("[B]Trakt[/B] - Kolekcja seriali", 'traktList&type=collection&media_type=tv', '05_tv_serien.png', 'DefaultTVShows.png')
 		self._endDirectory()
 
 	def tools(self):
-		self.addDirectoryItem("[B]Support[/B]: Information anzeigen", 'pluginInfo', '06_01_support_informationen_anzeigen.png', 'DefaultAddonProgram.png', isFolder=False)
-		self.addDirectoryItem("[B]Support[/B]: Paket erstellen und hochladen", 'supportUpload', '06_01_support_informationen_anzeigen.png', 'DefaultAddonProgram.png', isFolder=False)
-		self.addDirectoryItem(control.addonName +": EINSTELLUNGEN", 'addonSettings', '06_02_xvault_einstellungen.png', 'DefaultAddonProgram.png', isFolder=False)
-		self.addDirectoryItem("[B]Resolver[/B]: EINSTELLUNGEN", 'resolverSettings', '06_03_resolver_einstellungen.png', 'DefaultAddonProgram.png', isFolder=False)
+		self.addDirectoryItem("[B]Wsparcie[/B]: pokaż informacje", 'pluginInfo', '06_01_support_informationen_anzeigen.png', 'DefaultAddonProgram.png', isFolder=False)
+		self.addDirectoryItem("[B]Wsparcie[/B]: utwórz i prześlij pakiet", 'supportUpload', '06_01_support_informationen_anzeigen.png', 'DefaultAddonProgram.png', isFolder=False)
+		self.addDirectoryItem(control.addonName +": USTAWIENIA", 'addonSettings', '06_02_xvault_einstellungen.png', 'DefaultAddonProgram.png', isFolder=False)
+		self.addDirectoryItem("[B]Resolver[/B]: USTAWIENIA", 'resolverSettings', '06_03_resolver_einstellungen.png', 'DefaultAddonProgram.png', isFolder=False)
 		self._endDirectory()
 
 	def downloads(self):
 		movie_downloads = control.getSetting('download.movie.path')
 		tv_downloads = control.getSetting('download.tv.path')
 		if len(control.listDir(movie_downloads)[0]) > 0:
-			self.addDirectoryItem("Filme", movie_downloads, 'movies.png', 'DefaultMovies.png', isAction=False)
+			self.addDirectoryItem("Filmy", movie_downloads, 'movies.png', 'DefaultMovies.png', isAction=False)
 		if len(control.listDir(tv_downloads)[0]) > 0:
-			self.addDirectoryItem("TV-Serien", tv_downloads, 'tvshows.png', 'DefaultTVShows.png', isAction=False)
+			self.addDirectoryItem("Seriale", tv_downloads, 'tvshows.png', 'DefaultTVShows.png', isAction=False)
 		self._endDirectory()
 
 	def addDirectoryItem(self, name, query, thumb, icon, context=None, queue=False, isAction=True, isFolder=True):

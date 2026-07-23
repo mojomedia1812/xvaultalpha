@@ -1,18 +1,18 @@
-# Fire TV Stick Simulator
+# Symulator Fire TV Stick
 
-Dieser Simulator bildet Android-basierte Fire-OS-Profile fuer Fire-TV-Stick-Varianten ab. Er ist kein FireOS-ROM-Emulator und enthaelt keine Amazon-Firmware, keine DRM-Komponenten und keine proprietaeren Amazon-Dienste. Vega OS ist bewusst nicht enthalten.
+Ten symulator odwzorowuje profile Fire OS oparte na Androidzie dla wariantów Fire TV Stick. Nie jest emulatorem FireOS-ROM i nie zawiera firmware Amazon, komponentów DRM ani własnościowych usług Amazon. Vega OS celowo nie jest uwzględniony.
 
-Ziel ist ein schnelles Kompatibilitaetslabor fuer xVAULT:
+Celem jest szybkie laboratorium kompatybilności dla xVAULT:
 
-- Fire-TV-Stick-Profil auswaehlen
-- Fire OS, Android-Version, API-Level, Build-Model, RAM, Storage, ABI und Codec-Klasse sehen
-- xVAULTs `addon.xml` gegen die wichtigsten Fire-TV-Risiken pruefen
-- simulierte Android-Systemwerte als `getprop`-aehnliche Ausgabe, JSON oder Windows-Env-Werte exportieren
-- Android-TV-AVD-Testprofil nach dem Amazon-AVD-Vorgehen planen
+- wybór profilu Fire TV Stick,
+- podgląd Fire OS, wersji Androida, poziomu API, modelu build, RAM, pamięci, ABI i klasy kodeków,
+- sprawdzenie `addon.xml` xVAULT względem najważniejszych ryzyk Fire TV,
+- eksport symulowanych wartości systemu Android jako wynik podobny do `getprop`, JSON albo wartości środowiskowe Windows,
+- zaplanowanie profilu testowego Android-TV-AVD według podejścia Amazon AVD.
 
-## Nutzung
+## Użycie
 
-Alle Befehle werden aus dem Repository-Root ausgefuehrt.
+Wszystkie polecenia uruchamia się z katalogu głównego repozytorium.
 
 ```powershell
 python tools/firetv_stick_simulator.py list
@@ -23,7 +23,7 @@ python tools/firetv_stick_simulator.py properties aftkm --format json
 python tools/firetv_stick_simulator.py avd-plan aftkrt
 ```
 
-Fuer Tests von Kodi mit installiertem xVAULT gibt es zusaetzlich den Kodi-Simulator. Der Standard ist bewusst `aftmm`, also Fire TV Stick 4K - 1st Gen (2018), weil dieses Profil mit Fire OS 6 / API 25, 1.5 GB RAM und 8 GB Storage eine kritische Grenze bildet.
+Dla testów Kodi z zainstalowanym xVAULT dostępny jest dodatkowo symulator Kodi. Domyślnie używany jest profil `aftmm`, czyli Fire TV Stick 4K - 1st Gen (2018), ponieważ Fire OS 6 / API 25, 1.5 GB RAM i 8 GB pamięci tworzą krytyczną granicę.
 
 ```powershell
 python tools/kodi_firetv_test.py limits --profile aftmm
@@ -32,78 +32,78 @@ python tools/kodi_firetv_test.py db-stress --profile aftmm
 python tools/kodi_firetv_test.py all --profile aftmm --keep-profile
 ```
 
-Der Kodi-Simulator stubbt die wichtigsten Kodi-Python-Module (`xbmc`, `xbmcaddon`, `xbmcgui`, `xbmcplugin`, `xbmcvfs`) und startet xVAULT gegen ein temporaeres Profil. Der DB-Stresslauf prueft lokale Pickle-Speicher und `playcount.db` auf Konsistenz nach vielen Schreibvorgaengen, simuliert volle-Speicher-Fehler und fuehrt `PRAGMA integrity_check` fuer SQLite aus.
+Symulator Kodi stubuje najważniejsze moduły Kodi Python (`xbmc`, `xbmcaddon`, `xbmcgui`, `xbmcplugin`, `xbmcvfs`) i uruchamia xVAULT przeciw tymczasowemu profilowi. Test DB-stress sprawdza lokalne magazyny Pickle i `playcount.db` pod kątem spójności po wielu zapisach, symuluje błędy pełnej pamięci i wykonuje `PRAGMA integrity_check` dla SQLite.
 
-Profile koennen ueber ID, Alias oder Build-Model ausgewaehlt werden. Beispiele:
+Profile można wybierać po ID, aliasie albo modelu build. Przykłady:
 
-- `aftkrt` fuer Fire TV Stick 4K Max - 2nd Gen (2023)
-- `aftkm` fuer Fire TV Stick 4K - 2nd Gen (2023)
-- `aftss` fuer Fire TV Stick Lite / HD-Klasse
-- `aftt` fuer Fire TV Stick 2nd Gen / Basic Edition
+- `aftkrt` dla Fire TV Stick 4K Max - 2nd Gen (2023),
+- `aftkm` dla Fire TV Stick 4K - 2nd Gen (2023),
+- `aftss` dla klasy Fire TV Stick Lite / HD,
+- `aftt` dla Fire TV Stick 2nd Gen / Basic Edition.
 
-## Umfang
+## Zakres
 
-Enthalten sind Android-basierte Fire-TV-Stick-Varianten mit Fire OS 5, 6, 7 und 8. Fuer xVAULT sind besonders diese Grenzen interessant:
+Uwzględnione są warianty Fire TV Stick oparte na Androidzie z Fire OS 5, 6, 7 i 8. Dla xVAULT szczególnie istotne są te granice:
 
-- Fire OS 8 / Android 11 / API 30: aktuelles Android-basiertes Ziel
-- Fire OS 7 / Android 9 / API 28: breite 1080p- und 4K-Basis
-- Fire OS 6 / Android 7.1 / API 25: Legacy-4K-Basis
-- Fire OS 5 / Android 5.1 / API 22: sehr altes Ziel mit hohem Kodi-Risiko
+- Fire OS 8 / Android 11 / API 30: aktualny cel Android,
+- Fire OS 7 / Android 9 / API 28: szeroka baza 1080p i 4K,
+- Fire OS 6 / Android 7.1 / API 25: baza legacy 4K,
+- Fire OS 5 / Android 5.1 / API 22: bardzo stary cel z wysokim ryzykiem Kodi.
 
-## Grenzen
+## Ograniczenia
 
-Der Simulator startet kein echtes Fire OS. Er simuliert Profile und Kompatibilitaetsrisiken, aber nicht:
+Symulator nie uruchamia prawdziwego Fire OS. Symuluje profile i ryzyka kompatybilności, ale nie:
 
-- Amazon Launcher, Appstore, Alexa, DRM oder Widevine-Verhalten
-- echte Android-Medienpipeline
-- echte Fernbedienungs-Events
-- Kodi selbst
-- sideloading oder Geraete-Firmware
+- Amazon Launcher, Appstore, Alexa, DRM ani zachowania Widevine,
+- prawdziwą pipeline mediów Android,
+- prawdziwe zdarzenia pilota,
+- samego Kodi,
+- sideloadingu ani firmware urządzenia.
 
-Fuer echte Laufzeittests bleibt ein physischer Fire TV Stick oder ein Android-Emulator mit vergleichbarem API-Level noetig. Der Android-Emulator kann Fire OS aber nicht vollstaendig ersetzen, weil Fire-TV-spezifische Amazon-Dienste und Fire-TV-UI fehlen.
+Do prawdziwych testów runtime nadal potrzebny jest fizyczny Fire TV Stick albo emulator Androida z porównywalnym poziomem API. Emulator Androida nie zastępuje w pełni Fire OS, ponieważ brakuje usług specyficznych dla Fire TV i interfejsu Fire TV.
 
-## Android-TV-AVD nach Amazon-Vorbild
+## Android-TV-AVD według wzorca Amazon
 
-Amazon beschreibt fuer Fire Tablets einen Weg ueber den Android Virtual Device Manager: Hardwareprofil anlegen, Speicher und Display passend setzen, danach ein virtuelles Android-Geraet erzeugen. Die Amazon-Seite sagt ausdruecklich, dass diese Schritte Fire TV nicht simulieren koennen. Fuer xVAULT ist der Ansatz trotzdem nuetzlich, wenn er als Android-TV-Naeherung verstanden wird.
+Amazon opisuje dla Fire Tablets podejście przez Android Virtual Device Manager: utworzyć profil sprzętowy, ustawić pamięć i ekran, a następnie utworzyć wirtualne urządzenie Android. Strona Amazon jasno mówi, że te kroki nie symulują Fire TV. Dla xVAULT podejście nadal jest użyteczne jako przybliżenie Android TV.
 
-Das Tool erzeugt mit `avd-plan` eine Checkliste fuer Android Studio:
+Narzędzie tworzy przez `avd-plan` checklistę dla Android Studio:
 
-- Device Type: TV
-- Screen: 1080p oder 4K passend zur Stick-Klasse
-- Memory: RAM des Fire-TV-Stick-Profils
-- Input: Remote/D-Pad statt Touch
-- Sensors und Cameras: aus
-- System image: Android TV mit dem naechsten passenden API-Level
+- Device Type: TV,
+- Screen: 1080p albo 4K zgodnie z klasą sticka,
+- Memory: RAM profilu Fire TV Stick,
+- Input: Remote/D-Pad zamiast dotyku,
+- Sensors i Cameras: wyłączone,
+- System image: Android TV z najbliższym pasującym poziomem API.
 
-Beispiel:
+Przykład:
 
 ```powershell
 python tools/firetv_stick_simulator.py avd-plan fire-tv-stick-4k-2nd-gen-2023
 ```
 
-Damit lassen sich Kodi-Navigation, Layoutdruck, API-Level und RAM-Grenzen frueh testen. Amazon Launcher, Appstore, Alexa, DRM, Decoder-Eigenheiten und exaktes FireOS-Verhalten bleiben Tests fuer echte Hardware.
+Dzięki temu można wcześnie testować nawigację Kodi, nacisk layoutu, poziom API i granice RAM. Amazon Launcher, Appstore, Alexa, DRM, właściwości dekoderów i dokładne zachowanie Fire OS pozostają testami dla prawdziwego sprzętu.
 
-## AFTMM-Fokus
+## Fokus AFTMM
 
-Der Fire TV Stick 4K - 1st Gen (2018), Build-Model `AFTMM`, ist als Problemprofil besonders interessant:
+Fire TV Stick 4K - 1st Gen (2018), model build `AFTMM`, jest szczególnie interesującym profilem problemowym:
 
-- Fire OS 6 / Android 7.1 / API 25
-- 32-bit ABI
-- 1.5 GB RAM
-- 8 GB Storage
-- 4K/HDR faehig, aber ohne AV1
+- Fire OS 6 / Android 7.1 / API 25,
+- 32-bit ABI,
+- 1.5 GB RAM,
+- 8 GB pamięci,
+- obsługa 4K/HDR, ale bez AV1.
 
-Der empfohlene Lauf fuer dieses Profil ist:
+Zalecany przebieg dla tego profilu:
 
 ```powershell
 python tools/kodi_firetv_test.py all --profile aftmm --iterations 500 --keep-profile
 ```
 
-Wenn dabei `FAIL` erscheint, ist die Ursache sofort im Ergebnis benannt. `WARN` markiert Grenzen, die auf echter Hardware nachgetestet werden sollten.
+Jeśli pojawi się `FAIL`, przyczyna jest bezpośrednio wskazana w wyniku. `WARN` oznacza granice, które należy dodatkowo sprawdzić na prawdziwym sprzęcie.
 
-## Datenbasis
+## Baza danych
 
-Die Profile basieren auf Amazons offiziellen Entwicklerseiten:
+Profile bazują na oficjalnych stronach developerskich Amazon:
 
 - https://developer.amazon.com/docs/device-specs/device-specifications-fire-tv-streaming-media-player.html
 - https://developer.amazon.com/docs/device-specs/identify-fire-tv-devices.html

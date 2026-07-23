@@ -15,20 +15,20 @@ CHANGELOG_FILE = os.path.join(control.addonPath, 'CHANGELOG.txt')
 
 INTRO_TEXT = """## xVAULT
 
-**xVAULT ist eine Weiterentwicklung von xShip.**
+**xVAULT jest rozwinięciem projektu xShip.**
 
-Mit xVAULT führen wir den Gedanken von xShip weiter und bauen auf einer Grundlage auf, die über viele Jahre mit großem Einsatz, Können und Leidenschaft geschaffen wurde.
+W xVAULT kontynuujemy ideę xShip i budujemy na podstawie, która przez wiele lat powstawała dzięki dużemu zaangażowaniu, umiejętnościom i pasji.
 
-Unser ausdrücklicher Dank gilt dem ursprünglichen **Team xShip**, insbesondere den öffentlich bekannten Mitwirkenden aus dem xShip-Umfeld, für ihre langjährige Arbeit und ihr Engagement.
+Składamy wyraźne podziękowania pierwotnemu **Team xShip**, szczególnie publicznie znanym osobom z otoczenia xShip, za ich wieloletnią pracę i zaangażowanie.
 
-xShip war für viele Nutzer ein vertrautes und geschätztes Projekt. Die geleistete Arbeit verdient Anerkennung, Dank und Respekt — besonders für die Zeit, die Mühe und die technische Qualität bis zur Einstellung des Projekts.
+xShip był dla wielu użytkowników znanym i cenionym projektem. Wykonana praca zasługuje na uznanie, wdzięczność i szacunek, szczególnie za poświęcony czas, wysiłek i jakość techniczną aż do zakończenia projektu.
 
-**Danke an das Team xShip.
-Danke an michaz1988.
-Danke für die Basis.
-Danke für eure Arbeit.**
+**Dziękujemy Team xShip.
+Dziękujemy michaz1988.
+Dziękujemy za podstawę.
+Dziękujemy za waszą pracę.**
 
-xVAULT blickt nach vorn, ohne zu vergessen, worauf es aufbaut."""
+xVAULT patrzy naprzód, nie zapominając, na czym został zbudowany."""
 
 
 def show_pending_startup_info():
@@ -93,26 +93,26 @@ def _show_update_info(previous_version, current_version):
         changes = _changes_between('', current_version)
 
     lines = [
-        'xVAULT wurde aktualisiert.',
+        'xVAULT został zaktualizowany.',
         '',
-        'Vorherige Version: %s' % previous_version,
-        'Aktuelle Version: %s' % current_version,
+        'Poprzednia wersja: %s' % previous_version,
+        'Aktualna wersja: %s' % current_version,
         '',
-        'Änderungen seit der zuletzt benutzten Version:',
+        'Zmiany od ostatnio używanej wersji:',
         '',
     ]
 
     if changes:
         for release in changes:
             lines.append('xVAULT %s' % release['version'])
-            lines.append('Entwickler: %s' % release['developer'])
+            lines.append('Deweloper: %s' % release['developer'])
             for item in release['items']:
                 lines.append('- %s' % item)
             lines.append('')
     else:
-        lines.append('Für diesen Versionsbereich wurden keine Changelog-Einträge gefunden.')
+        lines.append('Nie znaleziono wpisów changeloga dla tego zakresu wersji.')
 
-    _show_text('xVAULT Aktualisierung', '\n'.join(lines).rstrip())
+    _show_text('Aktualizacja xVAULT', '\n'.join(lines).rstrip())
 
 
 def _changes_between(previous_version, current_version):
@@ -155,7 +155,7 @@ def _read_changelog():
         if not current:
             continue
 
-        developer = re.match(r'^Entwickler:\s*(.+)', line.strip())
+        developer = re.match(r'^(?:Entwickler|Deweloper):\s*(.+)', line.strip())
         if developer:
             current['developer'] = developer.group(1).strip()
             continue

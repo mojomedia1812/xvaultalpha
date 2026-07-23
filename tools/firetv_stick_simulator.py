@@ -508,7 +508,7 @@ def check_profile(profile: FireTvStickProfile, addon_xml: Path) -> List[str]:
         messages.append("[RISK] Fire OS 5 / API 22: sehr altes Ziel; aktuelle Kodi-Versionen koennen dort fehlen.")
 
     if profile.ram_mb <= 1024:
-        messages.append("[RISK] Nur %d MB RAM: Menues, grosse Quellenlisten und HLS-Puffer klein halten." % profile.ram_mb)
+        messages.append("[RISK] Tylko %d MB RAM: menu, duże listy źródeł i bufor HLS utrzymywać małe." % profile.ram_mb)
     elif profile.ram_mb < 2048:
         messages.append("[WARN] %d MB RAM: 4K/HLS und grosse Dialoglisten gezielt testen." % profile.ram_mb)
     else:

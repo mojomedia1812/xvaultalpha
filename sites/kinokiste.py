@@ -73,12 +73,12 @@ class source:
             sResponse = request.request()
             if not sResponse:
                 if log_errors:
-                    logger.error('[%s] Leere Antwort von %s' % (SITE_NAME, url))
+                    logger.error('[%s] Pusta odpowiedź z %s' % (SITE_NAME, url))
                 return None
             return json.loads(sResponse)
         except Exception as e:
             if log_errors:
-                logger.error('[%s] Request-Fehler: %s' % (SITE_NAME, str(e)))
+                logger.error('[%s] Błąd requestu: %s' % (SITE_NAME, str(e)))
             return None
 
     def _watchRequest(self, media_id):
@@ -97,18 +97,18 @@ class source:
     def _languageFromWatch(self, data, title=''):
         value = str(data.get('lang', '')).strip()
         if value == '2':
-            return 'de', 'Deutsch'
+            return 'de', 'Niemiecki'
         if value == '3':
-            return 'en', 'Englisch'
+            return 'en', 'Angielski'
         if value == '4':
             return 'multi', 'Mehrsprachig'
 
         title = str(title)
         if re.search(r'\bStaffel\b', title, re.IGNORECASE):
-            return 'de', 'Deutsch'
+            return 'de', 'Niemiecki'
         if re.search(r'\bSeason\b', title, re.IGNORECASE):
-            return 'en', 'Englisch'
-        return 'de', 'Deutsch'
+            return 'en', 'Angielski'
+        return 'de', 'Niemiecki'
 
     def run(self, titles, year, season=0, episode=0, imdb='', hostDict=None):
         search_terms = []
@@ -134,7 +134,7 @@ class source:
             if imdb:
                 aJson = self._request(self.imdb_link % (lang, imdb), cache=60 * 60 * 24, log_errors=False)
                 if aJson and isinstance(aJson.get('movies'), list) and len(aJson['movies']) > 0:
-                    logger.info('[%s] IMDB-Treffer lang=%s: %d Eintraege' % (SITE_NAME, lang, len(aJson['movies'])))
+                    logger.info('[%s] Trafienia IMDB lang=%s: %d wpisów' % (SITE_NAME, lang, len(aJson['movies'])))
                     for movie in aJson['movies']:
                         media_id = str(movie.get('_id', ''))
                         if media_id and media_id not in seen_ids:
@@ -147,7 +147,7 @@ class source:
                     aJson = self._request(self.search_link % (lang, quote_plus(title), '' if season else year, mediaType), cache=60 * 60 * 6)
                     if not aJson or not isinstance(aJson.get('movies'), list):
                         continue
-                    logger.info('[%s] Suchtreffer lang=%s: %d Eintraege' % (SITE_NAME, lang, len(aJson['movies'])))
+                    logger.info('[%s] Trafienia wyszukiwania lang=%s: %d wpisów' % (SITE_NAME, lang, len(aJson['movies'])))
                     for movie in aJson['movies']:
                         media_id = str(movie.get('_id', ''))
                         if media_id and media_id not in seen_ids:
@@ -155,7 +155,7 @@ class source:
                             movies.append(movie)
 
         if len(movies) == 0:
-            logger.error('[%s] Keine oder ungueltige API-Antwort' % SITE_NAME)
+            logger.error('[%s] Brak odpowiedzi API albo nieprawidłowa odpowiedź' % SITE_NAME)
             return self.sources
 
         matches = []
@@ -190,10 +190,10 @@ class source:
                 sBase = re.sub(r'\s*\(\d{4}\)\s*$', '', sBase).strip()
                 if any(st in sBase.replace(' ', '').lower() or st in sBase.lower() for st in search_terms):
                     if int(sSeason) == int(season):
-                        logger.info('[%s] Serien-Treffer: "%s" S%s' % (SITE_NAME, sTitle, sSeason))
+                        logger.info('[%s] Trafienie serialu: "%s" S%s' % (SITE_NAME, sTitle, sSeason))
                         matches.append((str(movie['_id']), sQuality, int(sSeason)))
 
-        logger.info('[%s] %d Match(es) gefunden' % (SITE_NAME, len(matches)))
+        logger.info('[%s] znaleziono %d dopasowań' % (SITE_NAME, len(matches)))
 
         for match in matches:
             self._getStreams(match, episode, hostDict)
@@ -203,13 +203,13 @@ class source:
     def _getStreams(self, data, episode, hostDict):
         aJson = self._watchRequest(data[0])
         if not aJson or not isinstance(aJson.get('streams'), list):
-            logger.error('[%s] Keine Streams fuer ID %s' % (SITE_NAME, data[0]))
+            logger.error('[%s] Brak streamów dla ID %s' % (SITE_NAME, data[0]))
             return
 
         sQuality = _parseQuality(data[1])
         isTvshow = len(data) > 2
         language, language_label = self._languageFromWatch(aJson, aJson.get('title', ''))
-        logger.info('[%s] %d Streams fuer ID %s' % (SITE_NAME, len(aJson['streams']), data[0]))
+        logger.info('[%s] %d streamów dla ID %s' % (SITE_NAME, len(aJson['streams']), data[0]))
 
         best_per_domain = {}
 
@@ -253,7 +253,7 @@ class source:
                 'info': language_label
             })
 
-        logger.info('[%s] %d Quellen' % (SITE_NAME, len(self.sources)))
+        logger.info('[%s] %d źródeł' % (SITE_NAME, len(self.sources)))
 
     def resolve(self, url):
         try:

@@ -107,4 +107,4 @@ def play(params):
         sources.sources().play(params)
     except Exception as exc:
         log_utils.log('TMDbHelper playback failed: %s' % str(exc), log_utils.LOGERROR)
-        control.infoDialog('TMDbHelper-Uebergabe fehlgeschlagen', sound=True, icon='WARNING', time=2000)
+        control.infoDialog('Przekazanie do TMDbHelper nie powiodło się', sound=True, icon='WARNING', time=2000)

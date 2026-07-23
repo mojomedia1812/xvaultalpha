@@ -57,12 +57,12 @@ def check_for_update(prompt=True, ignore_disabled=False):
         yes = True
         if prompt:
             yes = control.yesnoDialog(
-                'Eine neue xVAULT-Version ist verfügbar.',
-                'Installiert: %s   Neu: %s' % (control.addonVersion, latest_version),
-                'Jetzt installieren?',
+                'Dostępna jest nowa wersja xVAULT.',
+                'Zainstalowana: %s   Nowa: %s' % (control.addonVersion, latest_version),
+                'Zainstalować teraz?',
                 heading=control.addonName,
-                nolabel='Nein',
-                yeslabel='Installieren'
+                nolabel='Nie',
+                yeslabel='Zainstaluj'
             )
         if not yes:
             return True
@@ -83,7 +83,7 @@ def configure_external_source(manifest_url, download_url):
     manifest_url = str(manifest_url or '').strip()
     download_url = str(download_url or '').strip()
     if not manifest_url or not download_url or '%s' not in download_url:
-        raise UpdateError('Invalid update source')
+        raise UpdateError('Nieprawidłowe źródło aktualizacji')
     control.setSetting(SETTING_CHANNEL, CHANNEL_EXTERNAL)
     control.setSetting(SETTING_MANIFEST_URL, manifest_url)
     control.setSetting(SETTING_DOWNLOAD_URL, download_url)
@@ -119,7 +119,7 @@ def get_release_from_source(manifest_url, download_url, expected_addon_id=None):
 
 def _release_from_urls(manifest_url, download_url, expected_addon_id=None):
     if requests is None:
-        raise UpdateError('requests module is not available')
+        raise UpdateError('Moduł requests jest niedostępny')
     expected_addon_id = expected_addon_id or control.addonId
 
     response = requests.get(
@@ -131,9 +131,9 @@ def _release_from_urls(manifest_url, download_url, expected_addon_id=None):
 
     addon_id, version = _addon_xml_info(response.text)
     if addon_id != expected_addon_id:
-        raise UpdateError('Unexpected addon id in update manifest: %s' % addon_id)
+        raise UpdateError('Nieoczekiwany identyfikator dodatku w manifeście aktualizacji: %s' % addon_id)
     if not version:
-        raise UpdateError('No version found in update manifest')
+        raise UpdateError('Nie znaleziono wersji w manifeście aktualizacji')
 
     return {
         'version': version,
@@ -170,16 +170,16 @@ def install_update(version, url, addon_id=None, run_after=False):
             _wait_for_addon(target_addon_id, enabled=True)
             control.execute('RunAddon("%s")' % target_addon_id)
         control.infoDialog(
-            'Version %s wurde installiert. xVAULT bitte erneut öffnen.' % version,
+            'Wersja %s została zainstalowana. Otwórz xVAULT ponownie.' % version,
             icon='INFO',
             time=6000
         )
         return True
     except UpdateCancelled:
-        control.infoDialog('Aktualisierung abgebrochen', icon='INFO')
+        control.infoDialog('Aktualizacja przerwana', icon='INFO')
     except Exception as e:
         log_utils.log('Update install failed: %s' % str(e), log_utils.LOGERROR)
-        control.infoDialog('Aktualisierung fehlgeschlagen', icon='ERROR')
+        control.infoDialog('Aktualizacja nie powiodła się', icon='ERROR')
     finally:
         try:
             if os.path.exists(temp_zip):
@@ -251,10 +251,10 @@ def _record_pending_update(target_version):
 
 def _download(url, destination, version):
     if requests is None:
-        raise UpdateError('requests module is not available')
+        raise UpdateError('Moduł requests jest niedostępny')
 
     progress = control.progressDialog
-    progress.create(control.addonName, 'Aktualisierung wird heruntergeladen')
+    progress.create(control.addonName, 'Pobieranie aktualizacji')
     try:
         response = requests.get(url, stream=True, timeout=REQUEST_TIMEOUT)
         response.raise_for_status()
@@ -288,12 +288,12 @@ def _validate_zip(path, expected_version, expected_addon_id=None):
         addon_xml = _find_addon_xml(archive)
         addon_id, version = _addon_xml_info(archive.read(addon_xml).decode('utf-8'))
         if addon_id != expected_addon_id:
-            raise UpdateError('Unexpected addon id in zip: %s' % addon_id)
+            raise UpdateError('Nieoczekiwany identyfikator dodatku w ZIP: %s' % addon_id)
         if version != expected_version:
-            raise UpdateError('Unexpected version in zip: %s' % version)
+            raise UpdateError('Nieoczekiwana wersja w ZIP: %s' % version)
         root = addon_xml.rsplit('/', 1)[0] if '/' in addon_xml else ''
         if root and root != expected_addon_id:
-            raise UpdateError('Unexpected addon root in zip: %s' % root)
+            raise UpdateError('Nieoczekiwany folder główny dodatku w ZIP: %s' % root)
         return root
 
 

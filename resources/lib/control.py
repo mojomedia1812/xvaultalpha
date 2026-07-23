@@ -117,7 +117,7 @@ def trailerLabel():
 		lang = xbmc.getLanguage(xbmc.ISO_639_1).lower()[:2]
 	except Exception:
 		lang = 'en'
-	return 'Trailer ansehen' if lang == 'de' else 'Watch Trailer'
+	return 'Obejrzyj trailer'
 
 def hasTrailerPlayer():
 	"""Always True — IMDB provides direct MP4 playback without any YouTube player.
@@ -251,7 +251,7 @@ def openSettings(query=None, id=addonInfo('id')):
 		return
 
 def resetSettings():
-	yes = yesnoDialog("Zurücksetzen der Settings (außer Konten)", 'und einem abschließenden Reload vom Profil', 'Sind Sie sicher?')
+	yes = yesnoDialog('Zresetować ustawienia (oprócz kont)', 'i na końcu ponownie wczytać profil', 'Czy na pewno?')
 	if not yes: return
 	try:
 		login = getSetting('serienstream.user')

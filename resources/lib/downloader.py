@@ -44,7 +44,7 @@ def download(name, image, url, subfolder=None):  # new
             try: control.makeFile(os.path.abspath(os.path.join(dest, level)))
             except: pass
         if not control.makeFile(dest):
-            xbmcgui.Dialog().ok(name, dest + '[CR]ERROR - Server | Verzeichnis[CR]Download fehlgeschlagen')
+            xbmcgui.Dialog().ok(name, dest + '[CR]BŁĄD - serwer | folder[CR]Pobieranie nie powiodło się')
             return
 
         # new
@@ -57,7 +57,7 @@ def download(name, image, url, subfolder=None):  # new
         #     dest = os.path.join(dest, subfolder)
 
         if not control.makeFile(dest):
-            xbmcgui.Dialog().ok(name, dest + '[CR]ERROR - Server | Verzeichnis[CR]Download fehlgeschlagen')
+            xbmcgui.Dialog().ok(name, dest + '[CR]BŁĄD - serwer | folder[CR]Pobieranie nie powiodło się')
             return
     else:
         dest = control.getSetting('download.tv.path', False) #TODO
@@ -66,7 +66,7 @@ def download(name, image, url, subfolder=None):  # new
             try: control.makeFile(os.path.abspath(os.path.join(dest, level)))
             except: pass
         if not control.makeFile(dest):
-            xbmcgui.Dialog().ok(name, dest + '[CR]ERROR - Server | Verzeichnis[CR]Download fehlgeschlagen')
+            xbmcgui.Dialog().ok(name, dest + '[CR]BŁĄD - serwer | folder[CR]Pobieranie nie powiodło się')
             return
 
         if int(xbmc.getInfoLabel("System.BuildVersion").split(".")[0]) >= 19:
@@ -77,11 +77,11 @@ def download(name, image, url, subfolder=None):  # new
 
         dest = os.path.join(dest, transtvshowtitle)
         if not control.makeFile(dest):
-            xbmcgui.Dialog().ok(name, dest + '[CR]ERROR - Server | Verzeichnis[CR]Download fehlgeschlagen')
+            xbmcgui.Dialog().ok(name, dest + '[CR]BŁĄD - serwer | folder[CR]Pobieranie nie powiodło się')
             return
         dest = os.path.join(dest, 'Season %01d' % int(content[0][1]))
         if not control.makeFile(dest):
-            xbmcgui.Dialog().ok(name, dest + '[CR]ERROR - Server | Verzeichnis[CR]Download fehlgeschlagen')
+            xbmcgui.Dialog().ok(name, dest + '[CR]BŁĄD - serwer | folder[CR]Pobieranie nie powiodło się')
             return
 
     ext = os.path.splitext(urlparse(url).path)[1][1:]
@@ -121,9 +121,9 @@ def done(title, dest, downloaded):
         text += '[CR]'
 
     if downloaded:
-        text += '%s : %s' % (dest.rsplit(os.sep)[-1], '[COLOR forestgreen]Download erfolgreich[/COLOR]')
+        text += '%s : %s' % (dest.rsplit(os.sep)[-1], '[COLOR forestgreen]Pobieranie zakończone powodzeniem[/COLOR]')
     else:
-        text += '%s : %s' % (dest.rsplit(os.sep)[-1], '[COLOR red]Download fehlgeschlagen[/COLOR]')
+        text += '%s : %s' % (dest.rsplit(os.sep)[-1], '[COLOR red]Pobieranie nie powiodło się[/COLOR]')
 
     xbmcgui.Window(10000).setProperty('GEN-DOWNLOADED', text)
 
@@ -143,7 +143,7 @@ def doDownload(url, dest, title, image, headers):
     resp = getResponse(url, headers, 0)
 
     if not resp:
-        xbmcgui.Dialog().ok(title, dest + '[CR]Download fehlgeschlagen[CR]Keine Antwort vom Server')
+        xbmcgui.Dialog().ok(title, dest + '[CR]Pobieranie nie powiodło się[CR]Brak odpowiedzi z serwera')
         return
 
     try:    content = int(resp.headers['Content-Length'])
@@ -153,12 +153,12 @@ def doDownload(url, dest, title, image, headers):
     # if url.lower().endswith('.m3u8'):
         try:
             import m3u8_To_MP4
-            if xbmcgui.Dialog().yesno('Download - ' + title, '%s[CR]Weiter mit Download?' % file, 'Weiter', 'Abbrechen') == 1: return
+            if xbmcgui.Dialog().yesno('Pobieranie - ' + title, '%s[CR]Kontynuować pobieranie?' % file, 'Dalej', 'Przerwij') == 1: return
             dest = dest.replace('smb:', '')
             m3u8_To_MP4.multithread_download(url, file_path=dest, max_retry_times=5, max_num_workers=20)
-            xbmcgui.Dialog().ok('INFO', '[CR]Download beendet')
+            xbmcgui.Dialog().ok('INFO', '[CR]Pobieranie zakończone')
         except:
-            xbmcgui.Dialog().ok('Error', '[CR]Download fehlgeschlagen[CR]Problem mit "script.module.download-m3u8"')
+            xbmcgui.Dialog().ok('Błąd', '[CR]Pobieranie nie powiodło się[CR]Problem z "script.module.download-m3u8"')
         finally:
             exit()
 
@@ -170,7 +170,7 @@ def doDownload(url, dest, title, image, headers):
     #if resumable: print("Download is resumable")
 
     if content < 1:
-        xbmcgui.Dialog().ok(title, file + ' Unbekannte DateigrÃ¶ÃŸe[CR]Download nicht mÃ¶glich')
+        xbmcgui.Dialog().ok(title, file + ' Nieznany rozmiar pliku[CR]Pobieranie niemożliwe')
         return
 
     size = 1024 * 1024
@@ -187,9 +187,9 @@ def doDownload(url, dest, title, image, headers):
     sleep = 0
 
     if int(xbmc.getInfoLabel("System.BuildVersion").split(".")[0]) >= 19:
-        if xbmcgui.Dialog().yesno('Download - ' + title, '%s[CR]DateigrÃ¶ÃŸe %dMB[CR]Weiter mit Download?' % (file, mb) , 'Weiter', 'Abbrechen') == 1: return
+        if xbmcgui.Dialog().yesno('Pobieranie - ' + title, '%s[CR]Rozmiar pliku %dMB[CR]Kontynuować pobieranie?' % (file, mb) , 'Dalej', 'Przerwij') == 1: return
     else:
-        if xbmcgui.Dialog().yesno('Download - ' + title, file, 'DateigrÃ¶ÃŸe %dMB' % mb, 'Weiter mit Download?', 'Weiter',  'Abbrechen') == 1: return
+        if xbmcgui.Dialog().yesno('Pobieranie - ' + title, file, 'Rozmiar pliku %dMB' % mb, 'Kontynuować pobieranie?', 'Dalej',  'Przerwij') == 1: return
 
     #print('Download File Size : %dMB %s ' % (mb, dest))
 
@@ -282,5 +282,4 @@ def doDownload(url, dest, title, image, headers):
 if __name__ == '__main__':
     if 'downloader.py' in sys.argv[0]:
         doDownload(sys.argv[1], sys.argv[2], sys.argv[3], sys.argv[4], sys.argv[5])
-
 

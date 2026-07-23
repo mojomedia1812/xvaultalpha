@@ -93,16 +93,16 @@ class Client(object):
                     raw = self._open(base, action, method, body, headers)
                     data = json.loads(raw)
                     if not data.get('success'):
-                        raise ApiError(data.get('message', 'Synchronisation fehlgeschlagen'), data.get('error_code', 'SYNC_FAILED'))
+                        raise ApiError(data.get('message', 'Synchronizacja nie powiodła się'), data.get('error_code', 'SYNC_FAILED'))
                     self.api_key = key or ''
                     return data.get('data', {})
                 except urllib.error.HTTPError as exc:
                     raw = exc.read().decode('utf-8', 'ignore')
                     try:
                         data = json.loads(raw)
-                        api_exc = ApiError(data.get('message', 'Synchronisation fehlgeschlagen'), data.get('error_code', 'SYNC_FAILED'), exc.code)
+                        api_exc = ApiError(data.get('message', 'Synchronizacja nie powiodła się'), data.get('error_code', 'SYNC_FAILED'), exc.code)
                     except ValueError:
-                        api_exc = ApiError('Synchronisation fehlgeschlagen', 'SYNC_FAILED', exc.code)
+                        api_exc = ApiError('Synchronizacja nie powiodła się', 'SYNC_FAILED', exc.code)
                     if auth and api_exc.code == 'UNAUTHORIZED' and index < len(auth_keys) - 1:
                         log_utils.log('xVAULT sync: API key rejected for %s, retrying stored fallback key' % action, log_utils.LOGWARNING)
                         break
@@ -116,7 +116,7 @@ class Client(object):
                     last_error = exc
                     log_utils.log('xVAULT sync: API call %s via %s failed: %s' % (action, base.split(':', 1)[0], _safe_error(exc)), log_utils.LOGWARNING)
                     continue
-        raise ApiError('Synchronisation fehlgeschlagen. Bitte später erneut versuchen.', 'SYNC_FAILED')
+        raise ApiError('Synchronizacja nie powiodła się. Spróbuj ponownie później.', 'SYNC_FAILED')
 
     def _open(self, base, action, method, body, headers):
         url = base + action
@@ -145,7 +145,7 @@ def _is_hosting_challenge(raw):
 def _solve_hosting_challenge(raw):
     values = CHALLENGE_RE.findall(raw)
     if len(values) < 3:
-        raise ApiError('Synchronisation fehlgeschlagen: Hosting-Challenge konnte nicht gelesen werden.', 'SYNC_HOST_CHALLENGE')
+        raise ApiError('Synchronizacja nie powiodła się: nie udało się odczytać challenge hostingu.', 'SYNC_HOST_CHALLENGE')
     try:
         import pyaes
         key = bytes(bytearray.fromhex(values[0]))
@@ -158,7 +158,7 @@ def _solve_hosting_challenge(raw):
         raise
     except Exception as exc:
         log_utils.log('xVAULT sync: hosting challenge failed: %s' % _safe_error(exc), log_utils.LOGWARNING)
-        raise ApiError('Synchronisation fehlgeschlagen: Hosting-Challenge konnte nicht geloest werden.', 'SYNC_HOST_CHALLENGE')
+        raise ApiError('Synchronizacja nie powiodła się: nie udało się rozwiązać challenge hostingu.', 'SYNC_HOST_CHALLENGE')
 
 
 def _safe_error(exc):

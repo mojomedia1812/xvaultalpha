@@ -10,22 +10,22 @@ from resources.lib import control
 
 _params = dict(control.parse_qsl(sys.argv[2].replace('?', ''))) if len(sys.argv) > 1 else dict()
 
-#TV-Film
-# {"genres":[{"id":10759,"name":"Action & Adventure"},{"id":16,"name":"Animation"},{"id":35,"name":"Komödie"},{"id":80,"name":"Krimi"},{"id":99,"name":"Dokumentarfilm"},{"id":18,"name":"Drama"},{"id":10751,"name":"Familie"},{"id":10762,"name":"Kids"},{"id":9648,"name":"Mystery"},{"id":10763,"name":"News"},{"id":10764,"name":"Reality"},{"id":10765,"name":"Sci-Fi & Fantasy"},{"id":10766,"name":"Soap"},{"id":10767,"name":"Talk"},{"id":10768,"name":"War & Politics"},{"id":37,"name":"Western"}]}
+# Film telewizyjny
+# {"genres":[{"id":10759,"name":"Akcja i przygoda"},{"id":16,"name":"Animation"},{"id":35,"name":"Komedia"},{"id":80,"name":"Kryminał"},{"id":99,"name":"Dokumentalny"},{"id":18,"name":"Drama"},{"id":10751,"name":"Familijny"},{"id":10762,"name":"Kids"},{"id":9648,"name":"Mystery"},{"id":10763,"name":"News"},{"id":10764,"name":"Reality"},{"id":10765,"name":"Sci-Fi & Fantasy"},{"id":10766,"name":"Soap"},{"id":10767,"name":"Talk"},{"id":10768,"name":"Wojna i polityka"},{"id":37,"name":"Western"}]}
 
-_genresTv = [{"id":10759,"name":"Action & Abenteuer"},{"id":16,"name":"Animation"},{"id":35,"name":"Komödie"},{"id":80,"name":"Krimi"},{"id":18,"name":"Drama"},{"id":10751,"name":"Familie"},
-			 {"id":10762,"name":"Kids"},{"id":9648,"name":"Mystery"},{"id":10764,"name":"Reality"},{"id":10765,"name":"Sci-Fi & Fantasy"},{"id":10768,"name":"War & Politics"},
+_genresTv = [{"id":10759,"name":"Akcja i przygoda"},{"id":16,"name":"Animacja"},{"id":35,"name":"Komedia"},{"id":80,"name":"Kryminał"},{"id":18,"name":"Dramat"},{"id":10751,"name":"Familijny"},
+			 {"id":10762,"name":"Dzieci"},{"id":9648,"name":"Tajemnica"},{"id":10764,"name":"Reality"},{"id":10765,"name":"Sci-Fi i fantasy"},{"id":10768,"name":"Wojna i polityka"},
 			 {"id":37,"name":"Western"}]
 
-_genresMovie = [{"id":28,"name":"Action"},{"id":12,"name":"Abenteuer"},{"id":16,"name":"Animation"},{"id":35,"name":"Komödie"},{"id":80,"name":"Krimi"},{"id":18,"name":"Drama"},
-				{"id":10751,"name":"Familie"},{"id":14,"name":"Fantasy"},{"id":36,"name":"Historie"},{"id":27,"name":"Horror"},{"id":10402,"name":"Musik"},{"id":9648,"name":"Mystery"},
-				{"id":10749,"name":"Liebesfilm"},{"id":878,"name":"Science Fiction"},{"id":10770,"name":"TV-Film"},{"id":53,"name":"Thriller"},{"id":10752,"name":"Kriegsfilm"},{"id":37,"name":"Western"}]
+_genresMovie = [{"id":28,"name":"Akcja"},{"id":12,"name":"Przygodowy"},{"id":16,"name":"Animacja"},{"id":35,"name":"Komedia"},{"id":80,"name":"Kryminał"},{"id":18,"name":"Dramat"},
+				{"id":10751,"name":"Familijny"},{"id":14,"name":"Fantasy"},{"id":36,"name":"Historyczny"},{"id":27,"name":"Horror"},{"id":10402,"name":"Muzyka"},{"id":9648,"name":"Tajemnica"},
+				{"id":10749,"name":"Romans"},{"id":878,"name":"Science Fiction"},{"id":10770,"name":"Film TV"},{"id":53,"name":"Thriller"},{"id":10752,"name":"Wojenny"},{"id":37,"name":"Western"}]
 
 class listings:
 	def __init__(self):
 		self.URL = 'https://api.themoviedb.org/3/discover'
 		self.api_key = control.getSetting('api.tmdb').strip()
-		self.lang = 'de'
+		self.lang = 'pl-PL'
 		self.list = []
 		self.total_pages = 0
 		self.query = ''
@@ -98,7 +98,7 @@ class listings:
 
 
 	def _call(self, url, append_to_response=''):
-		url = '%s/%s?api_key=%s&language=de-DE&region=DE&vote_count.gte=20&include_adult=false&include_video=false&%s' % (self.URL, self.media_type, self.api_key, url)
+		url = '%s/%s?api_key=%s&language=pl-PL&region=PL&vote_count.gte=20&include_adult=false&include_video=false&%s' % (self.URL, self.media_type, self.api_key, url)
 		if not 'without_genres' in url: url += '&without_genres=99' # doku
 		if append_to_response:
 			url += '&%s' % append_to_response
@@ -134,11 +134,11 @@ class listings:
 				name = i['name']
 				if self.media_type == 'movie':
 					if 'primary_release_year' in i['url']:
-						plot = 'Filme aus dem Jahr:  %s' % name
+						plot = 'Filmy z roku:  %s' % name
 					else:
-						plot = 'Filme aus der Kategorie:  %s' % name
+						plot = 'Filmy z kategorii:  %s' % name
 				else:
-					plot = 'Serien aus der Kategorie:  %s' % name
+					plot = 'Seriale z kategorii:  %s' % name
 
 				try:
 					poster = os.path.join(artPath, i['image'])
@@ -159,7 +159,7 @@ class listings:
 				item.setArt({'thumb': thumb, 'poster': poster})
 				if not addonFanart is None: item.setProperty('Fanart_Image', addonFanart)
 
-				#  -> gesehen/ungesehen im cm und "Keine Informationen verfügbar" ausblenden (abhängig vom Skin)
+				#  -> ukryj obejrzane/nieobejrzane w menu kontekstowym oraz "Brak dostępnych informacji" (zależnie od skina)
 				item.setInfo('video', {'overlay': 4, 'plot': plot})
 				item.setIsFolder(True)
 
@@ -170,4 +170,3 @@ class listings:
 		control.content(syshandle, 'videos')
 		control.plugincategory(syshandle, control.addonVersion)
 		control.endofdirectory(syshandle, cacheToDisc=True)
-

@@ -1,14 +1,14 @@
-# xVAULT Synchronisation
+# Synchronizacja xVAULT
 
-## Zweck
+## Cel
 
-Die xVAULT-Synchronisation sichert benutzerbezogen Kodi-Favoriten und Wiedergabestaende, damit diese nach Neuinstallation, Geraetewechsel oder paralleler Nutzung auf mehreren Geraeten wiederhergestellt und abgeglichen werden koennen.
+Synchronizacja xVAULT zapisuje ulubione Kodi i stany odtwarzania przypisane do użytkownika, aby można je było przywrócić lub połączyć po ponownej instalacji, zmianie urządzenia albo równoległym używaniu na kilku urządzeniach.
 
-## API-Endpunkte
+## Punkty końcowe API
 
-Die API akzeptiert JSON und antwortet immer mit JSON.
+API przyjmuje JSON i zawsze odpowiada JSON-em.
 
-Aktueller Produktivhost: `http://xvault-sql.ddnss.de/index.php?action=`
+Aktualny host produkcyjny: `http://xvault-sql.ddnss.de/index.php?action=`
 
 - `POST /index.php?action=register`
 - `POST /index.php?action=login`
@@ -20,66 +20,66 @@ Aktueller Produktivhost: `http://xvault-sql.ddnss.de/index.php?action=`
 - `GET /index.php?action=sync_pull`
 - `GET /index.php?action=status`
 
-Wenn URL-Rewriting aktiv ist, funktionieren auch die entsprechenden `/api/...`-Pfade.
+Gdy aktywne jest przepisywanie URL-i, działają również odpowiednie ścieżki `/api/...`.
 
-## Datenbanktabellen
+## Tabele bazy danych
 
-- `users`: Benutzerkonto, Passwort-Hash, API-Key-Hash, Login-Metadaten.
-- `favorites_backups`: versionierte Favoriten-Backups pro Benutzer. Neue Backups werden serverseitig mit dem aktuellen Serverstand zusammengefuehrt; explizite `deleted_keys` verhindern, dass entfernte Favoriten durch ein anderes Geraet wieder auftauchen.
-- `binge_state`: aktueller Wiedergabe-/Binge-Stand pro stabilem `item_key`. Eintraege werden pro Film/Folge per Upsert zusammengefuehrt; der neuere Fortschritt gewinnt, bereits abgeschlossene Eintraege bleiben gesehen.
-- `sync_log`: technische Sync-Historie ohne sensible Inhalte.
+- `users`: konto użytkownika, hash hasła, hash klucza API i metadane logowania.
+- `favorites_backups`: wersjonowane kopie zapasowe ulubionych dla każdego użytkownika. Nowe kopie są po stronie serwera łączone z aktualnym stanem serwera; jawne `deleted_keys` zapobiegają ponownemu pojawieniu się usuniętych ulubionych przez inne urządzenie.
+- `binge_state`: aktualny stan odtwarzania/binge dla stabilnego `item_key`. Wpisy są łączone przez upsert dla każdego filmu lub odcinka; nowszy postęp wygrywa, a już ukończone wpisy pozostają oznaczone jako obejrzane.
+- `sync_log`: techniczna historia synchronizacji bez treści wrażliwych.
 
-## Multi-Geraete-Verhalten
+## Zachowanie na wielu urządzeniach
 
-- Beim Start zieht xVAULT den aktuellen Binge-Stand vom Server und wendet Bookmarks/Gesehen-Status lokal an.
-- Im laufenden Betrieb prueft der Hintergrunddienst regelmaessig auf Remote-Aenderungen. Dadurch werden Favoriten und Binge-Status auch ohne Neustart auf anderen angemeldeten Geraeten sichtbar.
-- Favoriten werden vor jedem Push mit dem letzten Serverstand gemergt. Parallele Hinzufuegungen von PC, Android TV und Raspberry bleiben erhalten.
-- Entfernte Favoriten werden als geloeschte Keys mitgesendet, damit ein paralleles Geraet sie nicht durch einen veralteten Snapshot erneut auf den Server schreibt.
-- Binge-/Gesehen-Status ist benutzerbezogen. Wenn mehrere Geraete mit demselben xVAULT-Konto angemeldet sind, sehen alle Geraete denselben Stand.
+- Przy starcie xVAULT pobiera aktualny stan binge z serwera i stosuje lokalnie zakładki oraz status obejrzenia.
+- W trakcie pracy usługa w tle regularnie sprawdza zdalne zmiany. Dzięki temu ulubione i stan binge stają się widoczne na innych zalogowanych urządzeniach bez restartu.
+- Ulubione są przed każdym pushem łączone z ostatnim stanem serwera. Równoległe dodatki z PC, Android TV i Raspberry pozostają zachowane.
+- Usunięte ulubione są wysyłane jako skasowane klucze, aby równoległe urządzenie nie zapisało ich ponownie na serwerze ze starego snapshotu.
+- Stan binge/obejrzenia jest przypisany do użytkownika. Gdy kilka urządzeń jest zalogowanych na tym samym koncie xVAULT, wszystkie widzą ten sam stan.
 
-Die Tabellen werden beim ersten API-Aufruf automatisch angelegt.
+Tabele są tworzone automatycznie przy pierwszym wywołaniu API.
 
-## Sicherheitskonzept
+## Koncepcja bezpieczeństwa
 
-- Kennwoerter werden serverseitig mit `password_hash()` gespeichert.
-- Logins geben einen kryptografisch zufaelligen API-Key zurueck.
-- In der Datenbank wird nur der SHA-256-Hash des API-Keys gespeichert.
-- Das Kodi-Plugin speichert lokal nur E-Mail-Adresse, API-Key, Geraete-ID, Sync-Status und Hash-/Zeitstempel.
-- Kennwoerter werden im Plugin nicht dauerhaft gespeichert.
-- `api/config.php` ist per `.gitignore` ausgeschlossen und darf nicht ins Repository.
+- Hasła są zapisywane po stronie serwera przez `password_hash()`.
+- Logowanie zwraca kryptograficznie losowy klucz API.
+- W bazie danych zapisywany jest tylko hash SHA-256 klucza API.
+- Dodatek Kodi zapisuje lokalnie tylko adres e-mail, klucz API, ID urządzenia, status synchronizacji oraz hashe i znaczniki czasu.
+- Hasła nie są trwale zapisywane w dodatku.
+- `api/config.php` jest wykluczony przez `.gitignore` i nie może trafić do repozytorium.
 
-## Plugin-Einstellungen
+## Ustawienia dodatku
 
-Unter `Einstellungen -> Konten` stehen bereit:
+W sekcji `Ustawienia -> Konta` dostępne są:
 
-- Synchronisation aktivieren
-- E-Mail-Adresse
+- Włącz synchronizację
+- Adres e-mail
 - Status
-- Letzte Synchronisation
-- Anmelden
-- Registrieren
-- Jetzt synchronisieren
-- Backup vom Server wiederherstellen
-- Status anzeigen
-- Datenschutz-Hinweis anzeigen
-- Abmelden
+- Ostatnia synchronizacja
+- Zaloguj
+- Zarejestruj
+- Synchronizuj teraz
+- Przywróć backup z serwera
+- Pokaż status
+- Pokaż informację o prywatności
+- Wyloguj
 
-## Wiederherstellung
+## Przywracanie
 
-Nach Anmeldung prueft xVAULT, ob ein Favoriten-Backup vorhanden ist. Der Benutzer entscheidet, ob der Serverstand lokale Favoriten ersetzt oder mit ihnen zusammengefuehrt wird. Vor dem Schreiben wird die lokale `favourites.xml` als `.xvault-backup-YYYYMMDDHHMMSS` gesichert.
+Po zalogowaniu xVAULT sprawdza, czy istnieje backup ulubionych. Użytkownik decyduje, czy stan z serwera ma zastąpić lokalne ulubione, czy zostać z nimi połączony. Przed zapisem lokalny plik `favourites.xml` jest zabezpieczany jako `.xvault-backup-YYYYMMDDHHMMSS`.
 
 ## Deployment
 
-Serverdateien liegen im Repository unter `api/`.
+Pliki serwerowe znajdują się w repozytorium w katalogu `api/`.
 
-Auf dem Zielhost muss eine echte `config.php` mit Datenbankzugangsdaten neben `index.php` liegen. Im Repository liegt nur `config.example.php`.
+Na hoście docelowym obok `index.php` musi leżeć prawdziwy plik `config.php` z danymi dostępu do bazy. W repozytorium znajduje się tylko `config.example.php`.
 
-Aktueller Upload fuer den neuen Freehostia-Space:
+Aktualny upload dla nowego miejsca Freehostia:
 
 - `api/index.php` -> `/xvault-sql.ddnss.de/index.php`
 - `api/.htaccess` -> `/xvault-sql.ddnss.de/.htaccess`
-- lokale, nicht versionierte `api/config.php` -> `/xvault-sql.ddnss.de/config.php`
+- lokalny, niewersjonowany `api/config.php` -> `/xvault-sql.ddnss.de/config.php`
 
-## Secrets
+## Sekrety
 
-Keine FTP-, Datenbank-, API- oder Kennwortdaten in Git committen. Fuer lokale Tests `api/config.php`, `.env` oder vergleichbare nicht versionierte Dateien verwenden.
+Nie commitować do Gita danych FTP, bazy danych, API ani haseł. Do testów lokalnych używać `api/config.php`, `.env` albo porównywalnych niewersjonowanych plików.

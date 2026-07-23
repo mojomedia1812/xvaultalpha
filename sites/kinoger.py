@@ -64,7 +64,7 @@ def get_voe_stream_from_kinoger(kinoger_url):
             return stream_url
         return None
     except Exception as e:
-        log_utils.log('Kinoger VOE Fehler: %s' % str(e), log_utils.LOGERROR)
+        log_utils.log('Błąd Kinoger VOE: %s' % str(e), log_utils.LOGERROR)
         return None
 
 class source:

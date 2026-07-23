@@ -8,9 +8,9 @@ from resources.lib.sync.api_client import ApiError, Client
 
 
 PRIVACY_TEXT = (
-    'Für Favoriten-Backup und Verlauf werden deine E-Mail-Adresse, ein sicherer '
-    'Zugangsschlüssel sowie deine xVAULT-Favoriten und Wiedergabestände gespeichert. '
-    'Dein Kennwort wird nicht im Klartext gespeichert.'
+    'Do kopii zapasowej ulubionych i historii zapisywane są Twój adres e-mail, bezpieczny '
+    'klucz dostępu oraz ulubione xVAULT i stany odtwarzania. '
+    'Twoje hasło nie jest zapisywane w postaci zwykłego tekstu.'
 )
 
 
@@ -48,15 +48,15 @@ def register():
     email = ask_email()
     if not email:
         return
-    password = ask_password('Kennwort festlegen')
+    password = ask_password('Ustaw hasło')
     if not password:
         return
     try:
         data = Client().register(email, password)
-        finish_login(data.get('email', email), data.get('api_key', ''), 'Registrierung erfolgreich.')
+        finish_login(data.get('email', email), data.get('api_key', ''), 'Rejestracja zakończona powodzeniem.')
     except ApiError as exc:
         if exc.code == 'EMAIL_EXISTS':
-            control.dialog.ok(control.addonName, 'Diese E-Mail-Adresse ist bereits registriert.\nBitte melde dich an oder nutze die Passwort-Wiederherstellung.')
+            control.dialog.ok(control.addonName, 'Ten adres e-mail jest już zarejestrowany.\nZaloguj się albo użyj odzyskiwania hasła.')
         else:
             control.infoDialog(str(exc), icon='WARNING', time=6000)
 
@@ -65,12 +65,12 @@ def login():
     email = ask_email(storage.email())
     if not email:
         return
-    password = ask_password('Kennwort')
+    password = ask_password('Hasło')
     if not password:
         return
     try:
         data = Client().login(email, password)
-        finish_login(data.get('email', email), data.get('api_key', ''), 'Anmeldung erfolgreich.')
+        finish_login(data.get('email', email), data.get('api_key', ''), 'Logowanie zakończone powodzeniem.')
     except ApiError as exc:
         control.infoDialog(str(exc), icon='WARNING', time=6000)
 
@@ -79,33 +79,33 @@ def reset_password():
     email = ask_email(storage.email())
     if not email:
         return
-    if not control.yesnoDialog('Kennwort wiederherstellen', 'Für diese E-Mail-Adresse wird ein neues Kennwort erstellt.', 'Alte Anmeldungen werden abgemeldet.', yeslabel='Erstellen', nolabel='Abbrechen'):
+    if not control.yesnoDialog('Odzyskaj hasło', 'Dla tego adresu e-mail zostanie utworzone nowe hasło.', 'Stare logowania zostaną wylogowane.', yeslabel='Utwórz', nolabel='Anuluj'):
         return
     try:
         data = Client().reset_password(email)
         new_password = data.get('password', '')
         if not new_password:
-            control.infoDialog('Kennwort konnte nicht erstellt werden.', icon='WARNING', time=6000)
+            control.infoDialog('Nie udało się utworzyć hasła.', icon='WARNING', time=6000)
             return
         storage.clear_login()
         storage.set_setting(storage.ACCOUNT_EMAIL, data.get('email', email))
-        control.dialog.ok(control.addonName, 'Neues Kennwort:\n[B]%s[/B]\n\nBitte notiere es dir und melde dich damit an.' % new_password)
+        control.dialog.ok(control.addonName, 'Nowe hasło:\n[B]%s[/B]\n\nZanotuj je i zaloguj się nim.' % new_password)
     except ApiError as exc:
         if exc.code == 'EMAIL_NOT_FOUND':
-            control.dialog.ok(control.addonName, 'Diese E-Mail-Adresse ist nicht registriert.')
+            control.dialog.ok(control.addonName, 'Ten adres e-mail nie jest zarejestrowany.')
         else:
             control.infoDialog(str(exc), icon='WARNING', time=6000)
 
 
 def logout():
     storage.clear_login()
-    control.infoDialog('Du bist abgemeldet.', icon='INFO')
+    control.infoDialog('Jesteś wylogowany.', icon='INFO')
 
 
 def sync_now():
     storage.reconcile_auth_settings()
     if not storage.is_logged_in():
-        control.infoDialog('Bitte zuerst anmelden.', icon='WARNING')
+        control.infoDialog('Najpierw się zaloguj.', icon='WARNING')
         return
     track_sync('sync_started', 'manual')
     try:
@@ -114,24 +114,24 @@ def sync_now():
         binge_sync.push_local(silent=True, client=client, require_login=False)
         binge_sync.pull_remote(apply_bookmarks=True, silent=True, client=client, require_login=False)
         storage.update_last_sync(time.strftime('%Y-%m-%d %H:%M:%S'))
-        storage.set_status('Angemeldet als %s' % storage.email())
+        storage.set_status('Zalogowany jako %s' % storage.email())
         track_sync('sync_finished', 'manual')
-        control.infoDialog('Synchronisation abgeschlossen.', icon='INFO')
+        control.infoDialog('Synchronizacja zakończona.', icon='INFO')
     except ApiError as exc:
         track_sync('sync_failed', 'manual', 'api_error')
         control.infoDialog(str(exc), icon='WARNING', time=6000)
     except Exception as exc:
         log_utils.log('xVAULT sync: manual sync failed: %s' % str(exc), log_utils.LOGERROR)
         track_sync('sync_failed', 'manual', 'plugin_error')
-        control.infoDialog('Synchronisation fehlgeschlagen.', icon='WARNING', time=6000)
+        control.infoDialog('Synchronizacja nie powiodła się.', icon='WARNING', time=6000)
 
 
 def show_status():
-    status = 'Angemeldet als %s' % storage.email() if storage.is_logged_in() else 'Nicht angemeldet'
+    status = 'Zalogowany jako %s' % storage.email() if storage.is_logged_in() else 'Niezalogowany'
     lines = [
         status,
-        'Synchronisation: %s' % ('aktiv' if storage.is_enabled() else 'inaktiv'),
-        'Letzte Synchronisation: %s' % (storage.get_setting(storage.LAST_SYNC_AT) or '-'),
+        'Synchronizacja: %s' % ('aktywna' if storage.is_enabled() else 'nieaktywna'),
+        'Ostatnia synchronizacja: %s' % (storage.get_setting(storage.LAST_SYNC_AT) or '-'),
         'API-Key: %s' % storage.mask_token(storage.api_key()),
     ]
     control.dialog.ok(control.addonName, '\n'.join(lines))
@@ -142,9 +142,9 @@ def finish_login(email, api_key, message):
     storage.save_login(email, api_key)
     client = Client(api_key=api_key)
     if initial_sync(client, email):
-        control.infoDialog(message + ' Erste Synchronisation abgeschlossen.', icon='INFO', time=6000)
+        control.infoDialog(message + ' Pierwsza synchronizacja zakończona.', icon='INFO', time=6000)
     else:
-        control.infoDialog(message + ' Die Synchronisation ist nun aktiviert.', icon='INFO', time=6000)
+        control.infoDialog(message + ' Synchronizacja jest teraz włączona.', icon='INFO', time=6000)
 
 
 def initial_sync(client, email):
@@ -158,7 +158,7 @@ def initial_sync(client, email):
     changed = binge_sync.push_local(silent=True, client=client, require_login=False) or changed
     changed = binge_sync.pull_remote(apply_bookmarks=True, silent=True, client=client, require_login=False) or changed
     storage.update_last_sync(time.strftime('%Y-%m-%d %H:%M:%S'))
-    storage.set_status('Angemeldet als %s' % email)
+    storage.set_status('Zalogowany jako %s' % email)
     return changed
 
 

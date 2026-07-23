@@ -54,13 +54,13 @@ def getMediaInfo(url, dialog, deadline=None):
     # 2. Fetch a small chunk to detect by Content-Type + content sniffing
     headers = _parseHeaders(url)
     try:
-        r = _fetchWithDeadline(dialog, 55, 'Erkenne Stream-Typ...',
+        r = _fetchWithDeadline(dialog, 55, 'Rozpoznawanie typu strumienia...',
             lambda: requests.get(stream_url, headers=headers, timeout=_remaining(deadline), verify=False, stream=True),
             deadline)
         if r is None:
             return None
         if r.status_code >= 400:
-            return 'Stream nicht erreichbar (HTTP %d)' % r.status_code
+            return 'Stream niedostępny (HTTP %d)' % r.status_code
 
         ct = r.headers.get('Content-Type', '').lower()
         content_length = r.headers.get('Content-Length', '')
@@ -82,7 +82,7 @@ def getMediaInfo(url, dialog, deadline=None):
 
     except Exception as e:
         log_utils.log('getMediaInfo Error: %s' % str(e), log_utils.LOGERROR)
-        return 'Stream-Typ konnte nicht erkannt werden'
+        return 'Nie rozpoznano typu streamu'
 
 
 def _probeHLS(url, dialog=None, deadline=None):
@@ -97,7 +97,7 @@ def _probeHLS(url, dialog=None, deadline=None):
         content = r.text
 
         if '#EXT-X-STREAM-INF' not in content:
-            return 'HLS Stream (Single-Bitrate)\n\nKeine Auflösungsinfo im Manifest verfügbar.'
+            return 'Stream HLS (pojedynczy bitrate)\n\nBrak informacji o rozdzielczości w manifeście.'
 
         lines = content.strip().split('\n')
         variants = []
@@ -122,20 +122,20 @@ def _probeHLS(url, dialog=None, deadline=None):
                 variants.append((width, height, bandwidth, codecs, variant_url))
 
         if not variants:
-            return 'HLS Stream\n\nKeine Auflösungsinfo gefunden.'
+            return 'Stream HLS\n\nNie znaleziono informacji o rozdzielczości.'
 
         variants.sort(key=lambda x: x[1], reverse=True)
         best = variants[0]
 
-        result = 'Typ:  HLS Stream\n'
-        result += 'Auflösung:  %dx%d (%s)\n' % (best[0], best[1], _resLabel(best[1]))
+        result = 'Typ:  Stream HLS\n'
+        result += 'Rozdzielczość:  %dx%d (%s)\n' % (best[0], best[1], _resLabel(best[1]))
         if best[3]:
             vc = [c.strip() for c in best[3].split(',') if c.strip()[:3].lower() in ('avc', 'hev', 'hvc', 'av0', 'vp0', 'vp8', 'vp9', 'mp4')]
             ac = [c.strip() for c in best[3].split(',') if c.strip() not in vc]
             # mp4a is audio, not video
             vc_final = [c for c in vc if not c.strip().lower().startswith('mp4a')]
             ac_final = ac + [c for c in vc if c.strip().lower().startswith('mp4a')]
-            if vc_final: result += 'Video-Codec:  %s\n' % _codecName(','.join(vc_final))
+            if vc_final: result += 'Kodek wideo:  %s\n' % _codecName(','.join(vc_final))
 
             # Parse #EXT-X-MEDIA:TYPE=AUDIO lines for language info
             audio_tracks = []
@@ -163,7 +163,7 @@ def _probeHLS(url, dialog=None, deadline=None):
             elif ac_final:
                 result += 'Audio:  %s\n' % _codecName(','.join(ac_final))
             else:
-                result += 'Audio:  !! Kein Audio !!\n'
+                result += 'Audio:  !! Brak audio !!\n'
 
         if best[2]: result += 'Bitrate:  %s\n' % _fmtBitrate(best[2])
 
@@ -184,16 +184,16 @@ def _probeHLS(url, dialog=None, deadline=None):
                     mins = (int(total_dur) % 3600) // 60
                     secs = int(total_dur) % 60
                     if hours > 0:
-                        result += 'Dauer:  %d:%02d:%02d (geschätzt)\n' % (hours, mins, secs)
+                        result += 'Czas trwania:  %d:%02d:%02d (szacowany)\n' % (hours, mins, secs)
                     else:
-                        result += 'Dauer:  %d:%02d (geschätzt)\n' % (mins, secs)
+                        result += 'Czas trwania:  %d:%02d (szacowany)\n' % (mins, secs)
                     if best[2]:
                         est_size = (best[2] * total_dur) / 8
                         est_mb = est_size / (1024.0 * 1024.0)
                         if est_mb >= 1024:
-                            result += 'Dateigröße:  %.1f GB (geschätzt)\n' % (est_mb / 1024.0)
+                            result += 'Rozmiar pliku:  %.1f GB (szacowany)\n' % (est_mb / 1024.0)
                         else:
-                            result += 'Dateigröße:  %.0f MB (geschätzt)\n' % est_mb
+                            result += 'Rozmiar pliku:  %.0f MB (szacowany)\n' % est_mb
             except:
                 pass
 
@@ -244,7 +244,7 @@ def _probeDASH(url, dialog=None, deadline=None):
                 variants.append((int(width), int(height), int(bandwidth) if bandwidth else 0, codecs, mime))
 
         if not variants:
-            return 'DASH Stream\n\nKeine Auflösungsinfo im Manifest verfügbar.'
+            return 'Stream DASH\n\nBrak informacji o rozdzielczości w manifeście.'
 
         # Deduplicate and sort by height descending
         seen = set()
@@ -258,9 +258,9 @@ def _probeDASH(url, dialog=None, deadline=None):
 
         best = unique[0]
 
-        result = 'Typ:  DASH Stream\n'
-        result += 'Auflösung:  %dx%d (%s)\n' % (best[0], best[1], _resLabel(best[1]))
-        if best[3]: result += 'Video-Codec:  %s\n' % _codecName(best[3])
+        result = 'Typ:  Stream DASH\n'
+        result += 'Rozdzielczość:  %dx%d (%s)\n' % (best[0], best[1], _resLabel(best[1]))
+        if best[3]: result += 'Kodek wideo:  %s\n' % _codecName(best[3])
         if best[2]: result += 'Bitrate:  %s\n' % _fmtBitrate(best[2])
 
         # Audio info from audio AdaptationSets
@@ -281,7 +281,7 @@ def _probeDASH(url, dialog=None, deadline=None):
                         result += 'Audio:  %s\n' % _codecName(ac)
                     break
         if not has_audio:
-            result += 'Audio:  !! Kein Audio !!\n'
+            result += 'Audio:  !! Brak audio !!\n'
 
         return result.rstrip()
 
@@ -393,7 +393,7 @@ def _probeDirect(url, dialog, deadline, file_size_str=''):
         INITIAL = 65536
         data, total_size = _fetchRange(stream_url, headers, 0, INITIAL - 1, dialog, deadline, 65, 'Lade Datei-Header...')
         if data is None:
-            return 'Typ:  Direkter Stream\n\nServer nicht erreichbar'
+            return 'Typ: stream bezpośredni\n\nSerwer niedostępny'
 
         # Fallback file size from caller or HEAD request
         if not total_size and file_size_str:
@@ -468,16 +468,16 @@ def _probeDirect(url, dialog, deadline, file_size_str=''):
                         if extra_audio:
                             audio_traks = extra_audio
 
-        result = 'Typ:  Direkter Stream\n'
+        result = 'Typ:  Stream bezpośredni\n'
 
         if width and height:
             label = _resLabel(height)
-            result += 'Auflösung:  %dx%d (%s)\n' % (width, height, label)
+            result += 'Rozdzielczość:  %dx%d (%s)\n' % (width, height, label)
         else:
-            result += 'Auflösung:  nicht aus Datei-Header ermittelbar\n'
+            result += 'Rozdzielczość:  nie można ustalić z nagłówka pliku\n'
 
         if codec:
-            result += 'Video-Codec:  %s\n' % _codecName(codec)
+            result += 'Kodek wideo:  %s\n' % _codecName(codec)
         if fps:
             if fps == int(fps):
                 result += 'FPS:  %d\n' % int(fps)
@@ -485,7 +485,7 @@ def _probeDirect(url, dialog, deadline, file_size_str=''):
                 fps_str = '%.3f' % fps
                 result += 'FPS:  %s\n' % fps_str.rstrip('0').rstrip('.')
         if not audio_traks:
-            result += 'Audio:  !! Kein Audio-Track !!\n'
+            result += 'Audio:  !! Brak ścieżki audio !!\n'
         for at in audio_traks:
             parts = [_codecName(at.get('audio_codec', ''))]
             if at.get('audio_channels'):
@@ -505,17 +505,17 @@ def _probeDirect(url, dialog, deadline, file_size_str=''):
             mins = (int(duration_sec) % 3600) // 60
             secs = int(duration_sec) % 60
             if hours > 0:
-                result += 'Dauer:  %d:%02d:%02d\n' % (hours, mins, secs)
+                result += 'Czas trwania:  %d:%02d:%02d\n' % (hours, mins, secs)
             else:
-                result += 'Dauer:  %d:%02d\n' % (mins, secs)
+                result += 'Czas trwania:  %d:%02d\n' % (mins, secs)
         if content_type and 'octet' not in content_type:
-            result += 'Dateityp:  %s\n' % content_type
+            result += 'Typ pliku:  %s\n' % content_type
         if total_size > 0:
             size_mb = total_size / (1024.0 * 1024.0)
             if size_mb >= 1024:
-                result += 'Dateigröße:  %.1f GB\n' % (size_mb / 1024.0)
+                result += 'Rozmiar pliku:  %.1f GB\n' % (size_mb / 1024.0)
             else:
-                result += 'Dateigröße:  %.0f MB\n' % size_mb
+                result += 'Rozmiar pliku:  %.0f MB\n' % size_mb
 
         return result.rstrip()
 
@@ -709,7 +709,7 @@ def _channelLabel(ch):
     if ch == 2: return 'Stereo'
     if ch == 6: return '5.1'
     if ch == 8: return '7.1'
-    return '%d Kanäle' % ch
+    return '%d kanałów' % ch
 
 def _codecName(raw):
     if not raw: return ''
@@ -752,30 +752,30 @@ def _codecName(raw):
 def _langName(code):
     if not code: return ''
     names = {
-        'de': 'Deutsch', 'deu': 'Deutsch', 'ger': 'Deutsch',
-        'en': 'Englisch', 'eng': 'Englisch',
-        'fr': 'Französisch', 'fra': 'Französisch', 'fre': 'Französisch',
-        'es': 'Spanisch', 'spa': 'Spanisch',
-        'it': 'Italienisch', 'ita': 'Italienisch',
-        'ja': 'Japanisch', 'jpn': 'Japanisch',
-        'ko': 'Koreanisch', 'kor': 'Koreanisch',
-        'pt': 'Portugiesisch', 'por': 'Portugiesisch',
-        'ru': 'Russisch', 'rus': 'Russisch',
-        'tr': 'Türkisch', 'tur': 'Türkisch',
-        'zh': 'Chinesisch', 'zho': 'Chinesisch', 'chi': 'Chinesisch',
-        'ar': 'Arabisch', 'ara': 'Arabisch',
-        'hi': 'Hindi', 'hin': 'Hindi',
-        'nl': 'Niederländisch', 'nld': 'Niederländisch', 'dut': 'Niederländisch',
-        'pl': 'Polnisch', 'pol': 'Polnisch',
-        'sv': 'Schwedisch', 'swe': 'Schwedisch',
-        'da': 'Dänisch', 'dan': 'Dänisch',
-        'no': 'Norwegisch', 'nor': 'Norwegisch',
-        'fi': 'Finnisch', 'fin': 'Finnisch',
-        'cs': 'Tschechisch', 'ces': 'Tschechisch', 'cze': 'Tschechisch',
-        'el': 'Griechisch', 'ell': 'Griechisch', 'gre': 'Griechisch',
-        'he': 'Hebräisch', 'heb': 'Hebräisch',
-        'th': 'Thailändisch', 'tha': 'Thailändisch',
-        'uk': 'Ukrainisch', 'ukr': 'Ukrainisch',
+        'de': 'niemiecki', 'deu': 'niemiecki', 'ger': 'niemiecki',
+        'en': 'angielski', 'eng': 'angielski',
+        'fr': 'francuski', 'fra': 'francuski', 'fre': 'francuski',
+        'es': 'hiszpański', 'spa': 'hiszpański',
+        'it': 'włoski', 'ita': 'włoski',
+        'ja': 'japoński', 'jpn': 'japoński',
+        'ko': 'koreański', 'kor': 'koreański',
+        'pt': 'portugalski', 'por': 'portugalski',
+        'ru': 'rosyjski', 'rus': 'rosyjski',
+        'tr': 'turecki', 'tur': 'turecki',
+        'zh': 'chiński', 'zho': 'chiński', 'chi': 'chiński',
+        'ar': 'arabski', 'ara': 'arabski',
+        'hi': 'hindi', 'hin': 'hindi',
+        'nl': 'niderlandzki', 'nld': 'niderlandzki', 'dut': 'niderlandzki',
+        'pl': 'polski', 'pol': 'polski',
+        'sv': 'szwedzki', 'swe': 'szwedzki',
+        'da': 'duński', 'dan': 'duński',
+        'no': 'norweski', 'nor': 'norweski',
+        'fi': 'fiński', 'fin': 'fiński',
+        'cs': 'czeski', 'ces': 'czeski', 'cze': 'czeski',
+        'el': 'grecki', 'ell': 'grecki', 'gre': 'grecki',
+        'he': 'hebrajski', 'heb': 'hebrajski',
+        'th': 'tajski', 'tha': 'tajski',
+        'uk': 'ukraiński', 'ukr': 'ukraiński',
         'und': '',
     }
     return names.get(code.lower(), code.upper())

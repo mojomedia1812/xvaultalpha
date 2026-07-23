@@ -51,8 +51,8 @@ class seasons:
 			watched_status.store_tvshow_status(title, title, imdb_id, number_of_seasons, show_playcount)
 			data['playcount'] = show_playcount
 			self.sysmeta = json.dumps(data)
-			if self.list == None or len(self.list) == 0:	# nichts gefunden
-				control.infoDialog("Nichts gefunden", time=8000)
+			if self.list == None or len(self.list) == 0:	# nic nie znaleziono
+				control.infoDialog("Nic nie znaleziono", time=8000)
 			else:
 				self.Directory(self.list)
 				return self.list
@@ -108,8 +108,8 @@ class seasons:
 		addonPoster, addonBanner = control.addonPoster(), control.addonBanner()
 		addonFanart, settingFanart = control.addonFanart(), control.getSetting('fanart')
 
-		watchedMenu = "In %s [I]Gesehen[/I]" % control.addonName
-		unwatchedMenu = "In %s [I]Ungesehen[/I]" % control.addonName
+		watchedMenu = "W %s [I]Obejrzane[/I]" % control.addonName
+		unwatchedMenu = "W %s [I]Nieobejrzane[/I]" % control.addonName
 		normal_season_count = len([item for item in items if int(item.get('season') or 0) > 0])
 		pos = 0
 		for i in items:
@@ -129,9 +129,9 @@ class seasons:
 				_sysmeta = control.quote_plus(json.dumps(_sysmeta))
 
 				if i.get('is_special') or int(season) == 0:
-					label = 'Specials / Pilotfilme - %s' % sysmeta['title']
+					label = 'Odcinki specjalne / filmy pilotowe - %s' % sysmeta['title']
 				else:
-					label = 'Staffel %s - %s' % (season, sysmeta['title'])
+					label = 'Sezon %s - %s' % (season, sysmeta['title'])
 				if i.get('premiered') and datetime.datetime(*(time.strptime(i['premiered'], "%Y-%m-%d")[0:6])) > datetime.datetime.now():
 					label = '[COLOR=red][I]{}[/I][/COLOR]'.format(label) # ffcc0000
 
@@ -232,7 +232,7 @@ class seasons:
 		control.plugincategory(syshandle, control.addonVersion)
 		control.endofdirectory(syshandle, cacheToDisc=False)
 
-		# setzt Auswahl nach letzte als gesehen markierte Staffel -> Content: 'movies'
+		# ustawia wybór po ostatnim sezonie oznaczonym jako obejrzany -> Content: 'movies'
 		if control.getSetting('status.position') == 'true':
 			from resources.lib.utils import setPosition
 			setPosition(pos, __name__, 'movies')
