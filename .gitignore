@@ -5,6 +5,7 @@ __pycache__/
 !docs/*.zip
 !docs/downloads/*.zip
 !docs/plugin.video.xvault/*.zip
+!docs/plugin.video.xvaultalpha/*.zip
 !docs/repository.xvault/*.zip
 !docs/zips/*/*.zip
 .DS_Store
