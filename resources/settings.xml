@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <settings>
     <category label="Allgemein">
-        <setting label="Standard-Aktion ändern" type="action" action="RunPlugin(&quot;plugin://plugin.video.xvault/?action=setPlaybackMode&quot;)" />
+        <setting label="Standard-Aktion ändern" type="action" action="RunPlugin(&quot;plugin://plugin.video.xvaultalpha/?action=setPlaybackMode&quot;)" />
         <setting id="updates.auto" type="bool" label="Automatische Updates aktivieren" default="true" />
         <setting id="scrapers.timeout" type="slider" label="Zeitlimit für Indexseiten" default="35" range="10,60" option="int" />
         <setting id="fanart" type="bool" label="Fanart verwenden" default="true" />
         <setting id="search.doku" type="bool" label="Auch nach Dokumentationen suchen" default="false" />
         <setting type="lsep" label="Support" />
-        <setting label="Supportpaket erstellen und hochladen" type="action" action="RunPlugin(plugin://plugin.video.xvault/?action=supportUpload)" />
+        <setting label="Supportpaket erstellen und hochladen" type="action" action="RunPlugin(plugin://plugin.video.xvaultalpha/?action=supportUpload)" />
         <setting id="support.upload.provider" type="enum" label="Support-Upload-Dienst" values="filebin.net|file.io|0x0.st" default="0" />
         <setting id="support.upload.expiry" type="enum" label="Supportpaket automatisch loeschen nach" values="1 Tag|7 Tage|14 Tage" default="1" />
         <setting id="support.last_uuid" type="text" label="Letzte Support UUID" default="" visible="false" />
@@ -34,8 +34,8 @@
         <setting type="text" label="[COLOR blue]ACHTUNG:  Die folgenden Optionen werden sofort[/COLOR]" />
         <setting type="text" label="[COLOR blue]und für [B]alle[/B] Indexseiten ausgeführt![/COLOR]" />
         <setting type="sep"/>
-        <setting label="Alle Quellen aktivieren" type="action" action="RunPlugin(plugin://plugin.video.xvault/?action=settings&amp;subaction=toggleGerman&amp;setting=true)" option=""/>
-        <setting label="Alle Quellen deaktivieren" type="action" action="RunPlugin(plugin://plugin.video.xvault/?action=settings&amp;subaction=toggleGerman&amp;setting=false)" option=""/>
+        <setting label="Alle Quellen aktivieren" type="action" action="RunPlugin(plugin://plugin.video.xvaultalpha/?action=settings&amp;subaction=toggleGerman&amp;setting=true)" option=""/>
+        <setting label="Alle Quellen deaktivieren" type="action" action="RunPlugin(plugin://plugin.video.xvaultalpha/?action=settings&amp;subaction=toggleGerman&amp;setting=false)" option=""/>
         <setting type="sep"/>
         <setting id="provider.einschalten" type="bool" label="EINSCHALTEN   |   [B][COLOR blue]Filme &amp; Serien[/COLOR][/B]" default="true" />
         <setting id="provider.einschalten.domain" label="[B][COLOR red]PluginError oder Domain nicht erreichbar[/COLOR][/B]" type="text" default="" visible="eq(1,false)"/>
@@ -82,8 +82,8 @@
         <setting type="text" label="[COLOR blue]ACHTUNG:  Die folgenden Optionen werden sofort[/COLOR]" />
         <setting type="text" label="[COLOR blue]und für [B]alle[/B] Indexseiten ausgeführt![/COLOR]" />
         <setting type="sep"/>
-        <setting label="Alle Quellen aktivieren" type="action" action="RunPlugin(plugin://plugin.video.xvault/?action=settings&amp;subaction=toggleGerman&amp;setting=true)" option=""/>
-        <setting label="Alle Quellen deaktivieren" type="action" action="RunPlugin(plugin://plugin.video.xvault/?action=settings&amp;subaction=toggleGerman&amp;setting=false)" option=""/>
+        <setting label="Alle Quellen aktivieren" type="action" action="RunPlugin(plugin://plugin.video.xvaultalpha/?action=settings&amp;subaction=toggleGerman&amp;setting=true)" option=""/>
+        <setting label="Alle Quellen deaktivieren" type="action" action="RunPlugin(plugin://plugin.video.xvaultalpha/?action=settings&amp;subaction=toggleGerman&amp;setting=false)" option=""/>
         <setting type="sep"/>
         <setting id="provider.megakino" type="bool" label="MEGAKINO   |   [B][COLOR blue]Filme &amp; Serien[/COLOR][/B]" default="true" />
         <setting id="provider.megakino.domain" label="[B][COLOR red]PluginError oder Domain nicht erreichbar[/COLOR][/B]" type="text" default="" visible="eq(1,false)"/>
@@ -131,8 +131,8 @@
         <setting type="text" label="[COLOR blue]ACHTUNG:  Die folgenden Optionen werden sofort[/COLOR]" />
         <setting type="text" label="[COLOR blue]und für [B]alle[/B] Indexseiten ausgeführt![/COLOR]" />
         <setting type="sep"/>
-        <setting label="Alle Quellen aktivieren" type="action" action="RunPlugin(plugin://plugin.video.xvault/?action=settings&amp;subaction=toggleGerman&amp;setting=true)" option=""/>
-        <setting label="Alle Quellen deaktivieren" type="action" action="RunPlugin(plugin://plugin.video.xvault/?action=settings&amp;subaction=toggleGerman&amp;setting=false)" option=""/>
+        <setting label="Alle Quellen aktivieren" type="action" action="RunPlugin(plugin://plugin.video.xvaultalpha/?action=settings&amp;subaction=toggleGerman&amp;setting=true)" option=""/>
+        <setting label="Alle Quellen deaktivieren" type="action" action="RunPlugin(plugin://plugin.video.xvaultalpha/?action=settings&amp;subaction=toggleGerman&amp;setting=false)" option=""/>
         <setting type="sep"/>
         <setting id="provider.cineto" type="bool" label="CINE.TO   |   [B][COLOR red]Filme[/COLOR][/B]" default="true"/>
         <setting id="provider.cineto.domain" label="[B][COLOR red]PluginError oder Domain nicht erreichbar[/COLOR][/B]" type="text" default="" visible="eq(1,false)"/>
@@ -193,14 +193,14 @@
         <setting id="sync.email" type="text" label="E-Mail-Adresse" default="" />
         <setting id="sync.status" type="text" label="Status" default="Nicht angemeldet" enable="false"/>
         <setting id="sync.last_sync_at" type="text" label="Letzte Synchronisation" default="" enable="false"/>
-        <setting label="Anmelden" type="action" action="RunPlugin(plugin://plugin.video.xvault/?action=syncLogin)"/>
-        <setting label="Registrieren" type="action" action="RunPlugin(plugin://plugin.video.xvault/?action=syncRegister)"/>
-        <setting label="Kennwort wiederherstellen" type="action" action="RunPlugin(plugin://plugin.video.xvault/?action=syncResetPassword)"/>
-        <setting label="Jetzt synchronisieren" type="action" action="RunPlugin(plugin://plugin.video.xvault/?action=syncNow)"/>
-        <setting label="Backup vom Server wiederherstellen" type="action" action="RunPlugin(plugin://plugin.video.xvault/?action=syncRestoreFavorites)"/>
-        <setting label="Status anzeigen" type="action" action="RunPlugin(plugin://plugin.video.xvault/?action=syncStatus)"/>
-        <setting label="Datenschutz-Hinweis anzeigen" type="action" action="RunPlugin(plugin://plugin.video.xvault/?action=syncPrivacy)"/>
-        <setting label="Abmelden" type="action" action="RunPlugin(plugin://plugin.video.xvault/?action=syncLogout)"/>
+        <setting label="Anmelden" type="action" action="RunPlugin(plugin://plugin.video.xvaultalpha/?action=syncLogin)"/>
+        <setting label="Registrieren" type="action" action="RunPlugin(plugin://plugin.video.xvaultalpha/?action=syncRegister)"/>
+        <setting label="Kennwort wiederherstellen" type="action" action="RunPlugin(plugin://plugin.video.xvaultalpha/?action=syncResetPassword)"/>
+        <setting label="Jetzt synchronisieren" type="action" action="RunPlugin(plugin://plugin.video.xvaultalpha/?action=syncNow)"/>
+        <setting label="Backup vom Server wiederherstellen" type="action" action="RunPlugin(plugin://plugin.video.xvaultalpha/?action=syncRestoreFavorites)"/>
+        <setting label="Status anzeigen" type="action" action="RunPlugin(plugin://plugin.video.xvaultalpha/?action=syncStatus)"/>
+        <setting label="Datenschutz-Hinweis anzeigen" type="action" action="RunPlugin(plugin://plugin.video.xvaultalpha/?action=syncPrivacy)"/>
+        <setting label="Abmelden" type="action" action="RunPlugin(plugin://plugin.video.xvaultalpha/?action=syncLogout)"/>
         <setting id="sync.api_key" type="text" option="hidden" label="API-Key" default="" visible="false"/>
         <setting id="sync.logged_in" type="bool" label="Angemeldet" default="false" visible="false"/>
         <setting id="sync.device_id" type="text" label="Geräte-ID" default="" visible="false"/>
@@ -232,12 +232,12 @@
         <setting id="trakt.watchlist.menu" type="bool" label="Trakt-Watchlist im Menue anzeigen" default="true" />
         <setting id="trakt.collection.menu" type="bool" label="Trakt-Collection im Menue anzeigen" default="true" />
         <setting id="trakt.ratings.enabled" type="bool" label="Trakt-Bewertungen im Kontextmenue anzeigen" default="false" />
-        <setting label="Trakt verbinden" type="action" action="RunPlugin(plugin://plugin.video.xvault/?action=traktAuthorize)"/>
-        <setting label="Trakt jetzt synchronisieren" type="action" action="RunPlugin(plugin://plugin.video.xvault/?action=traktSyncNow)"/>
-        <setting label="Trakt-Gesehen importieren" type="action" action="RunPlugin(plugin://plugin.video.xvault/?action=traktImportWatched)"/>
-        <setting label="Lokalen Gesehen-Status zu Trakt senden" type="action" action="RunPlugin(plugin://plugin.video.xvault/?action=traktExportWatched)"/>
-        <setting label="Trakt-Status anzeigen" type="action" action="RunPlugin(plugin://plugin.video.xvault/?action=traktStatus)"/>
-        <setting label="Trakt trennen" type="action" action="RunPlugin(plugin://plugin.video.xvault/?action=traktLogout)"/>
+        <setting label="Trakt verbinden" type="action" action="RunPlugin(plugin://plugin.video.xvaultalpha/?action=traktAuthorize)"/>
+        <setting label="Trakt jetzt synchronisieren" type="action" action="RunPlugin(plugin://plugin.video.xvaultalpha/?action=traktSyncNow)"/>
+        <setting label="Trakt-Gesehen importieren" type="action" action="RunPlugin(plugin://plugin.video.xvaultalpha/?action=traktImportWatched)"/>
+        <setting label="Lokalen Gesehen-Status zu Trakt senden" type="action" action="RunPlugin(plugin://plugin.video.xvaultalpha/?action=traktExportWatched)"/>
+        <setting label="Trakt-Status anzeigen" type="action" action="RunPlugin(plugin://plugin.video.xvaultalpha/?action=traktStatus)"/>
+        <setting label="Trakt trennen" type="action" action="RunPlugin(plugin://plugin.video.xvaultalpha/?action=traktLogout)"/>
         <setting id="trakt.status" type="text" label="Trakt-Status" default="Nicht verbunden" enable="false"/>
         <setting id="trakt.last_sync_at" type="text" label="Letzter Trakt-Sync" default="" enable="false"/>
         <setting id="trakt.username" type="text" label="Trakt-Benutzer" default="" visible="false"/>
@@ -249,7 +249,7 @@
         <setting type="lsep" label="Konto [B]opensubtitles.org[/B]"/>
     </category>
     <category label="Plus">
-        <setting label="Aktivieren" type="action" action="RunPlugin(plugin://plugin.video.xvault/?action=activatePlus)" />
+        <setting label="Zu xVAULT wechseln" type="action" action="RunPlugin(plugin://plugin.video.xvaultalpha/?action=deactivatePlus)" />
         <setting id="plus.enabled" type="bool" label="Plus aktiv" default="false" visible="false" />
         <setting id="plus.client_id" type="text" label="Plus Client" default="" visible="false" />
         <setting id="updates.channel" type="text" label="Update-Kanal" default="stable" visible="false" />
@@ -259,7 +259,7 @@
     <category label="Statistik">
         <setting type="lsep" label="Nutzungsstatistik" />
         <setting id="telemetry.enabled" type="bool" label="Nutzungsstatistik aktivieren" default="false" />
-        <setting label="Statistikstatus anzeigen" type="action" action="RunPlugin(plugin://plugin.video.xvault/?action=telemetryStatus)" />
+        <setting label="Statistikstatus anzeigen" type="action" action="RunPlugin(plugin://plugin.video.xvaultalpha/?action=telemetryStatus)" />
         <setting id="telemetry.install_id" type="text" label="Statistik Installations-ID" default="" visible="false" />
         <setting id="telemetry.session_id" type="text" label="Statistik Sitzung" default="" visible="false" />
         <setting id="telemetry.last_heartbeat" type="text" label="Statistik letzter Heartbeat" default="" visible="false" />
@@ -269,7 +269,7 @@
     <category label="Downloads / Untertitel">
         <setting id="downloads" type="bool" label="Herunterladen aktivieren" default="false" />
         <setting type="lsep" label="Bitte Ordnerpfade eingeben" />
-        <setting label="[COLOR blue]Hier Hilfe zum Syntax für den Ordnerpfad[/COLOR]" type="action" action="RunPlugin(plugin://plugin.video.xvault/?action=settings&amp;subaction=downloadInfo)" option=""/>
+        <setting label="[COLOR blue]Hier Hilfe zum Syntax für den Ordnerpfad[/COLOR]" type="action" action="RunPlugin(plugin://plugin.video.xvaultalpha/?action=settings&amp;subaction=downloadInfo)" option=""/>
         <setting id="download.movie.path" type="text" label="Filme" enable="!eq(-3,false)" default="" />
         <setting id="download.tv.path" type="text" label="TV-Serien" enable="!eq(-4,false)" default="" />
         <setting type="lsep" label="[CR]" />
