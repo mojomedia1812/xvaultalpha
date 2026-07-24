@@ -47,7 +47,7 @@ Więcej informacji o zależnościach znajduje się w [`DEPENDENCIES.md`](DEPENDE
 - Trakt obsługuje logowanie kodem urządzenia, watchlistę, kolekcję, import/eksport obejrzanych, scrobbling i oceny.
 - DNS over HTTPS jest domyślnie aktywny i można go wyłączyć w ustawieniach ogólnych.
 - Narzędzia wsparcia tworzą redigowany pakiet diagnostyczny, który po potwierdzeniu może zostać przesłany i udostępniony przez krótką identyfikację usługi.
-- Opcjonalne statystyki użycia identyfikują ten wariant jako `alpa`.
+- Opcjonalne statystyki użycia identyfikują ten wariant jako kanał `alpha` i wersję `2026.07.23.6-alpha`.
 - Obszar Plus pozwala wrócić z xVAULTalpha do standardowego dodatku xVAULT przez instalację najnowszej wersji standardowej.
 
 ## Zgłaszanie błędów i propozycji

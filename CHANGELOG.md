@@ -5,7 +5,7 @@
 Deweloper: mojomedia1812
 
 - Cały widoczny interfejs xVAULTalpha został przetłumaczony na język polski: menu Kodi, ustawienia, dialogi, LiveTV, Sync, Trakt, Plus, Support, MediaInfo, aktualizacje i komunikaty startowe.
-- xVAULTalpha zgłasza się w statystykach jako wariant `alpa`, aby dane Alpha były jednoznacznie odseparowane od standardowego xVAULT.
+- xVAULTalpha zgłasza się w statystykach jako kanał `alpha` z wersją `2026.07.23.6-alpha`, aby dane Alpha były jednoznacznie odseparowane od standardowego xVAULT.
 - Metadane TMDB, plakaty, fanarty, zwiastuny, domyślne napisy i listy języków preferują teraz język polski oraz region PL.
 - GitHub Pages, README, podręcznik, dokumentacja synchronizacji, metadane repozytorium i generowane listy pobierania są publikowane po polsku dla repozytorium xvaultalpha.
 - Pakiety `plugin.video.xvaultalpha-2026.07.23.6.zip`, katalog repozytorium i indeks Kodi zostały przebudowane z polską lokalizacją.

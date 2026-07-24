@@ -22,7 +22,7 @@ SETTING_SESSION_ID = 'telemetry.session_id'
 SETTING_LAST_HEARTBEAT = 'telemetry.last_heartbeat'
 SETTING_CONSENT_VERSION = 'telemetry.consent_version'
 SETTING_ADDON_VERSION = 'telemetry.addon_version'
-ADDON_VARIANT = 'alpa'
+ADDON_VARIANT = 'alpha'
 
 ALLOWED_EVENTS = set([
     'installation_created',
@@ -52,7 +52,7 @@ def status_lines():
         'Sesja: %s' % (_mask(session_id) if session_id else 'nie uruchomiono'),
         'Wersja xVAULT: %s' % context.get('addon_version', ''),
         'Kanał xVAULT: %s' % context.get('addon_variant', 'stable'),
-        'Wersja Kodi: %s' % (context.get('kodi_version', '') or 'unbekannt'),
+        'Wersja Kodi: %s' % (context.get('kodi_version', '') or 'nieznana'),
         'Klasa OS: %s' % context.get('os_class', 'unknown'),
         'Klasa urządzenia: %s' % context.get('device_class', 'unknown'),
         'Heartbeat: co 10 minut',
