@@ -14,6 +14,7 @@ CATEGORIES = (
 def show_home():
     handle = _handle()
     _add_folder(handle, "Odśwież listę kanałów", {"action": "liveTVLiteRefresh"}, False)
+    _add_folder(handle, linear_tv.TV_FAVORITES_LABEL, {"action": "liveTVLiteFavorites"}, True)
     for category in CATEGORIES:
         _add_folder(
             handle,
@@ -38,6 +39,27 @@ def show_category(category_slug):
         return
 
     channels = [channel for channel in _catalog() if channel.get("category_slug") == category["slug"]]
+    _show_channels(channels, category["label"], favorites=False)
+
+
+def show_favorites():
+    channels = [_lite_channel(channel) for channel in linear_tv.tv_favorites()]
+    _show_channels(channels, linear_tv.TV_FAVORITES_LABEL, favorites=True)
+
+
+def add_favorite(channel_id):
+    linear_tv.add_favorite(channel_id)
+
+
+def remove_favorite(channel_id):
+    linear_tv.remove_favorite(channel_id)
+
+
+def play(channel_id):
+    linear_tv.play(channel_id)
+
+
+def _show_channels(channels, title, favorites=False):
     handle = _handle()
     for channel in sorted(channels, key=lambda item: _sort_key(item.get("name"))):
         item = control.item(channel.get("name") or "LiveTV lite", offscreen=True)
@@ -49,12 +71,18 @@ def show_category(category_slug):
             "mediatype": "video",
         })
         item.setArt(_art(channel))
+        item.addContextMenuItems(
+            linear_tv.tv_favorite_context_menu(
+                channel,
+                favorite_context=favorites,
+                add_action="liveTVLiteFavoriteAdd",
+                remove_action="liveTVLiteFavoriteRemove",
+                include_health_check=False,
+            ),
+            True,
+        )
         control.addItem(handle, _url({"action": "liveTVLitePlay", "id": channel.get("id")}), item, False)
-    _end(category["label"], cache=False)
-
-
-def play(channel_id):
-    linear_tv.play(channel_id)
+    _end(title, cache=False)
 
 
 def _catalog(refresh=False):

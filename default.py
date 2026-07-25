@@ -143,6 +143,18 @@ elif action == 'liveTVLiteCategory':
     from resources.lib import linear_tv_lite
     linear_tv_lite.show_category(params.get('category'))
 
+elif action == 'liveTVLiteFavorites':
+    from resources.lib import linear_tv_lite
+    linear_tv_lite.show_favorites()
+
+elif action == 'liveTVLiteFavoriteAdd':
+    from resources.lib import linear_tv_lite
+    linear_tv_lite.add_favorite(params.get('id'))
+
+elif action == 'liveTVLiteFavoriteRemove':
+    from resources.lib import linear_tv_lite
+    linear_tv_lite.remove_favorite(params.get('id'))
+
 elif action == 'liveTVLitePlay':
     from resources.lib import linear_tv_lite
     linear_tv_lite.play(params.get('id'))

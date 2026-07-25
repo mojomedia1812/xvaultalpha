@@ -67,6 +67,9 @@ PLAYBACK_ENGINE_AUTO = 0
 PLAYBACK_ENGINE_NATIVE = 1
 PLAYBACK_ENGINE_FFMPEG_DIRECT = 2
 PLAYBACK_ENGINE_ADAPTIVE = 3
+TV_FAVORITES_LABEL = "TV Favoriten"
+TV_FAVORITE_ADD_LABEL = "Zu TV Favoriten hinzufügen"
+TV_FAVORITE_REMOVE_LABEL = "Aus TV Favoriten entfernen"
 
 _signature_cache = {"value": "", "timestamp": 0}
 _epg_memory_cache = {"data": None, "mtime": 0}
@@ -191,7 +194,7 @@ def show_home():
     handle = _handle()
     _add_folder(handle, "Odśwież listę kanałów", {"action": "liveTVRefresh"}, False)
     _add_folder(handle, "Sprawdź działanie listy kanałów", {"action": "liveTVHealthCheck"}, True, "Sprawdza wszystkie aktualnie widoczne kanały i ukrywa niedostępne do następnego głównego startu xVAULT.")
-    _add_folder(handle, "Ulubione", {"action": "liveTVFavorites"}, True, "Ulubione")
+    _add_folder(handle, TV_FAVORITES_LABEL, {"action": "liveTVFavorites"}, True, TV_FAVORITES_LABEL)
     _add_folder(handle, "Szukaj", {"action": "liveTVSearch"}, True, "Szukaj")
     _add_folder(handle, "Wszystkie kanały", {"action": "liveTVCategory", "category": "Wszystkie kanały"}, True, "Wszystkie kanały")
 
@@ -359,8 +362,8 @@ def show_search(query=None):
 
 
 def show_favorites():
-    favorites = _load_favorites()
-    _show_channels(favorites, "Ulubione", favorites=True)
+    favorites = tv_favorites()
+    _show_channels(favorites, TV_FAVORITES_LABEL, favorites=True)
 
 
 def add_favorite(channel_id):
@@ -372,13 +375,14 @@ def add_favorite(channel_id):
     if not _channel_by_id(favorites, channel_id):
         favorites.append(_favorite_record(channel))
         _save_favorites(favorites)
-    control.infoDialog("Zapisano ulubiony kanał", icon="INFO")
+    control.infoDialog("Zapisano w TV Favoriten", icon="INFO")
+    xbmc.executebuiltin("Container.Refresh")
 
 
 def remove_favorite(channel_id):
     favorites = [item for item in _load_favorites() if item.get("id") != channel_id]
     _save_favorites(favorites)
-    control.infoDialog("Usunięto ulubiony kanał", icon="INFO")
+    control.infoDialog("Usunięto z TV Favoriten", icon="INFO")
     xbmc.executebuiltin("Container.Refresh")
 
 
@@ -433,7 +437,7 @@ def _show_channels(channels, title, favorites=False):
             "mediatype": "video",
         })
         _set_channel_art(item, channel, epg)
-        item.addContextMenuItems(_context_menu(channel, favorites))
+        item.addContextMenuItems(_context_menu(channel, favorites), True)
         url = _url({"action": "liveTVPlay", "id": channel.get("id")})
         try:
             item.setPath(url)
@@ -1230,23 +1234,35 @@ def _visible_channels(channels):
 
 
 def _context_menu(channel, favorite_context=False):
+    return tv_favorite_context_menu(channel, favorite_context=favorite_context, include_health_check=True)
+
+
+def tv_favorites():
+    return _load_favorites()
+
+
+def tv_favorite_context_menu(
+        channel,
+        favorite_context=False,
+        add_action="liveTVFavoriteAdd",
+        remove_action="liveTVFavoriteRemove",
+        include_health_check=True):
     check_entry = ("Sprawdź działanie listy kanałów", "RunPlugin(%s)" % _url({"action": "liveTVHealthCheck"}))
+    items = []
     if favorite_context:
-        return [
-            ("Usuń z ulubionych", "RunPlugin(%s)" % _url({"action": "liveTVFavoriteRemove", "id": channel.get("id")})),
-            check_entry,
-        ]
-    favorites = _load_favorites()
-    if _channel_by_id(favorites, channel.get("id")):
-        label = "Usuń z ulubionych"
-        action = "liveTVFavoriteRemove"
+        items.append((TV_FAVORITE_REMOVE_LABEL, "RunPlugin(%s)" % _url({"action": remove_action, "id": channel.get("id")})))
     else:
-        label = "Dodaj do ulubionych"
-        action = "liveTVFavoriteAdd"
-    return [
-        (label, "RunPlugin(%s)" % _url({"action": action, "id": channel.get("id")})),
-        check_entry,
-    ]
+        favorites = _load_favorites()
+        if _channel_by_id(favorites, channel.get("id")):
+            label = TV_FAVORITE_REMOVE_LABEL
+            action = remove_action
+        else:
+            label = TV_FAVORITE_ADD_LABEL
+            action = add_action
+        items.append((label, "RunPlugin(%s)" % _url({"action": action, "id": channel.get("id")})))
+    if include_health_check:
+        items.append(check_entry)
+    return items
 
 
 def _health_blocked_ids():
