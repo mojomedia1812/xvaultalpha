@@ -3,6 +3,7 @@ xVAULT 2026.07.23.6
 Deweloper: mojomedia1812
 
 - Cały widoczny interfejs xVAULTalpha został przetłumaczony na język polski: menu Kodi, ustawienia, dialogi, LiveTV, Sync, Trakt, Plus, Support, MediaInfo, aktualizacje i komunikaty startowe.
+- Menu kontekstowe LiveTV i LiveTV lite używa polskich etykiet dla ulubionych TV oraz zastępuje standardowy wpis ulubionych Kodi własnym menu xVAULTalpha.
 - xVAULTalpha zgłasza się w statystykach jako kanał alpha z wersją 2026.07.23.6-alpha, aby dane Alpha były jednoznacznie odseparowane od standardowego xVAULT.
 - Metadane TMDB, plakaty, fanarty, zwiastuny, domyślne napisy i listy języków preferują teraz język polski oraz region PL.
 - GitHub Pages, README, podręcznik, dokumentacja synchronizacji, metadane repozytorium i generowane listy pobierania są publikowane po polsku dla repozytorium xvaultalpha.

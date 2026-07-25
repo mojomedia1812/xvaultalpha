@@ -41,6 +41,7 @@ Więcej informacji o zależnościach znajduje się w [`DEPENDENCIES.md`](DEPENDE
 - Język streamów może być preferowany lub filtrowany; źródła wielojęzyczne mogą być dopuszczane według ustawień.
 - Serie obsługują odcinki specjalne z sezonu TMDB 0 jako osobne wpisy.
 - LiveTV i LiveTV lite używają tylko polskiej listy xVAULTalpha. Kanały niemieckie, austriackie, szwajcarskie i jasno obcojęzyczne są filtrowane z katalogu, cache i ulubionych.
+- LiveTV i LiveTV lite używają własnego folderu `Ulubione TV` oraz polskich etykiet menu kontekstowego.
 - LiveTV używa lokalnego cache, polskich kategorii, logo kanałów, polskiego EPG, sprawdzania dostępności kanałów oraz fallbacków hostów `huhu.to`, `oha.to` i `vavoo.to`.
 - Dostępne są pobieranie, napisy i zewnętrzne menedżery pobierania.
 - Dostępna jest synchronizacja ulubionych i stanów odtwarzania przez host API `xvault-sql.ddnss.de`.

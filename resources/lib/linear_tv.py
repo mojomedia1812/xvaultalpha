@@ -67,9 +67,9 @@ PLAYBACK_ENGINE_AUTO = 0
 PLAYBACK_ENGINE_NATIVE = 1
 PLAYBACK_ENGINE_FFMPEG_DIRECT = 2
 PLAYBACK_ENGINE_ADAPTIVE = 3
-TV_FAVORITES_LABEL = "TV Favoriten"
-TV_FAVORITE_ADD_LABEL = "Zu TV Favoriten hinzufügen"
-TV_FAVORITE_REMOVE_LABEL = "Aus TV Favoriten entfernen"
+TV_FAVORITES_LABEL = "Ulubione TV"
+TV_FAVORITE_ADD_LABEL = "Dodaj do ulubionych TV"
+TV_FAVORITE_REMOVE_LABEL = "Usuń z ulubionych TV"
 
 _signature_cache = {"value": "", "timestamp": 0}
 _epg_memory_cache = {"data": None, "mtime": 0}
@@ -375,14 +375,14 @@ def add_favorite(channel_id):
     if not _channel_by_id(favorites, channel_id):
         favorites.append(_favorite_record(channel))
         _save_favorites(favorites)
-    control.infoDialog("Zapisano w TV Favoriten", icon="INFO")
+    control.infoDialog("Zapisano w ulubionych TV", icon="INFO")
     xbmc.executebuiltin("Container.Refresh")
 
 
 def remove_favorite(channel_id):
     favorites = [item for item in _load_favorites() if item.get("id") != channel_id]
     _save_favorites(favorites)
-    control.infoDialog("Usunięto z TV Favoriten", icon="INFO")
+    control.infoDialog("Usunięto z ulubionych TV", icon="INFO")
     xbmc.executebuiltin("Container.Refresh")
 
 
